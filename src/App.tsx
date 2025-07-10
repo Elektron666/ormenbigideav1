@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { LoginForm } from './components/Auth/LoginForm';
 import { CustomerDetail } from './components/Customers/CustomerDetail';
+import { BulkCustomerUpload } from './components/Customers/BulkCustomerUpload';
+import { StockManagement } from './components/Stock/StockManagement';
+import { MotivationPage } from './components/Motivation/MotivationPage';
+import { NotesPage } from './components/Notes/NotesPage';
+import { BackupManager } from './components/Backup/BackupManager';
 import { Header } from './components/Layout/Header';
 import { Sidebar } from './components/Layout/Sidebar';
 import { Dashboard } from './components/Dashboard/Dashboard';
@@ -20,7 +25,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
-    type: 'customer' | 'product' | 'movement' | 'quick-movement' | null;
+    type: 'customer' | 'product' | 'movement' | 'quick-movement' | 'bulk-customer' | null;
     data?: any;
   }>({ isOpen: false, type: null });
   const [customerDetailState, setCustomerDetailState] = useState<{
@@ -78,6 +83,13 @@ function App() {
     setModalState({ isOpen: false, type: null });
   };
 
+  const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
+    customersData.forEach(customerData => {
+      addCustomer(customerData);
+    });
+    setModalState({ isOpen: false, type: null });
+  };
+
   const handleCustomerDelete = (id: string) => {
     if (window.confirm('Bu müşteriyi silmek istediğinizden emin misiniz?')) {
       deleteCustomer(id);
@@ -101,7 +113,10 @@ function App() {
       case 'products': return 'Kartelalar';
       case 'movements': return 'Hareketler';
       case 'reports': return 'Raporlar';
-      case 'import-export': return 'Veri Yönetimi';
+      case 'stock': return 'Kartela Stok';
+      case 'motivation': return 'Motivasyon';
+      case 'notes': return 'Notlarım';
+      case 'backup': return 'Yedek Al/Yükle';
       case 'settings': return 'Ayarlar';
       default: return 'Kartela Yönetimi';
     }
@@ -120,6 +135,7 @@ function App() {
             onDelete={handleCustomerDelete}
             onView={handleCustomerView}
             onAdd={() => setModalState({ isOpen: true, type: 'customer' })}
+            onBulkAdd={() => setModalState({ isOpen: true, type: 'bulk-customer' })}
           />
         );
       
@@ -159,6 +175,18 @@ function App() {
           </div>
         );
       
+      case 'stock':
+        return <StockManagement />;
+      
+      case 'motivation':
+        return <MotivationPage />;
+      
+      case 'notes':
+        return <NotesPage />;
+      
+      case 'backup':
+        return <BackupManager />;
+      
       default:
         return (
           <div className="bg-white rounded-lg border border-gray-200 p-6">
@@ -181,6 +209,8 @@ function App() {
         return 'Tekli Hareket';
       case 'quick-movement':
         return 'Hızlı Hareket - Çoklu Kartela Seçimi';
+      case 'bulk-customer':
+        return 'Toplu Müşteri Yükleme';
       default:
         return '';
     }
@@ -244,6 +274,12 @@ function App() {
             products={products}
             onSave={handleQuickMovementSave}
             onCancel={() => setModalState({ isOpen: false, type: null })}
+          />
+        )}
+        {modalState.type === 'bulk-customer' && (
+          <BulkCustomerUpload
+            onUpload={handleBulkCustomerUpload}
+            onClose={() => setModalState({ isOpen: false, type: null })}
           />
         )}
       </Modal>

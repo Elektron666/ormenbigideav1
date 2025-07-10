@@ -3,13 +3,16 @@ import {
   Users, 
   Package, 
   TrendingUp, 
-  FileText, 
+  BarChart3,
+  Archive,
+  Lightbulb,
+  BookOpen,
   Settings, 
   Download, 
   Upload,
-  BarChart3,
   Home,
-  X
+  X,
+  Heart
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -25,7 +28,10 @@ const menuItems = [
   { id: 'products', label: 'Kartelalar', icon: Package },
   { id: 'movements', label: 'Hareketler', icon: TrendingUp },
   { id: 'reports', label: 'Raporlar', icon: BarChart3 },
-  { id: 'import-export', label: 'Veri Yönetimi', icon: FileText },
+  { id: 'stock', label: 'Kartela Stok', icon: Archive },
+  { id: 'motivation', label: 'Motivasyon', icon: Lightbulb },
+  { id: 'notes', label: 'Notlarım', icon: BookOpen },
+  { id: 'backup', label: 'Yedek Al/Yükle', icon: Download },
   { id: 'settings', label: 'Ayarlar', icon: Settings },
 ];
 
@@ -47,7 +53,10 @@ export function Sidebar({ isOpen, onClose, activeTab, onTabChange }: SidebarProp
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Kartela Yönetimi</h2>
+          <div>
+            <h2 className="text-lg font-bold text-blue-900">ORMEN TEKSTİL</h2>
+            <p className="text-xs text-blue-600">Kartela Sistemi V1</p>
+          </div>
           <button
             onClick={onClose}
             className="p-1 rounded-lg hover:bg-gray-100 lg:hidden"
@@ -87,9 +96,12 @@ export function Sidebar({ isOpen, onClose, activeTab, onTabChange }: SidebarProp
         </nav>
         
         <div className="absolute bottom-4 left-4 right-4">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <p className="text-xs text-blue-600 font-medium">Kartela Yönetim v1.0</p>
-            <p className="text-xs text-blue-500 mt-1">Modern & Kullanıcı Dostu</p>
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-3 border border-blue-100">
+            <div className="flex items-center space-x-2 mb-1">
+              <Heart className="w-3 h-3 text-red-500" />
+              <p className="text-xs text-blue-700 font-semibold">ORMEN TEKSTİL</p>
+            </div>
+            <p className="text-xs text-blue-600">Modern & İlham Verici</p>
           </div>
         </div>
       </aside>

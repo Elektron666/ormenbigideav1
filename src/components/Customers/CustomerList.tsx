@@ -10,9 +10,10 @@ interface CustomerListProps {
   onDelete: (id: string) => void;
   onView: (customer: Customer) => void;
   onAdd: () => void;
+  onBulkAdd: () => void;
 }
 
-export function CustomerList({ customers, onEdit, onDelete, onView, onAdd }: CustomerListProps) {
+export function CustomerList({ customers, onEdit, onDelete, onView, onAdd, onBulkAdd }: CustomerListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<keyof Customer>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -47,13 +48,22 @@ export function CustomerList({ customers, onEdit, onDelete, onView, onAdd }: Cus
           <h2 className="text-2xl font-bold text-gray-900">Müşteriler</h2>
           <p className="text-gray-600 mt-1">Toplam {customers.length} müşteri</p>
         </div>
-        <button
-          onClick={onAdd}
-          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Yeni Müşteri</span>
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={onBulkAdd}
+            className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2.5 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            <Users className="w-4 h-4" />
+            <span>Toplu Yükle</span>
+          </button>
+          <button
+            onClick={onAdd}
+            className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Yeni Müşteri</span>
+          </button>
+        </div>
       </div>
 
       <SearchFilter
