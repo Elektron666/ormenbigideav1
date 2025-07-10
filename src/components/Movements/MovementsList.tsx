@@ -53,13 +53,25 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
       const aVal = a[sortBy];
       const bVal = b[sortBy];
       
+      // Handle undefined values
+      if (aVal === undefined && bVal === undefined) return 0;
+      if (aVal === undefined) return 1;
+      if (bVal === undefined) return -1;
       if (aVal === bVal) return 0;
       
       let comparison = 0;
       if (sortBy === 'createdAt') {
         comparison = new Date(aVal as Date).getTime() - new Date(bVal as Date).getTime();
       } else {
-        comparison = aVal < bVal ? -1 : 1;
+        // Safe comparison with type checking
+        if (typeof aVal === 'string' && typeof bVal === 'string') {
+          comparison = aVal.localeCompare(bVal, 'tr-TR', { sensitivity: 'base' });
+        } else if (typeof aVal === 'number' && typeof bVal === 'number') {
+          comparison = aVal - bVal;
+        } else {
+          // Convert to string for comparison
+          comparison = String(aVal).localeCompare(String(bVal), 'tr-TR', { sensitivity: 'base' });
+        }
       }
       
       return sortOrder === 'asc' ? comparison : -comparison;

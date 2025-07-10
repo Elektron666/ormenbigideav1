@@ -90,6 +90,10 @@ export function filterAndSort<T>(
     const aVal = a[sortBy];
     const bVal = b[sortBy];
     
+    // Handle undefined/null values safely
+    if (aVal === undefined && bVal === undefined) return 0;
+    if (aVal === undefined || aVal === null) return sortOrder === 'asc' ? 1 : -1;
+    if (bVal === undefined || bVal === null) return sortOrder === 'asc' ? -1 : 1;
     if (aVal === bVal) return 0;
     
     // TÜRKÇE KARAKTER SORUNU ÇÖZÜLDİ - GERÇEK ÇÖZÜM!
