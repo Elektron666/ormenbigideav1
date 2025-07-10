@@ -85,9 +85,16 @@ function App() {
   };
 
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
-    customersData.forEach(customerData => {
-      addCustomer(customerData);
-    });
+    console.log('Bulk upload data:', customersData); // Debug log
+    try {
+      customersData.forEach(customerData => {
+        console.log('Adding customer:', customerData); // Debug log
+        addCustomer(customerData);
+      });
+      console.log('All customers added successfully'); // Debug log
+    } catch (error) {
+      console.error('Error adding customers:', error);
+    }
     setModalState({ isOpen: false, type: null });
   };
 

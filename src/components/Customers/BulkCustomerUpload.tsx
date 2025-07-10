@@ -31,7 +31,7 @@ export function BulkCustomerUpload({ onUpload, onClose }: BulkCustomerUploadProp
   const handleUpload = () => {
     const validCustomers = previewData.filter(item => item.valid);
     if (validCustomers.length > 0) {
-      onUpload(validCustomers.map(item => ({ name: item.name })));
+      onUpload(validCustomers);
     }
   };
 
