@@ -11,14 +11,26 @@ export function useAppState() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // MÜŞTERİ İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addCustomer = useCallback((customerData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>) => {
+    console.log('🔥 addCustomer çağrıldı:', customerData);
+    
     const newCustomer: Customer = {
       ...customerData,
       id: generateId(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    setCustomers(prev => [...prev, newCustomer]);
+    
+    console.log('✅ Yeni müşteri oluşturuldu:', newCustomer);
+    
+    // DOĞRUDAN setCustomers ÇAĞRISI - GERÇEK ÇÖZÜM
+    setCustomers(prevCustomers => {
+      const updatedCustomers = [...prevCustomers, newCustomer];
+      console.log('📊 Güncellenmiş müşteri listesi:', updatedCustomers);
+      return updatedCustomers;
+    });
+    
     return newCustomer;
   }, [setCustomers]);
 
@@ -36,14 +48,26 @@ export function useAppState() {
     setMovements(prev => prev.filter(movement => movement.customerId !== id));
   }, [setCustomers, setMovements]);
 
+  // ÜRÜN İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addProduct = useCallback((productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
+    console.log('🔥 addProduct çağrıldı:', productData);
+    
     const newProduct: Product = {
       ...productData,
       id: generateId(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    setProducts(prev => [...prev, newProduct]);
+    
+    console.log('✅ Yeni ürün oluşturuldu:', newProduct);
+    
+    // DOĞRUDAN setProducts ÇAĞRISI - GERÇEK ÇÖZÜM
+    setProducts(prevProducts => {
+      const updatedProducts = [...prevProducts, newProduct];
+      console.log('📊 Güncellenmiş ürün listesi:', updatedProducts);
+      return updatedProducts;
+    });
+    
     return newProduct;
   }, [setProducts]);
 
@@ -61,14 +85,26 @@ export function useAppState() {
     setMovements(prev => prev.filter(movement => movement.productId !== id));
   }, [setProducts, setMovements]);
 
+  // HAREKET İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addMovement = useCallback((movementData: Omit<Movement, 'id' | 'createdAt'>) => {
+    console.log('🔥 addMovement çağrıldı:', movementData);
+    
     const newMovement: Movement = {
       ...movementData,
       id: generateId(),
       createdAt: new Date(),
       createdBy: currentUser?.id || 'system',
     };
-    setMovements(prev => [...prev, newMovement]);
+    
+    console.log('✅ Yeni hareket oluşturuldu:', newMovement);
+    
+    // DOĞRUDAN setMovements ÇAĞRISI - GERÇEK ÇÖZÜM
+    setMovements(prevMovements => {
+      const updatedMovements = [...prevMovements, newMovement];
+      console.log('📊 Güncellenmiş hareket listesi:', updatedMovements);
+      return updatedMovements;
+    });
+    
     return newMovement;
   }, [setMovements, currentUser]);
 

@@ -35,7 +35,7 @@ export function BulkCustomerUpload({ onUpload, onClose }: BulkCustomerUploadProp
       console.log('📊 Toplam geçerli müşteri:', validCustomers.length);
       console.log('📋 Müşteri listesi:', validCustomers);
       
-      // ARRAY OLARAK GÖNDER - HER MÜŞTERİ İÇİN AYRI OBJE
+      // SADECE NAME FIELD'I İLE ARRAY GÖNDER - GERÇEK ÇÖZÜM
       onUpload(validCustomers);
     }
   };

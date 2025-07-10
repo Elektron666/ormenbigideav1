@@ -76,7 +76,7 @@ export function BulkProductUpload({ onUpload, onClose, existingProducts }: BulkP
       console.log('📊 Toplam geçerli kartela:', validProducts.length);
       console.log('📋 Kartela listesi:', validProducts);
       
-      // ARRAY OLARAK GÖNDER - HER KARTELA İÇİN AYRI OBJE
+      // NAME, CODE VE CATEGORY FIELD'LARI İLE ARRAY GÖNDER - GERÇEK ÇÖZÜM
       onUpload(validProducts);
     }
   };

@@ -82,7 +82,22 @@ function App() {
 
   const handleNewMovementSave = (movementData: any) => {
     console.log('🔥 YENİ HAREKET KAYDI - GERÇEK ÇÖZÜM:', movementData);
-    addMovement(movementData);
+    
+    // EĞER ARRAY İSE HER BİRİNİ TEK TEK EKLE
+    if (Array.isArray(movementData)) {
+      console.log('📊 Çoklu hareket kaydı:', movementData.length);
+      for (let i = 0; i < movementData.length; i++) {
+        const movement = movementData[i];
+        console.log(`💾 Hareket ${i + 1} kaydediliyor:`, movement);
+        const result = addMovement(movement);
+        console.log(`✅ Hareket ${i + 1} kaydedildi:`, result);
+      }
+    } else {
+      // TEK HAREKET
+      const result = addMovement(movementData);
+      console.log('✅ Tek hareket kaydedildi:', result);
+    }
+    
     setModalState({ isOpen: false, type: null });
   };
 
@@ -92,12 +107,15 @@ function App() {
     console.log('📊 Gelen müşteri sayısı:', customersData.length);
     console.log('📋 Müşteri verileri:', customersData);
     
-    // HER MÜŞTERİYİ TEK TEK EKLE - GERÇEK ÇÖZÜM
-    customersData.forEach((customerData, index) => {
-      console.log(`👤 Müşteri ${index + 1} ekleniyor:`, customerData.name);
-      addCustomer({ name: customerData.name.trim() });
-      console.log(`✅ Müşteri ${index + 1} eklendi:`, customerData.name);
-    });
+    // SENKRON OLARAK HER MÜŞTERİYİ TEK TEK EKLE - GERÇEK ÇÖZÜM
+    for (let i = 0; i < customersData.length; i++) {
+      const customerData = customersData[i];
+      console.log(`👤 Müşteri ${i + 1} ekleniyor:`, customerData.name);
+      
+      // SENKRON addCustomer ÇAĞRISI
+      const result = addCustomer({ name: customerData.name.trim() });
+      console.log(`✅ Müşteri ${i + 1} eklendi:`, result);
+    }
     
     console.log(`🎉 TOPLAM ${customersData.length} müşteri başarıyla eklendi!`);
     setModalState({ isOpen: false, type: null });
@@ -109,16 +127,19 @@ function App() {
     console.log('📊 Gelen kartela sayısı:', productsData.length);
     console.log('📋 Kartela verileri:', productsData);
     
-    // HER KARTELAYI TEK TEK EKLE - GERÇEK ÇÖZÜM
-    productsData.forEach((productData, index) => {
-      console.log(`📦 Kartela ${index + 1} ekleniyor:`, productData.name, productData.code);
-      addProduct({
+    // SENKRON OLARAK HER KARTELAYI TEK TEK EKLE - GERÇEK ÇÖZÜM
+    for (let i = 0; i < productsData.length; i++) {
+      const productData = productsData[i];
+      console.log(`📦 Kartela ${i + 1} ekleniyor:`, productData.name, productData.code);
+      
+      // SENKRON addProduct ÇAĞRISI
+      const result = addProduct({
         name: productData.name.trim(),
         code: productData.code.trim(),
         category: productData.category?.trim()
       });
-      console.log(`✅ Kartela ${index + 1} eklendi:`, productData.name, productData.code);
-    });
+      console.log(`✅ Kartela ${i + 1} eklendi:`, result);
+    }
     
     console.log(`🎉 TOPLAM ${productsData.length} kartela başarıyla eklendi!`);
     setModalState({ isOpen: false, type: null });

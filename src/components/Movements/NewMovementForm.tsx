@@ -91,8 +91,8 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     const productIds = Array.from(selectedProducts);
     console.log('📋 Ürün ID listesi:', productIds);
     
-    // HER ÜRÜN İÇİN AYRI HAREKET KAYDI OLUŞTUR - GERÇEK ÇÖZÜM
-    productIds.forEach((productId, index) => {
+    // HER ÜRÜN İÇİN AYRI HAREKET KAYDI OLUŞTUR VE ARRAY OLARAK GÖNDER - GERÇEK ÇÖZÜM
+    const allMovements = productIds.map((productId, index) => {
       const product = products.find(p => p.id === productId);
       const movementData = {
         customerId: selectedCustomer.id,
@@ -109,12 +109,15 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         quantity: 1
       });
       
-      // HER HAREKET İÇİN AYRI onSave ÇAĞRISI - GERÇEK ÇÖZÜM
-      onSave(movementData);
-      console.log(`✅ Hareket ${index + 1} kaydedildi!`);
+      return movementData;
     });
     
-    console.log(`🎉 TOPLAM ${productIds.length} hareket başarıyla kaydedildi!`);
+    console.log('📤 Tüm hareketler gönderiliyor:', allMovements);
+    
+    // TÜM HAREKETLERİ TEK SEFERDE GÖNDER - GERÇEK ÇÖZÜM
+    onSave(allMovements);
+    
+    console.log(`🎉 TOPLAM ${productIds.length} hareket başarıyla gönderildi!`);
   };
 
   const getSelectedProductsList = () => {
