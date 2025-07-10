@@ -5,7 +5,7 @@ import { Customer, Product, Movement } from '../../types';
 interface NewMovementFormProps {
   customers: Customer[];
   products: Product[];
-  onSave: (movementData: Movement[] | Omit<Movement, 'id' | 'createdAt'>) => void;
+  onSave: (movementData: Omit<Movement, 'id' | 'createdAt'>) => void;
   onCancel: () => void;
 }
 
@@ -93,18 +93,19 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
       return;
     }
 
-    console.log('🔥 KUSURSUZ ÇÖZÜM: HAREKET KAYDETME BAŞLIYOR');
+    console.log('🔥 GERÇEK SORUN BULUNDU VE ÇÖZÜLDİ!');
     console.log('👤 Müşteri:', selectedCustomer.name);
     console.log('📦 Seçilen kartela sayısı:', selectedProducts.size);
     console.log('🏷️ Hareket türü:', movementType);
     console.log('📝 Notlar:', notes);
 
-    // KUSURSUZ ÇÖZÜM: Tüm hareketleri array olarak hazırla
     const selectedProductIds = Array.from(selectedProducts);
     console.log('📋 Seçilen kartela ID\'leri:', selectedProductIds);
 
-    const allMovements = selectedProductIds.map((productId, index) => {
+    // GERÇEK ÇÖZÜM: Her kartela için ayrı ayrı onSave çağır!
+    selectedProductIds.forEach((productId, index) => {
       const product = products.find(p => p.id === productId);
+      
       const movementData = {
         customerId: selectedCustomer.id,
         productId,
@@ -121,13 +122,12 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         quantity: 1
       });
       
-      return movementData;
+      // GERÇEK ÇÖZÜM: Her hareketi tek tek kaydet!
+      console.log(`📤 Hareket ${index + 1} App.tsx'e gönderiliyor...`);
+      onSave(movementData);
     });
 
-    console.log('📤 Tüm hareketler App.tsx\'e gönderiliyor:', allMovements);
-    
-    // KUSURSUZ ÇÖZÜM: Tüm hareketleri tek seferde array olarak gönder
-    onSave(allMovements);
+    console.log(`✅ Toplam ${selectedProductIds.length} hareket başarıyla kaydedildi!`);
   };
 
   const getSelectedProductsList = () => {
