@@ -76,8 +76,12 @@ export function BulkProductUpload({ onUpload, onClose, existingProducts }: BulkP
       console.log('📊 Toplam geçerli kartela:', validProducts.length);
       console.log('📋 Kartela listesi:', validProducts);
       
-      // NAME, CODE VE CATEGORY FIELD'LARI İLE ARRAY GÖNDER - GERÇEK ÇÖZÜM
-      onUpload(validProducts);
+      // NAME, CODE VE CATEGORY FIELD'LARI İLE ARRAY GÖNDER - TYPE SAFE ÇÖZÜM
+      onUpload(validProducts.map(product => ({
+        name: product.name,
+        code: product.code,
+        category: product.category
+      })));
     }
   };
 

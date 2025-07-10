@@ -1,41 +1,85 @@
 import React, { useState, useMemo } from 'react';
 import { Plus, Search, Filter, Eye, Edit, Trash2, ArrowRightLeft, Calendar, User, Package } from 'lucide-react';
-import { toast } from 'react-hot-toast';
-import { useApp } from '../context/AppContext';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Modal, ModalHeader, ModalBody, ModalFooter } from '../components/ui/Modal';
-import { Transaction } from '../types';
-import { formatDate, formatDateTime, searchInText } from '../utils/helpers';
+import { Customer, Product, Movement } from '../../types';
 
-export const Transactions: React.FC = () => {
-  const { state, addTransaction, updateTransaction, deleteTransaction, getTransactionsWithDetails } = useApp();
+interface Transaction {
+  id: string;
+  customerId: string;
+  productId: string;
+  type: 'given' | 'taken' | 'returned';
+  quantity: number;
+  notes?: string;
+  createdAt: Date;
+}
+
+interface TransactionWithDetails extends Transaction {
+  customer: Customer;
+  product: Product;
+}
+
+interface TransactionsProps {
+  customers: Customer[];
+  products: Product[];
+  movements: Movement[];
+  onAddTransaction: (transaction: Omit<Transaction, 'id' | 'createdAt'>) => void;
+  onUpdateTransaction: (transaction: Transaction) => void;
+  onDeleteTransaction: (id: string) => void;
+}
+
+export function Transactions({ 
+  customers, 
+  products, 
+  movements, 
+  onAddTransaction, 
+  onUpdateTransaction, 
+  onDeleteTransaction 
+}: TransactionsProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [customerFilter, setCustomerFilter] = useState('');
   const [productFilter, setProductFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('');
-  const [showCustomerSelect, setShowCustomerSelect] = useState(false);
-  const [showProductSelect, setShowProductSelect] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-  const [selectedProducts, setSelectedProducts] = useState<any[]>([]);
   const [formData, setFormData] = useState({
-    type: 'given' as 'given' | 'returned' | 'sold',
+    customerId: '',
+    productId: '',
+    type: 'given' as 'given' | 'taken' | 'returned',
+    quantity: 1,
     notes: '',
   });
 
-  const transactionsWithDetails = getTransactionsWithDetails();
+  // Convert movements to transactions with details
+  const transactionsWithDetails: TransactionWithDetails[] = useMemo(() => {
+    return movements.map(movement => {
+      const customer = customers.find(c => c.id === movement.customerId);
+      const product = products.find(p => p.id === movement.productId);
+      
+      if (!customer || !product) return null;
+      
+      return {
+        id: movement.id,
+        customerId: movement.customerId,
+        productId: movement.productId,
+        type: movement.type,
+        quantity: movement.quantity,
+        notes: movement.notes,
+        createdAt: movement.createdAt,
+        customer,
+        product,
+      };
+    }).filter(Boolean) as TransactionWithDetails[];
+  }, [movements, customers, products]);
 
   const filteredTransactions = useMemo(() => {
     return transactionsWithDetails.filter(transaction => {
-      const matchesSearch = searchInText(transaction.customer.name, searchTerm) ||
-                           searchInText(transaction.product.name, searchTerm) ||
-                           searchInText(transaction.product.code, searchTerm) ||
-                           searchInText(transaction.notes || '', searchTerm);
+      const matchesSearch = !searchTerm || 
+        transaction.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        transaction.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        transaction.product.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (transaction.notes && transaction.notes.toLowerCase().includes(searchTerm.toLowerCase()));
       
       const matchesType = !typeFilter || transaction.type === typeFilter;
       const matchesCustomer = !customerFilter || transaction.customerId === customerFilter;
@@ -53,84 +97,39 @@ export const Transactions: React.FC = () => {
 
   const resetForm = () => {
     setFormData({
+      customerId: '',
+      productId: '',
       type: 'given',
+      quantity: 1,
       notes: '',
     });
-    setSelectedCustomer(null);
-    setSelectedProducts([]);
   };
 
   const handleAdd = () => {
-    setShowCustomerSelect(true);
     resetForm();
+    setShowAddModal(true);
   };
 
-  const handleCustomerSelect = (customer: any) => {
-    setSelectedCustomer(customer);
-    setShowCustomerSelect(false);
-    setShowProductSelect(true);
-  };
-
-  const handleProductToggle = (product: any) => {
-    setSelectedProducts(prev => {
-      const exists = prev.find(p => p.id === product.id);
-      if (exists) {
-        return prev.filter(p => p.id !== product.id);
-      } else {
-        return [...prev, { ...product, quantity: 1 }];
-      }
-    });
-  };
-
-  const handleQuantityChange = (productId: string, quantity: number) => {
-    setSelectedProducts(prev => 
-      prev.map(p => p.id === productId ? { ...p, quantity } : p)
-    );
-  };
-
-  const handlePreview = () => {
-    if (selectedProducts.length === 0) {
-      toast.error('En az bir kartela seçmelisiniz');
-      return;
-    }
-    setShowProductSelect(false);
-    setShowPreview(true);
-  };
-
-  const handleConfirmTransaction = () => {
-    selectedProducts.forEach(product => {
-      addTransaction({
-        customerId: selectedCustomer.id,
-        productId: product.id,
-        type: formData.type,
-        quantity: product.quantity,
-        notes: formData.notes.trim() || undefined,
-      });
-    });
-    
-    toast.success(`${selectedProducts.length} kartela hareketi başarıyla eklendi`);
-    setShowPreview(false);
-    resetForm();
-  };
-  const handleEdit = (transaction: Transaction) => {
+  const handleEdit = (transaction: TransactionWithDetails) => {
     setSelectedTransaction(transaction);
     setFormData({
+      customerId: transaction.customerId,
+      productId: transaction.productId,
       type: transaction.type,
+      quantity: transaction.quantity,
       notes: transaction.notes || '',
     });
     setShowEditModal(true);
   };
 
-  const handleView = (transaction: Transaction) => {
+  const handleView = (transaction: TransactionWithDetails) => {
     setSelectedTransaction(transaction);
     setShowViewModal(true);
   };
 
-  const handleDelete = (transaction: Transaction) => {
-    const transactionWithDetails = transactionsWithDetails.find(t => t.id === transaction.id);
-    if (transactionWithDetails && window.confirm(`${transactionWithDetails.customer.name} - ${transactionWithDetails.product.name} hareketini silmek istediğinizden emin misiniz?`)) {
-      deleteTransaction(transaction.id);
-      toast.success('Hareket başarıyla silindi');
+  const handleDelete = (transaction: TransactionWithDetails) => {
+    if (window.confirm(`${transaction.customer.name} - ${transaction.product.name} hareketini silmek istediğinizden emin misiniz?`)) {
+      onDeleteTransaction(transaction.id);
     }
   };
 
@@ -138,13 +137,24 @@ export const Transactions: React.FC = () => {
     e.preventDefault();
     
     if (selectedTransaction) {
-      updateTransaction({
+      onUpdateTransaction({
         ...selectedTransaction,
+        customerId: formData.customerId,
+        productId: formData.productId,
         type: formData.type,
+        quantity: formData.quantity,
         notes: formData.notes.trim() || undefined,
       });
-      toast.success('Hareket başarıyla güncellendi');
       setShowEditModal(false);
+    } else {
+      onAddTransaction({
+        customerId: formData.customerId,
+        productId: formData.productId,
+        type: formData.type,
+        quantity: formData.quantity,
+        notes: formData.notes.trim() || undefined,
+      });
+      setShowAddModal(false);
     }
     
     resetForm();
@@ -154,8 +164,8 @@ export const Transactions: React.FC = () => {
   const getTypeLabel = (type: string) => {
     switch (type) {
       case 'given': return 'Verildi';
+      case 'taken': return 'Alındı';
       case 'returned': return 'İade';
-      case 'sold': return 'Satıldı';
       default: return type;
     }
   };
@@ -163,10 +173,20 @@ export const Transactions: React.FC = () => {
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'given': return 'bg-red-100 text-red-800';
+      case 'taken': return 'bg-blue-100 text-blue-800';
       case 'returned': return 'bg-green-100 text-green-800';
-      case 'sold': return 'bg-blue-100 text-blue-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const formatDateTime = (date: Date) => {
+    return new Intl.DateTimeFormat('tr-TR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(date));
   };
 
   return (
@@ -178,74 +198,71 @@ export const Transactions: React.FC = () => {
           <p className="text-gray-600">Toplam {transactionsWithDetails.length} hareket</p>
         </div>
         
-        <Button
-          variant="primary"
-          icon={Plus}
+        <button
           onClick={handleAdd}
+          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors font-medium"
         >
-          Yeni Hareket
-        </Button>
+          <Plus className="w-4 h-4" />
+          <span>Yeni Hareket</span>
+        </button>
       </div>
 
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-          <Input
-            icon={Search}
-            placeholder="Hareket ara..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            fullWidth
-          />
-          
-          <div>
-            <select
-              className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-            >
-              <option value="">Tüm Türler</option>
-              <option value="given">Verildi</option>
-              <option value="returned">İade</option>
-              <option value="sold">Satıldı</option>
-            </select>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Hareket ara..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
           </div>
           
-          <div>
-            <select
-              className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              value={customerFilter}
-              onChange={(e) => setCustomerFilter(e.target.value)}
-            >
-              <option value="">Tüm Müşteriler</option>
-              {state.customers.map((customer) => (
-                <option key={customer.id} value={customer.id}>
-                  {customer.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+          >
+            <option value="">Tüm Türler</option>
+            <option value="given">Verildi</option>
+            <option value="taken">Alındı</option>
+            <option value="returned">İade</option>
+          </select>
           
-          <div>
-            <select
-              className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              value={productFilter}
-              onChange={(e) => setProductFilter(e.target.value)}
-            >
-              <option value="">Tüm Kartelalar</option>
-              {state.products.map((product) => (
-                <option key={product.id} value={product.id}>
-                  {product.name} ({product.code})
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={customerFilter}
+            onChange={(e) => setCustomerFilter(e.target.value)}
+          >
+            <option value="">Tüm Müşteriler</option>
+            {customers.map((customer) => (
+              <option key={customer.id} value={customer.id}>
+                {customer.name}
+              </option>
+            ))}
+          </select>
           
-          <Input
+          <select
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={productFilter}
+            onChange={(e) => setProductFilter(e.target.value)}
+          >
+            <option value="">Tüm Kartelalar</option>
+            {products.map((product) => (
+              <option key={product.id} value={product.id}>
+                {product.name} ({product.code})
+              </option>
+            ))}
+          </select>
+          
+          <input
             type="date"
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            fullWidth
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
       </div>
@@ -324,25 +341,24 @@ export const Transactions: React.FC = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        icon={Eye}
+                      <button
                         onClick={() => handleView(transaction)}
-                      />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        icon={Edit}
+                        className="text-blue-600 hover:text-blue-700 p-1 rounded"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => handleEdit(transaction)}
-                      />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        icon={Trash2}
+                        className="text-gray-600 hover:text-gray-700 p-1 rounded"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => handleDelete(transaction)}
-                        className="text-red-600 hover:text-red-700"
-                      />
+                        className="text-red-600 hover:text-red-700 p-1 rounded"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -369,311 +385,137 @@ export const Transactions: React.FC = () => {
               }
             </p>
             {!searchTerm && !typeFilter && !customerFilter && !productFilter && !dateFilter && (
-              <Button variant="primary" icon={Plus} onClick={handleAdd}>
-                İlk Hareketi Ekle
-              </Button>
+              <button
+                onClick={handleAdd}
+                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                <span>İlk Hareketi Ekle</span>
+              </button>
             )}
           </div>
         )}
       </div>
 
       {/* Add/Edit Modal */}
-      <Modal
-        isOpen={showEditModal}
-        onClose={() => {
-          setShowEditModal(false);
-          resetForm();
-          setSelectedTransaction(null);
-        }}
-        title="Hareket Düzenle"
-        size="md"
-      >
-        <form onSubmit={handleSubmit}>
-          <ModalBody>
-            <div className="space-y-4">
+      {(showAddModal || showEditModal) && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              {showEditModal ? 'Hareket Düzenle' : 'Yeni Hareket'}
+            </h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Müşteri *
+                </label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={formData.customerId}
+                  onChange={(e) => setFormData({ ...formData, customerId: e.target.value })}
+                  required
+                >
+                  <option value="">Müşteri seçin</option>
+                  {customers.map((customer) => (
+                    <option key={customer.id} value={customer.id}>
+                      {customer.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Kartela *
+                </label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={formData.productId}
+                  onChange={(e) => setFormData({ ...formData, productId: e.target.value })}
+                  required
+                >
+                  <option value="">Kartela seçin</option>
+                  {products.map((product) => (
+                    <option key={product.id} value={product.id}>
+                      {product.name} ({product.code})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Hareket Türü *
                 </label>
                 <select
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ormen-500 focus:border-ormen-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as 'given' | 'returned' | 'sold' })}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value as 'given' | 'taken' | 'returned' })}
                   required
                 >
                   <option value="given">Verildi</option>
+                  <option value="taken">Alındı</option>
                   <option value="returned">İade</option>
-                  <option value="sold">Satıldı</option>
                 </select>
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Miktar *
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={formData.quantity}
+                  onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) || 1 })}
+                  required
+                />
+              </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Notlar
                 </label>
                 <textarea
-                  className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ormen-500 focus:border-ormen-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   rows={3}
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                   placeholder="Hareket ile ilgili notlar..."
                 />
               </div>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setShowEditModal(false);
-                resetForm();
-                setSelectedTransaction(null);
-              }}
-            >
-              İptal
-            </Button>
-            <Button type="submit" variant="primary">
-              Güncelle
-            </Button>
-          </ModalFooter>
-        </form>
-      </Modal>
 
-      {/* Customer Selection Modal */}
-      <Modal
-        isOpen={showCustomerSelect}
-        onClose={() => {
-          setShowCustomerSelect(false);
-          resetForm();
-        }}
-        title="Müşteri Seçin"
-        size="lg"
-      >
-        <ModalBody>
-          <div className="space-y-4">
-            <Input
-              icon={Search}
-              placeholder="Müşteri ara..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              fullWidth
-            />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto">
-              {state.customers
-                .filter(customer => 
-                  searchInText(customer.name, searchTerm) ||
-                  searchInText(customer.company || '', searchTerm)
-                )
-                .map((customer) => (
+              <div className="flex space-x-3 pt-4">
                 <button
-                  key={customer.id}
-                  onClick={() => handleCustomerSelect(customer)}
-                  className="text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-ormen-300 transition-colors"
+                  type="button"
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setShowEditModal(false);
+                    resetForm();
+                    setSelectedTransaction(null);
+                  }}
+                  className="flex-1 bg-gray-200 text-gray-800 py-2.5 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium"
                 >
-                  <div className="font-medium text-gray-900">{customer.name}</div>
-                  {customer.company && (
-                    <div className="text-sm text-gray-500">{customer.company}</div>
-                  )}
-                  {customer.phone && (
-                    <div className="text-sm text-gray-500">{customer.phone}</div>
-                  )}
+                  İptal
                 </button>
-              ))}
-            </div>
-          </div>
-        </ModalBody>
-      </Modal>
-
-      {/* Product Selection Modal */}
-      <Modal
-        isOpen={showProductSelect}
-        onClose={() => {
-          setShowProductSelect(false);
-          resetForm();
-        }}
-        title={`Kartela Seçin - ${selectedCustomer?.name}`}
-        size="lg"
-      >
-        <ModalBody>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Hareket Türü
-                </label>
-                <select
-                  className="px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value as 'given' | 'returned' | 'sold' })}
+                <button
+                  type="submit"
+                  className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
                 >
-                  <option value="given">Verildi</option>
-                  <option value="returned">İade</option>
-                  <option value="sold">Satıldı</option>
-                </select>
+                  {showEditModal ? 'Güncelle' : 'Kaydet'}
+                </button>
               </div>
-              <div className="text-sm text-gray-600">
-                Seçilen: {selectedProducts.length} kartela
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto">
-              {state.products.map((product) => {
-                const isSelected = selectedProducts.find(p => p.id === product.id);
-                return (
-                  <div
-                    key={product.id}
-                    className={`p-4 border rounded-lg transition-colors cursor-pointer ${
-                      isSelected 
-                        ? 'border-ormen-500 bg-ormen-50' 
-                        : 'border-gray-200 hover:bg-gray-50'
-                    }`}
-                    onClick={() => handleProductToggle(product)}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <div className="font-medium text-gray-900">{product.name}</div>
-                        <div className="text-sm text-gray-500">{product.code}</div>
-                        {product.category && (
-                          <div className="text-xs text-gray-400">{product.category}</div>
-                        )}
-                      </div>
-                      {isSelected && (
-                        <div className="ml-4 flex items-center space-x-2">
-                          <input
-                            type="number"
-                            min="1"
-                            value={isSelected.quantity}
-                            onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value) || 1)}
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-16 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-ormen-500"
-                          />
-                          <span className="text-sm text-gray-500">adet</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Notlar
-              </label>
-              <textarea
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ormen-500 focus:border-ormen-500"
-                rows={2}
-                value={formData.notes}
-                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                placeholder="Hareket ile ilgili notlar..."
-              />
-            </div>
+            </form>
           </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setShowProductSelect(false);
-              setShowCustomerSelect(true);
-            }}
-          >
-            Geri
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handlePreview}
-            disabled={selectedProducts.length === 0}
-          >
-            Önizleme ({selectedProducts.length})
-          </Button>
-        </ModalFooter>
-      </Modal>
+        </div>
+      )}
 
-      {/* Preview Modal */}
-      <Modal
-        isOpen={showPreview}
-        onClose={() => {
-          setShowPreview(false);
-          setShowProductSelect(true);
-        }}
-        title="Hareket Önizlemesi"
-        size="md"
-      >
-        <ModalBody>
-          <div className="space-y-4">
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-medium text-gray-900 mb-2">Müşteri Bilgileri</h4>
-              <p className="text-gray-700">{selectedCustomer?.name}</p>
-              {selectedCustomer?.company && (
-                <p className="text-sm text-gray-500">{selectedCustomer.company}</p>
-              )}
-            </div>
-            
-            <div>
-              <h4 className="font-medium text-gray-900 mb-2">Seçilen Kartelalar</h4>
-              <div className="space-y-2">
-                {selectedProducts.map((product) => (
-                  <div key={product.id} className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
-                    <div>
-                      <div className="font-medium text-gray-900">{product.name}</div>
-                      <div className="text-sm text-gray-500">{product.code}</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-medium">{product.quantity} adet</div>
-                      <div className={`text-xs px-2 py-1 rounded-full ${
-                        formData.type === 'given' ? 'bg-red-100 text-red-800' :
-                        formData.type === 'returned' ? 'bg-green-100 text-green-800' :
-                        'bg-blue-100 text-blue-800'
-                      }`}>
-                        {formData.type === 'given' ? 'Verildi' :
-                         formData.type === 'returned' ? 'İade' : 'Satıldı'}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {formData.notes && (
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2">Notlar</h4>
-                <p className="text-gray-700 bg-gray-50 p-3 rounded-lg">{formData.notes}</p>
-              </div>
-            )}
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setShowPreview(false);
-              setShowProductSelect(true);
-            }}
-          >
-            Düzenle
-          </Button>
-          <Button
-            variant="primary"
-            onClick={handleConfirmTransaction}
-          >
-            Kaydet
-          </Button>
-        </ModalFooter>
-      </Modal>
       {/* View Modal */}
-      <Modal
-        isOpen={showViewModal}
-        onClose={() => {
-          setShowViewModal(false);
-          setSelectedTransaction(null);
-        }}
-        title="Hareket Detayları"
-        size="md"
-      >
-        {selectedTransaction && (
-          <ModalBody>
+      {showViewModal && selectedTransaction && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Hareket Detayları</h3>
             {(() => {
               const transactionWithDetails = transactionsWithDetails.find(t => t.id === selectedTransaction.id);
               if (!transactionWithDetails) return null;
@@ -729,9 +571,20 @@ export const Transactions: React.FC = () => {
                 </div>
               );
             })()}
-          </ModalBody>
-        )}
-      </Modal>
+            <div className="flex justify-end pt-4">
+              <button
+                onClick={() => {
+                  setShowViewModal(false);
+                  setSelectedTransaction(null);
+                }}
+                className="bg-gray-200 text-gray-800 py-2.5 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+              >
+                Kapat
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
+}

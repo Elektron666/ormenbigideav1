@@ -5,7 +5,7 @@ import { Customer, Product, Movement } from '../../types';
 interface NewMovementFormProps {
   customers: Customer[];
   products: Product[];
-  onSave: (movementData: Omit<Movement, 'id' | 'createdAt' | 'createdBy'>) => void;
+  onSave: (movementData: Array<Omit<Movement, 'id' | 'createdAt' | 'createdBy'>>) => void;
   onCancel: () => void;
 }
 

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Plus, Package, MapPin, Tag, Edit, Trash2, Search, BarChart3, TrendingUp, AlertTriangle } from 'lucide-react';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 interface StockItem {
   id: string;
@@ -14,7 +15,7 @@ interface StockItem {
 }
 
 export function StockManagement() {
-  const [stockItems, setStockItems] = useState<StockItem[]>([
+  const [stockItems, setStockItems] = useLocalStorage<StockItem[]>('ormen_stock_items', [
     {
       id: '1',
       name: 'Pamuk Kartela A1',
