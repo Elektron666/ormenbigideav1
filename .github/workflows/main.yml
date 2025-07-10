@@ -68,6 +68,9 @@ jobs:
     - name: Build for Android
       run: npm run build:android
       
+    - name: Add Android platform
+      run: npx cap add android
+      
     - name: Sync Capacitor
       run: npx cap sync android
       
