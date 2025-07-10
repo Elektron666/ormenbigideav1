@@ -22,24 +22,31 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     }
   });
 
-  // GERÇEK ÇÖZÜM: setValue fonksiyonunu useCallback ile optimize et
+  // KUSURSUZ ÇÖZÜM: React'ın functional update desteğini tam olarak sağla
   const setValue = useCallback((value: T | ((val: T) => T)) => {
-    try {
-      // Yeni değeri hesapla
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+    console.log(`🔄 setValue çağrıldı [${key}]`);
+    
+    // GERÇEK ÇÖZÜM: setStoredValue'ı functional şekilde çağır
+    setStoredValue(prev => {
+      console.log(`📝 Functional update çalışıyor [${key}] - Önceki değer:`, prev);
       
-      // State'i güncelle
-      setStoredValue(valueToStore);
+      // Yeni değeri hesapla - EN GÜNCEL state'i kullan
+      const valueToStore = value instanceof Function ? value(prev) : value;
+      console.log(`✅ Yeni değer hesaplandı [${key}]:`, valueToStore);
       
       // localStorage'a kaydet
       if (typeof window !== 'undefined') {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
-        console.log(`✅ localStorage güncellendi [${key}]`);
+        try {
+          window.localStorage.setItem(key, JSON.stringify(valueToStore));
+          console.log(`💾 localStorage güncellendi [${key}]`);
+        } catch (error) {
+          console.error(`❌ localStorage yazma hatası [${key}]:`, error);
+        }
       }
-    } catch (error) {
-      console.error(`❌ localStorage yazma hatası [${key}]:`, error);
-    }
-  }, [key, storedValue]);
+      
+      return valueToStore;
+    });
+  }, [key]);
 
   // GERÇEK ÇÖZÜM: localStorage değişikliklerini dinle
   useEffect(() => {
