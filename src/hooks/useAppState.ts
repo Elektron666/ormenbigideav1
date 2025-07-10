@@ -13,7 +13,7 @@ export function useAppState() {
 
   // MÜŞTERİ İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addCustomer = useCallback((customerData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>) => {
-    console.log('🔥 addCustomer çağrıldı:', customerData);
+    console.log('🔥 addCustomer çağrıldı:', customerData.name);
     
     const newCustomer: Customer = {
       ...customerData,
@@ -22,12 +22,12 @@ export function useAppState() {
       updatedAt: new Date(),
     };
     
-    console.log('✅ Yeni müşteri oluşturuldu:', newCustomer);
+    console.log('✅ Yeni müşteri oluşturuldu:', newCustomer.name, newCustomer.id);
     
-    // DOĞRUDAN setCustomers ÇAĞRISI - GERÇEK ÇÖZÜM
+    // SENKRON GÜNCELLEME - GERÇEK ÇÖZÜM
     setCustomers(prevCustomers => {
       const updatedCustomers = [...prevCustomers, newCustomer];
-      console.log('📊 Güncellenmiş müşteri listesi:', updatedCustomers);
+      console.log('📊 Güncellenmiş müşteri sayısı:', updatedCustomers.length);
       return updatedCustomers;
     });
     
@@ -50,7 +50,7 @@ export function useAppState() {
 
   // ÜRÜN İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addProduct = useCallback((productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
-    console.log('🔥 addProduct çağrıldı:', productData);
+    console.log('🔥 addProduct çağrıldı:', productData.name, productData.code);
     
     const newProduct: Product = {
       ...productData,
@@ -59,12 +59,12 @@ export function useAppState() {
       updatedAt: new Date(),
     };
     
-    console.log('✅ Yeni ürün oluşturuldu:', newProduct);
+    console.log('✅ Yeni ürün oluşturuldu:', newProduct.name, newProduct.id);
     
-    // DOĞRUDAN setProducts ÇAĞRISI - GERÇEK ÇÖZÜM
+    // SENKRON GÜNCELLEME - GERÇEK ÇÖZÜM
     setProducts(prevProducts => {
       const updatedProducts = [...prevProducts, newProduct];
-      console.log('📊 Güncellenmiş ürün listesi:', updatedProducts);
+      console.log('📊 Güncellenmiş ürün sayısı:', updatedProducts.length);
       return updatedProducts;
     });
     
@@ -87,7 +87,7 @@ export function useAppState() {
 
   // HAREKET İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addMovement = useCallback((movementData: Omit<Movement, 'id' | 'createdAt'>) => {
-    console.log('🔥 addMovement çağrıldı:', movementData);
+    console.log('🔥 addMovement çağrıldı:', movementData.type, movementData.quantity);
     
     const newMovement: Movement = {
       ...movementData,
@@ -96,12 +96,12 @@ export function useAppState() {
       createdBy: currentUser?.id || 'system',
     };
     
-    console.log('✅ Yeni hareket oluşturuldu:', newMovement);
+    console.log('✅ Yeni hareket oluşturuldu:', newMovement.type, newMovement.id);
     
-    // DOĞRUDAN setMovements ÇAĞRISI - GERÇEK ÇÖZÜM
+    // SENKRON GÜNCELLEME - GERÇEK ÇÖZÜM
     setMovements(prevMovements => {
       const updatedMovements = [...prevMovements, newMovement];
-      console.log('📊 Güncellenmiş hareket listesi:', updatedMovements);
+      console.log('📊 Güncellenmiş hareket sayısı:', updatedMovements.length);
       return updatedMovements;
     });
     

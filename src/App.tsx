@@ -103,37 +103,112 @@ function App() {
 
   // TOPLU MÜŞTERİ YÜKLEME - GERÇEK ÇÖZÜM
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
-    console.log('🔥 TOPLU MÜŞTERİ YÜKLEME - GERÇEK ÇÖZÜM BAŞLIYOR');
-    console.log('📊 Gelen müşteri sayısı:', customersData.length);
-    console.log('📋 Müşteri verileri:', customersData);
+    console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR - Sayı:', customersData.length);
     
-    // SENKRON OLARAK HER MÜŞTERİYİ TEK TEK EKLE - GERÇEK ÇÖZÜM
-    for (let i = 0; i < customersData.length; i++) {
-      const customerData = customersData[i];
-      console.log(`👤 Müşteri ${i + 1} ekleniyor:`, customerData.name);
-      
-      // SENKRON addCustomer ÇAĞRISI
-      const result = addCustomer({ name: customerData.name.trim() });
-      console.log(`✅ Müşteri ${i + 1} eklendi:`, result);
+    // BATCH İŞLEM - TÜM MÜŞTERİLERİ TEK SEFERDE EKLE
+    const newCustomers = customersData.map(customerData => ({
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      name: customerData.name.trim(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    
+    // MEVCUT MÜŞTERİLERLE BİRLEŞTİR
+    const updatedCustomers = [...customers, ...newCustomers];
+    
+    // TEK SEFERDE GÜNCELLE
+    if (typeof setCustomers === 'function') {
+      setCustomers(updatedCustomers);
+      console.log(`✅ ${customersData.length} müşteri toplu olarak eklendi!`);
+    } else {
+      console.error('❌ setCustomers fonksiyonu bulunamadı!');
     }
     
-    console.log(`🎉 TOPLAM ${customersData.length} müşteri başarıyla eklendi!`);
     setModalState({ isOpen: false, type: null });
   };
 
   // TOPLU KARTELA YÜKLEME - GERÇEK ÇÖZÜM
   const handleBulkProductUpload = (productsData: Array<{ name: string; code: string; category?: string }>) => {
-    console.log('🔥 TOPLU KARTELA YÜKLEME - GERÇEK ÇÖZÜM BAŞLIYOR');
-    console.log('📊 Gelen kartela sayısı:', productsData.length);
-    console.log('📋 Kartela verileri:', productsData);
+    console.log('🔥 TOPLU KARTELA YÜKLEME BAŞLIYOR - Sayı:', productsData.length);
     
-    // SENKRON OLARAK HER KARTELAYI TEK TEK EKLE - GERÇEK ÇÖZÜM
-    for (let i = 0; i < productsData.length; i++) {
-      const productData = productsData[i];
-      console.log(`📦 Kartela ${i + 1} ekleniyor:`, productData.name, productData.code);
+    // BATCH İŞLEM - TÜM KARTELALAR TEK SEFERDE EKLE
+    const newProducts = productsData.map(productData => ({
+      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+      name: productData.name.trim(),
+      code: productData.code.trim(),
+      category: productData.category?.trim(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    
+    // MEVCUT KARTELALARLA BİRLEŞTİR
+    const updatedProducts = [...products, ...newProducts];
+    
+    // TEK SEFERDE GÜNCELLE
+    if (typeof setProducts === 'function') {
+      setProducts(updatedProducts);
+      console.log(`✅ ${productsData.length} kartela toplu olarak eklendi!`);
+    } else {
+      console.error('❌ setProducts fonksiyonu bulunamadı!');
+    }
+    
+    setModalState({ isOpen: false, type: null });
+  };
+
+  const handleNewMovementSave = (movementData: any) => {
+    console.log('🔥 YENİ HAREKET KAYDI BAŞLIYOR');
+    
+    // EĞER ARRAY İSE (ÇOKLU HAREKET)
+    if (Array.isArray(movementData)) {
+      console.log('📊 Çoklu hareket kaydı:', movementData.length);
       
-      // SENKRON addProduct ÇAĞRISI
-      const result = addProduct({
+      // BATCH İŞLEM - TÜM HAREKETLERİ TEK SEFERDE EKLE
+      const newMovements = movementData.map(movement => ({
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        customerId: movement.customerId,
+        productId: movement.productId,
+        type: movement.type,
+        quantity: movement.quantity,
+        notes: movement.notes,
+        createdAt: new Date(),
+        createdBy: 'system',
+      }));
+      
+      // MEVCUT HAREKETLERLE BİRLEŞTİR
+      const updatedMovements = [...movements, ...newMovements];
+      
+      // TEK SEFERDE GÜNCELLE
+      if (typeof setMovements === 'function') {
+        setMovements(updatedMovements);
+        console.log(`✅ ${movementData.length} hareket toplu olarak eklendi!`);
+      } else {
+        console.error('❌ setMovements fonksiyonu bulunamadı!');
+      }
+    } else {
+      // TEK HAREKET
+      const newMovement = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        customerId: movementData.customerId,
+        productId: movementData.productId,
+        type: movementData.type,
+        quantity: movementData.quantity,
+        notes: movementData.notes,
+        createdAt: new Date(),
+        createdBy: 'system',
+      };
+      
+      const updatedMovements = [...movements, newMovement];
+      
+      if (typeof setMovements === 'function') {
+        setMovements(updatedMovements);
+        console.log('✅ Tek hareket eklendi!');
+      } else {
+        console.error('❌ setMovements fonksiyonu bulunamadı!');
+      }
+    }
+    
+    setModalState({ isOpen: false, type: null });
+  };
         name: productData.name.trim(),
         code: productData.code.trim(),
         category: productData.category?.trim()
