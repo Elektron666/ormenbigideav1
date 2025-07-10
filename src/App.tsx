@@ -83,14 +83,19 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    // ARRAY MI TEK HAREKET Mİ KONTROL ET
+    console.log('🔥 handleNewMovementSave çağrıldı - FİNAL ÇÖZÜM');
+    console.log('📊 Gelen veri tipi:', Array.isArray(movementData) ? 'ARRAY' : 'OBJECT');
+    console.log('📋 Gelen veri:', movementData);
+    
     if (Array.isArray(movementData)) {
-      // ARRAY İSE HER BİRİNİ KAYDET
+      console.log(`🔄 ARRAY işleniyor - ${movementData.length} hareket`);
       movementData.forEach(movement => {
+        console.log('💾 Hareket kaydediliyor:', movement);
         addMovement(movement);
       });
+      console.log('✅ Tüm hareketler kaydedildi!');
     } else {
-      // TEK HAREKET İSE DİREKT KAYDET
+      console.log('💾 Tek hareket kaydediliyor:', movementData);
       addMovement(movementData);
     }
     
