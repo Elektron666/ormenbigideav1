@@ -31,10 +31,14 @@ export function BulkCustomerUpload({ onUpload, onClose }: BulkCustomerUploadProp
   const handleUpload = () => {
     const validCustomers = previewData.filter(item => item.valid);
     if (validCustomers.length > 0) {
-      // Convert to the expected format
-      const customersToUpload = validCustomers.map(item => ({ name: item.name }));
-      console.log('Uploading customers:', customersToUpload); // Debug log
-      onUpload(customersToUpload);
+      try {
+        // Convert to the expected format
+        const customersToUpload = validCustomers.map(item => ({ name: item.name.trim() }));
+        console.log('Uploading customers:', customersToUpload); // Debug log
+        onUpload(customersToUpload);
+      } catch (error) {
+        console.error('Error in handleUpload:', error);
+      }
     }
   };
 

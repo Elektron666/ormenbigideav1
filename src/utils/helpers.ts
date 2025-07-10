@@ -81,7 +81,7 @@ export function filterAndSort<T>(
     filtered = items.filter(item =>
       searchFields.some(field => {
         const value = item[field];
-        return value && String(value).toLowerCase().includes(term);
+        return value && String(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(term.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
       })
     );
   }
@@ -92,7 +92,24 @@ export function filterAndSort<T>(
     
     if (aVal === bVal) return 0;
     
-    const comparison = aVal < bVal ? -1 : 1;
+    let comparison = 0;
+    
+    // Handle different data types properly
+    if (typeof aVal === 'string' && typeof bVal === 'string') {
+      // Use Turkish locale for proper sorting
+      comparison = aVal.localeCompare(bVal, 'tr-TR', { 
+        sensitivity: 'base',
+        numeric: true,
+        caseFirst: 'lower'
+      });
+    } else if (aVal instanceof Date && bVal instanceof Date) {
+      comparison = aVal.getTime() - bVal.getTime();
+    } else if (typeof aVal === 'number' && typeof bVal === 'number') {
+      comparison = aVal - bVal;
+    } else {
+      comparison = String(aVal).localeCompare(String(bVal), 'tr-TR', { sensitivity: 'base' });
+    }
+    
     return sortOrder === 'asc' ? comparison : -comparison;
   });
 }

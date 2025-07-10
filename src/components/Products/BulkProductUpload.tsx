@@ -72,13 +72,17 @@ export function BulkProductUpload({ onUpload, onClose, existingProducts }: BulkP
   const handleUpload = () => {
     const validProducts = previewData.filter(item => item.valid);
     if (validProducts.length > 0) {
-      const productsToUpload = validProducts.map(item => ({
-        name: item.name,
-        code: item.code,
-        category: item.category
-      }));
-      console.log('Uploading products:', productsToUpload); // Debug log
-      onUpload(productsToUpload);
+      try {
+        const productsToUpload = validProducts.map(item => ({
+          name: item.name.trim(),
+          code: item.code.trim(),
+          category: item.category?.trim()
+        }));
+        console.log('Uploading products:', productsToUpload); // Debug log
+        onUpload(productsToUpload);
+      } catch (error) {
+        console.error('Error in handleUpload:', error);
+      }
     }
   };
 
