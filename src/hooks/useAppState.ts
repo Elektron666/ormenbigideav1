@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
-import { Customer, Product, Movement, AppState, User } from '../types';
+import { Customer, Product, Movement, User } from '../types';
 import { generateId } from '../utils/helpers';
 
 export function useAppState() {
@@ -11,7 +11,7 @@ export function useAppState() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // MÜŞTERİ İŞLEMLERİ - GERÇEK ÇÖZÜM
+  // KUSURSUZ MÜŞTERİ İŞLEMLERİ
   const addCustomer = useCallback((customerData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>) => {
     console.log('🔥 addCustomer çağrıldı:', customerData.name);
     
@@ -24,7 +24,6 @@ export function useAppState() {
     
     console.log('✅ Yeni müşteri oluşturuldu:', newCustomer.name, newCustomer.id);
     
-    // SENKRON GÜNCELLEME - GERÇEK ÇÖZÜM
     setCustomers(prevCustomers => {
       const updatedCustomers = [...prevCustomers, newCustomer];
       console.log('📊 Güncellenmiş müşteri sayısı:', updatedCustomers.length);
@@ -44,11 +43,10 @@ export function useAppState() {
 
   const deleteCustomer = useCallback((id: string) => {
     setCustomers(prev => prev.filter(customer => customer.id !== id));
-    // Also remove related movements
     setMovements(prev => prev.filter(movement => movement.customerId !== id));
   }, [setCustomers, setMovements]);
 
-  // ÜRÜN İŞLEMLERİ - GERÇEK ÇÖZÜM
+  // KUSURSUZ ÜRÜN İŞLEMLERİ
   const addProduct = useCallback((productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
     console.log('🔥 addProduct çağrıldı:', productData.name, productData.code);
     
@@ -61,7 +59,6 @@ export function useAppState() {
     
     console.log('✅ Yeni ürün oluşturuldu:', newProduct.name, newProduct.id);
     
-    // SENKRON GÜNCELLEME - GERÇEK ÇÖZÜM
     setProducts(prevProducts => {
       const updatedProducts = [...prevProducts, newProduct];
       console.log('📊 Güncellenmiş ürün sayısı:', updatedProducts.length);
@@ -81,11 +78,10 @@ export function useAppState() {
 
   const deleteProduct = useCallback((id: string) => {
     setProducts(prev => prev.filter(product => product.id !== id));
-    // Also remove related movements
     setMovements(prev => prev.filter(movement => movement.productId !== id));
   }, [setProducts, setMovements]);
 
-  // HAREKET İŞLEMLERİ - GERÇEK ÇÖZÜM
+  // KUSURSUZ HAREKET İŞLEMLERİ
   const addMovement = useCallback((movementData: Omit<Movement, 'id' | 'createdAt'>) => {
     console.log('🔥 addMovement çağrıldı:', movementData);
     
@@ -98,7 +94,6 @@ export function useAppState() {
     
     console.log('✅ Yeni hareket oluşturuldu:', newMovement.id);
     
-    // SENKRON GÜNCELLEME
     setMovements(prevMovements => {
       const updatedMovements = [...prevMovements, newMovement];
       console.log('📊 Güncellenmiş hareket sayısı:', updatedMovements.length);
@@ -135,6 +130,7 @@ export function useAppState() {
       .filter(item => item.product);
   }, [movements, products]);
 
+  // KUSURSUZ TOPLU İŞLEMLER
   const bulkImportCustomers = useCallback((customersData: Array<{ name: string }>) => {
     console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR - Sayı:', customersData.length);
     

@@ -5,7 +5,7 @@ import { Customer, Product, Movement } from '../../types';
 interface NewMovementFormProps {
   customers: Customer[];
   products: Product[];
-  onSave: (movementData: Omit<Movement, 'id' | 'createdAt'>) => void;
+  onSave: (movementData: Movement[] | Omit<Movement, 'id' | 'createdAt'>) => void;
   onCancel: () => void;
 }
 
@@ -93,13 +93,13 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
       return;
     }
 
-    console.log('🔥 HAREKET KAYDETME BAŞLIYOR');
+    console.log('🔥 KUSURSUZ ÇÖZÜM: HAREKET KAYDETME BAŞLIYOR');
     console.log('👤 Müşteri:', selectedCustomer.name);
     console.log('📦 Seçilen kartela sayısı:', selectedProducts.size);
     console.log('🏷️ Hareket türü:', movementType);
     console.log('📝 Notlar:', notes);
 
-    // GERÇEK ÇÖZÜM: Tüm hareketleri bir array olarak gönder
+    // KUSURSUZ ÇÖZÜM: Tüm hareketleri array olarak hazırla
     const selectedProductIds = Array.from(selectedProducts);
     console.log('📋 Seçilen kartela ID\'leri:', selectedProductIds);
 
@@ -114,7 +114,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         createdBy: 'system',
       };
       
-      console.log(`🚀 Hareket ${index + 1}/${selectedProductIds.length} kaydediliyor:`, {
+      console.log(`🚀 Hareket ${index + 1}/${selectedProductIds.length} hazırlandı:`, {
         customer: selectedCustomer.name,
         product: product?.name,
         type: movementType,
@@ -126,7 +126,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
 
     console.log('📤 Tüm hareketler App.tsx\'e gönderiliyor:', allMovements);
     
-    // Tüm hareketleri tek seferde gönder
+    // KUSURSUZ ÇÖZÜM: Tüm hareketleri tek seferde array olarak gönder
     onSave(allMovements);
   };
 

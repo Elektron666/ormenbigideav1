@@ -94,13 +94,15 @@ function App() {
     setModalState({ isOpen: false, type: null });
   };
 
+  // KUSURSUZ ÇÖZÜM: Çoklu hareket kaydetme
   const handleNewMovementSave = (movementData: any) => {
     console.log('🔥 ÇOKLU HAREKET KAYDETME BAŞLIYOR:', movementData);
     
-    // Eğer movementData bir array ise (çoklu hareket)
+    // Eğer array gelirse (çoklu hareket)
     if (Array.isArray(movementData)) {
       console.log(`📦 ${movementData.length} hareket kaydedilecek`);
       
+      // Her hareketi sırayla kaydet
       movementData.forEach((movement, index) => {
         console.log(`🚀 Hareket ${index + 1}/${movementData.length} kaydediliyor:`, movement);
         addMovement(movement);
@@ -117,25 +119,17 @@ function App() {
     setModalState({ isOpen: false, type: null });
   };
 
-  // TOPLU MÜŞTERİ YÜKLEME - GERÇEK ÇÖZÜM
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
     console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR - Sayı:', customersData.length);
-    
-    // HOOK'TAN GELEN BULK IMPORT FONKSİYONUNU KULLAN
     bulkImportCustomers(customersData);
     console.log(`✅ ${customersData.length} müşteri toplu olarak eklendi!`);
-    
     setModalState({ isOpen: false, type: null });
   };
 
-  // TOPLU KARTELA YÜKLEME - GERÇEK ÇÖZÜM
   const handleBulkProductUpload = (productsData: Array<{ name: string; code: string; category?: string }>) => {
     console.log('🔥 TOPLU KARTELA YÜKLEME BAŞLIYOR - Sayı:', productsData.length);
-    
-    // HOOK'TAN GELEN BULK IMPORT FONKSİYONUNU KULLAN
     bulkImportProducts(productsData);
     console.log(`✅ ${productsData.length} kartela toplu olarak eklendi!`);
-    
     setModalState({ isOpen: false, type: null });
   };
 
