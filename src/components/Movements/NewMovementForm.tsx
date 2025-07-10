@@ -48,25 +48,32 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   };
 
   const handleProductToggle = (productId: string) => {
-    const newSelected = new Set(selectedProducts);
-    if (newSelected.has(productId)) {
-      newSelected.delete(productId);
-    } else {
-      newSelected.add(productId);
-    }
-    setSelectedProducts(newSelected);
+    setSelectedProducts(prev => {
+      const newSelected = new Set(prev);
+      if (newSelected.has(productId)) {
+        newSelected.delete(productId);
+        console.log(`❌ Kartela kaldırıldı: ${productId}, Kalan: ${newSelected.size}`);
+      } else {
+        newSelected.add(productId);
+        console.log(`✅ Kartela eklendi: ${productId}, Toplam: ${newSelected.size}`);
+      }
+      return newSelected;
+    });
   };
 
   const handleSelectAll = () => {
     if (selectedProducts.size === filteredProducts.length) {
       setSelectedProducts(new Set());
+      console.log('🔄 Tüm kartelalar kaldırıldı');
     } else {
       setSelectedProducts(new Set(filteredProducts.map(p => p.id)));
+      console.log(`🔄 Tüm kartelalar seçildi: ${filteredProducts.length} adet`);
     }
   };
 
   const handleNext = () => {
     if (step === 'products' && selectedProducts.size > 0) {
+      console.log(`🚀 Önizlemeye geçiliyor - Seçilen kartela sayısı: ${selectedProducts.size}`);
       setStep('preview');
     }
   };
@@ -81,15 +88,23 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   };
 
   const handleSubmit = () => {
-    if (!selectedCustomer || selectedProducts.size === 0) return;
+    if (!selectedCustomer || selectedProducts.size === 0) {
+      console.error('❌ Eksik bilgi: Müşteri veya kartela seçilmemiş');
+      return;
+    }
 
-    console.log('🔥 GERÇEK ÇÖZÜM: Her ürün için ayrı hareket kaydediliyor');
-    console.log('📊 Seçilen ürün sayısı:', selectedProducts.size);
+    console.log('🔥 HAREKET KAYDETME BAŞLIYOR');
     console.log('👤 Müşteri:', selectedCustomer.name);
+    console.log('📦 Seçilen kartela sayısı:', selectedProducts.size);
     console.log('🏷️ Hareket türü:', movementType);
+    console.log('📝 Notlar:', notes);
 
-    // GERÇEK ÇÖZÜM: Her ürün için ayrı hareket objesi oluştur ve TEK TEK KAYDET
-    Array.from(selectedProducts).forEach((productId, index) => {
+    // Her seçilen kartela için ayrı hareket oluştur
+    const selectedProductIds = Array.from(selectedProducts);
+    console.log('📋 Seçilen kartela ID\'leri:', selectedProductIds);
+
+    selectedProductIds.forEach((productId, index) => {
+      const product = products.find(p => p.id === productId);
       const movementData = {
         customerId: selectedCustomer.id,
         productId,
@@ -99,7 +114,13 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         createdBy: 'system',
       };
       
-      console.log(`🚀 Hareket ${index + 1}/${selectedProducts.size} kaydediliyor:`, movementData);
+      console.log(`🚀 Hareket ${index + 1}/${selectedProductIds.length} kaydediliyor:`, {
+        customer: selectedCustomer.name,
+        product: product?.name,
+        type: movementType,
+        quantity: 1
+      });
+      
       onSave(movementData);
     });
 
@@ -139,8 +160,8 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         </div>
         
         {step === 'products' && (
-          <div className="text-sm text-gray-600">
-            Seçilen: {selectedProducts.size} kartela
+          <div className="text-sm text-gray-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+            <span className="font-medium text-blue-800">Seçilen: {selectedProducts.size} kartela</span>
           </div>
         )}
       </div>
@@ -250,11 +271,11 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
 
           {/* Select All Button */}
           {filteredProducts.length > 0 && (
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
               <button
                 type="button"
                 onClick={handleSelectAll}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors ${
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors font-medium ${
                   isAllSelected
                     ? 'bg-blue-100 border-blue-300 text-blue-700'
                     : isSomeSelected
@@ -277,7 +298,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
                   {isAllSelected ? 'Tümünü Kaldır' : 'Tümünü Seç'}
                 </span>
               </button>
-              <span className="text-sm text-gray-600">
+              <span className="text-sm font-medium text-gray-700 bg-white px-3 py-1 rounded-full border">
                 {selectedProducts.size} / {filteredProducts.length} seçili
               </span>
             </div>
@@ -293,34 +314,45 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
                     <div
                       key={product.id}
                       className={`p-3 cursor-pointer transition-colors ${
-                        isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'
+                        isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : 'hover:bg-gray-50'
                       }`}
                       onClick={() => handleProductToggle(product.id)}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className={`w-5 h-5 border-2 rounded flex items-center justify-center ${
+                        <div className={`w-5 h-5 border-2 rounded flex items-center justify-center transition-colors ${
                           isSelected
                             ? 'bg-blue-600 border-blue-600'
-                            : 'border-gray-300'
+                            : 'border-gray-300 hover:border-blue-400'
                         }`}>
                           {isSelected && <Check className="w-3 h-3 text-white" />}
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center space-x-2">
-                            <span className="text-sm text-gray-500 font-medium">
+                            <span className="text-sm text-gray-500 font-medium min-w-[2rem]">
                               {index + 1}.
                             </span>
-                            <span className="font-medium text-gray-900">
+                            <span className={`font-medium ${isSelected ? 'text-blue-900' : 'text-gray-900'}`}>
                               {product.name}
                             </span>
                           </div>
-                          <p className="text-sm text-gray-600">{product.code}</p>
+                          <p className={`text-sm ${isSelected ? 'text-blue-700' : 'text-gray-600'}`}>
+                            {product.code}
+                          </p>
                           {product.category && (
-                            <span className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full mt-1">
+                            <span className={`inline-block text-xs px-2 py-1 rounded-full mt-1 ${
+                              isSelected 
+                                ? 'bg-blue-200 text-blue-800' 
+                                : 'bg-gray-100 text-gray-600'
+                            }`}>
                               {product.category}
                             </span>
                           )}
                         </div>
+                        {isSelected && (
+                          <div className="text-blue-600 font-medium text-sm">
+                            ✓ Seçildi
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
@@ -395,8 +427,13 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
                     <div className="flex-1">
                       <p className="font-medium text-gray-900">{product.name}</p>
                       <p className="text-sm text-gray-600">{product.code}</p>
+                      {product.category && (
+                        <span className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full mt-1">
+                          {product.category}
+                        </span>
+                      )}
                     </div>
-                    <span className="text-sm text-gray-500">1 adet</span>
+                    <span className="text-sm text-gray-500 font-medium">1 adet</span>
                   </div>
                 ))}
               </div>
@@ -412,9 +449,10 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
             </button>
             <button
               onClick={handleSubmit}
-              className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium"
+              className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center space-x-2"
             >
-              Kaydet ({selectedProducts.size} hareket)
+              <Check className="w-4 h-4" />
+              <span>Kaydet ({selectedProducts.size} hareket)</span>
             </button>
           </div>
         </div>
