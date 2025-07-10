@@ -95,7 +95,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     }
 
     setIsSubmitting(true);
-    console.log('🔥 GERÇEK SORUN BULUNDU VE ÇÖZÜLDİ!');
+    console.log('🔥 ÇOKLU HAREKET KAYDETME BAŞLIYOR!');
     console.log('👤 Müşteri:', selectedCustomer.name);
     console.log('📦 Seçilen kartela sayısı:', selectedProducts.size);
     console.log('🏷️ Hareket türü:', movementType);
@@ -104,42 +104,47 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     const selectedProductIds = Array.from(selectedProducts);
     console.log('📋 Seçilen kartela ID\'leri:', selectedProductIds);
 
-    // GERÇEK ÇÖZÜM: Sıralı olarak her hareketi kaydet
-    let completedCount = 0;
-    
-    selectedProductIds.forEach((productId, index) => {
-      const product = products.find(p => p.id === productId);
-      
-      const movementData = {
-        customerId: selectedCustomer.id,
-        productId,
-        type: movementType,
-        quantity: 1,
-        notes: notes || undefined,
-        createdBy: 'system',
-      };
-      
-      console.log(`🚀 Hareket ${index + 1}/${selectedProductIds.length} hazırlandı:`, {
-        customer: selectedCustomer.name,
-        product: product?.name,
-        type: movementType,
-        quantity: 1
+    // GERÇEK ÇÖZÜM: Promise.all ile tüm hareketleri paralel kaydet
+    const movementPromises = selectedProductIds.map((productId, index) => {
+      return new Promise<void>((resolve) => {
+        const product = products.find(p => p.id === productId);
+        
+        const movementData = {
+          customerId: selectedCustomer.id,
+          productId,
+          type: movementType,
+          quantity: 1,
+          notes: notes || undefined,
+          createdBy: 'system',
+        };
+        
+        console.log(`🚀 Hareket ${index + 1}/${selectedProductIds.length} hazırlandı:`, {
+          customer: selectedCustomer.name,
+          product: product?.name,
+          type: movementType,
+          quantity: 1
+        });
+        
+        // Kısa gecikme ile sıralı kaydetme
+        setTimeout(() => {
+          console.log(`📤 Hareket ${index + 1} App.tsx'e gönderiliyor...`);
+          onSave(movementData);
+          console.log(`✅ Hareket ${index + 1}/${selectedProductIds.length} kaydedildi`);
+          resolve();
+        }, index * 100); // Her hareket için 100ms gecikme
       });
-      
-      console.log(`📤 Hareket ${index + 1} App.tsx'e gönderiliyor...`);
-      onSave(movementData);
-      
-      completedCount++;
-      console.log(`✅ Hareket ${completedCount}/${selectedProductIds.length} kaydedildi`);
     });
-
-    console.log(`✅ Toplam ${selectedProductIds.length} hareket başarıyla kaydedildi!`);
     
-    // GERÇEK ÇÖZÜM: Tüm hareketler kaydedildikten sonra modal'ı kapat
-    setTimeout(() => {
+    // Tüm hareketlerin kaydedilmesini bekle
+    Promise.all(movementPromises).then(() => {
+      console.log(`✅ Toplam ${selectedProductIds.length} hareket başarıyla kaydedildi!`);
       setIsSubmitting(false);
-      onCancel(); // Modal'ı kapat
-    }, 500); // Kısa bir gecikme ile UI'ın güncellenmesini bekle
+      
+      // Modal'ı kapat
+      setTimeout(() => {
+        onCancel();
+      }, 500);
+    });
   };
 
   const getSelectedProductsList = () => {
