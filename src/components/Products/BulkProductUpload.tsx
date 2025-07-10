@@ -14,20 +14,20 @@ export function BulkProductUpload({ onUpload, onClose, existingProducts }: BulkP
 
   const getNextCode = (index: number) => {
     const existingCodes = existingProducts.map(p => p.code);
-    let baseCodeNumber = 1;
+    let maxCodeNumber = 0;
     
     // Mevcut ORM kodlarından en yüksek numarayı bul
     existingCodes.forEach(code => {
       if (code.startsWith('ORM-')) {
         const num = parseInt(code.replace('ORM-', ''));
-        if (!isNaN(num) && num >= baseCodeNumber) {
-          baseCodeNumber = num + 1;
+        if (!isNaN(num) && num > maxCodeNumber) {
+          maxCodeNumber = num;
         }
       }
     });
     
-    // Index'i ekleyerek sıralı kodlar oluştur
-    const finalNumber = baseCodeNumber + index;
+    // Index'i ekleyerek sıralı kodlar oluştur (1'den başlayarak)
+    const finalNumber = maxCodeNumber + index + 1;
     return `ORM-${finalNumber.toString().padStart(4, '0')}`;
   };
 

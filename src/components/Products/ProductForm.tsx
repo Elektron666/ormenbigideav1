@@ -23,19 +23,21 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
   // Otomatik kod oluşturma fonksiyonu
   const generateNextCode = () => {
     const existingCodes = products.map(p => p.code);
-    let codeNumber = 1;
+    let maxCodeNumber = 0;
     
     // Mevcut ORM kodlarından en yüksek numarayı bul
     existingCodes.forEach(code => {
       if (code.startsWith('ORM-')) {
         const num = parseInt(code.replace('ORM-', ''));
-        if (!isNaN(num) && num >= codeNumber) {
-          codeNumber = num + 1;
+        if (!isNaN(num) && num > maxCodeNumber) {
+          maxCodeNumber = num;
         }
       }
     });
     
-    return `ORM-${codeNumber.toString().padStart(4, '0')}`;
+    // Bir sonraki numarayı oluştur
+    const nextNumber = maxCodeNumber + 1;
+    return `ORM-${nextNumber.toString().padStart(4, '0')}`;
   };
 
   useEffect(() => {
