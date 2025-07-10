@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { LoginForm } from './components/Auth/LoginForm';
 import { CustomerDetail } from './components/Customers/CustomerDetail';
 import { BulkCustomerUpload } from './components/Customers/BulkCustomerUpload';
+import { BulkProductUpload } from './components/Products/BulkProductUpload';
 import { StockManagement } from './components/Stock/StockManagement';
 import { MotivationPage } from './components/Motivation/MotivationPage';
 import { NotesPage } from './components/Notes/NotesPage';
@@ -26,7 +27,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
-    type: 'customer' | 'product' | 'movement' | 'new-movement' | 'bulk-customer' | null;
+    type: 'customer' | 'product' | 'movement' | 'new-movement' | 'bulk-customer' | 'bulk-product' | null;
     data?: any;
   }>({ isOpen: false, type: null });
   const [customerDetailState, setCustomerDetailState] = useState<{
@@ -98,6 +99,20 @@ function App() {
     setModalState({ isOpen: false, type: null });
   };
 
+  const handleBulkProductUpload = (productsData: Array<{ name: string; code: string; category?: string }>) => {
+    console.log('Bulk product upload data:', productsData); // Debug log
+    try {
+      productsData.forEach(productData => {
+        console.log('Adding product:', productData); // Debug log
+        addProduct(productData);
+      });
+      console.log('All products added successfully'); // Debug log
+    } catch (error) {
+      console.error('Error adding products:', error);
+    }
+    setModalState({ isOpen: false, type: null });
+  };
+
   const handleCustomerDelete = (id: string) => {
     if (window.confirm('Bu müşteriyi silmek istediğinizden emin misiniz?')) {
       deleteCustomer(id);
@@ -154,6 +169,7 @@ function App() {
             onEdit={(product) => setModalState({ isOpen: true, type: 'product', data: product })}
             onDelete={handleProductDelete}
             onAdd={() => setModalState({ isOpen: true, type: 'product' })}
+            onBulkAdd={() => setModalState({ isOpen: true, type: 'bulk-product' })}
           />
         );
       
@@ -215,6 +231,8 @@ function App() {
         return 'Yeni Hareket';
       case 'bulk-customer':
         return 'Toplu Müşteri Yükleme';
+      case 'bulk-product':
+        return 'Toplu Kartela Yükleme';
       default:
         return '';
     }
@@ -284,6 +302,13 @@ function App() {
           <BulkCustomerUpload
             onUpload={handleBulkCustomerUpload}
             onClose={() => setModalState({ isOpen: false, type: null })}
+          />
+        )}
+        {modalState.type === 'bulk-product' && (
+          <BulkProductUpload
+            onUpload={handleBulkProductUpload}
+            onClose={() => setModalState({ isOpen: false, type: null })}
+            existingProducts={products}
           />
         )}
       </Modal>

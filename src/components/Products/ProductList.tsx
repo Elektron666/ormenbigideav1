@@ -9,9 +9,10 @@ interface ProductListProps {
   onEdit: (product: Product) => void;
   onDelete: (id: string) => void;
   onAdd: () => void;
+  onBulkAdd: () => void;
 }
 
-export function ProductList({ products, onEdit, onDelete, onAdd }: ProductListProps) {
+export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: ProductListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<keyof Product>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -54,13 +55,22 @@ export function ProductList({ products, onEdit, onDelete, onAdd }: ProductListPr
             </div>
           </div>
         </div>
-        <button
-          onClick={onAdd}
-          className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2.5 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Yeni Kartela</span>
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={onBulkAdd}
+            className="flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-4 py-2.5 rounded-xl hover:from-purple-600 hover:to-indigo-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
+            <Package className="w-4 h-4" />
+            <span>Toplu Yükle</span>
+          </button>
+          <button
+            onClick={onAdd}
+            className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2.5 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Yeni Kartela</span>
+          </button>
+        </div>
       </div>
 
       <SearchFilter
