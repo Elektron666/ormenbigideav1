@@ -72,14 +72,12 @@ export function BulkProductUpload({ onUpload, onClose, existingProducts }: BulkP
   const handleUpload = () => {
     const validProducts = previewData.filter(item => item.valid);
     if (validProducts.length > 0) {
-      // Her ürünü ayrı ayrı ekle
-      validProducts.forEach(product => {
-        onUpload([{
-          name: product.name.trim(),
-          code: product.code.trim(),
-          category: product.category?.trim()
-        }]);
-      });
+      // TÜM ÜRÜNLERİ TEK SEFERDE GÖNDER
+      onUpload(validProducts.map(product => ({
+        name: product.name.trim(),
+        code: product.code.trim(),
+        category: product.category?.trim()
+      })));
     }
   };
 

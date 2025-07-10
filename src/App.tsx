@@ -86,22 +86,26 @@ function App() {
   };
 
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
-    // Tek müşteri ekleme - her çağrıda bir müşteri
-    if (customersData.length > 0 && customersData[0].name && customersData[0].name.trim()) {
-      addCustomer({ name: customersData[0].name.trim() });
-    }
+    // TÜM MÜŞTERİLERİ TOPLU OLARAK EKLE
+    customersData.forEach(customerData => {
+      if (customerData.name && customerData.name.trim()) {
+        addCustomer({ name: customerData.name.trim() });
+      }
+    });
     setModalState({ isOpen: false, type: null });
   };
 
   const handleBulkProductUpload = (productsData: Array<{ name: string; code: string; category?: string }>) => {
-    // Tek ürün ekleme - her çağrıda bir ürün
-    if (productsData.length > 0 && productsData[0].name && productsData[0].name.trim() && productsData[0].code && productsData[0].code.trim()) {
-      addProduct({
-        name: productsData[0].name.trim(),
-        code: productsData[0].code.trim(),
-        category: productsData[0].category?.trim()
-      });
-    }
+    // TÜM ÜRÜNLERİ TOPLU OLARAK EKLE
+    productsData.forEach(productData => {
+      if (productData.name && productData.name.trim() && productData.code && productData.code.trim()) {
+        addProduct({
+          name: productData.name.trim(),
+          code: productData.code.trim(),
+          category: productData.category?.trim()
+        });
+      }
+    });
     setModalState({ isOpen: false, type: null });
   };
 

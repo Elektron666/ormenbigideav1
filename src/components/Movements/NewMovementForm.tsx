@@ -83,20 +83,31 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
-    // Her ürün için ayrı hareket kaydı oluştur
+    // ÇOKLU HAREKET KAYDI - HER ÜRÜN İÇİN AYRI KAYIT
     const productIds = Array.from(selectedProducts);
     
+    console.log('🚀 Hareket kaydediliyor:', {
+      customer: selectedCustomer.name,
+      productCount: productIds.length,
+      type: movementType
+    });
+    
     productIds.forEach(productId => {
-      onSave({
+      const movementData = {
         customerId: selectedCustomer.id,
         productId,
         type: movementType,
         quantity: 1,
         notes: notes || undefined,
-      });
+      };
+      
+      console.log('💾 Kaydedilen hareket:', movementData);
+      onSave(movementData);
     });
     
-    // Form temizle
+    console.log('✅ Tüm hareketler kaydedildi!');
+    
+    // Form temizle ve kapat
     setSelectedProducts(new Set());
     setNotes('');
   };

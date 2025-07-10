@@ -31,10 +31,8 @@ export function BulkCustomerUpload({ onUpload, onClose }: BulkCustomerUploadProp
   const handleUpload = () => {
     const validCustomers = previewData.filter(item => item.valid);
     if (validCustomers.length > 0) {
-      // Her müşteriyi ayrı ayrı ekle
-      validCustomers.forEach(customer => {
-        onUpload([{ name: customer.name.trim() }]);
-      });
+      // TÜM MÜŞTERİLERİ TEK SEFERDE GÖNDER
+      onUpload(validCustomers.map(customer => ({ name: customer.name.trim() })));
     }
   };
 
