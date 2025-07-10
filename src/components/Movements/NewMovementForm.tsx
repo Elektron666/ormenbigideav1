@@ -83,29 +83,17 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
-    console.log('🔥 FİNAL ÇÖZÜM: HER HAREKET AYRI AYRI GÖNDERİLİYOR');
-    console.log('👤 Seçilen müşteri:', selectedCustomer.name);
-    console.log('📦 Seçilen ürün sayısı:', selectedProducts.size);
-
-    // FİNAL ÇÖZÜM: HER HAREKETİ AYRI AYRI GÖNDER
-    Array.from(selectedProducts).forEach((productId, index) => {
-      console.log(`📝 Hareket ${index + 1}/${selectedProducts.size} gönderiliyor...`);
-      
-      const movement = {
+    // GERÇEK ÇÖZÜM: TÜM HAREKETLERİ BİR ARRAY OLARAK GÖNDER
+    const movements = Array.from(selectedProducts).map(productId => ({
         customerId: selectedCustomer.id,
         productId,
         type: movementType,
         quantity: 1,
         notes: notes || undefined,
-      };
-      
-      console.log(`💾 Hareket ${index + 1} detayı:`, movement);
-      
-      // TEK TEK GÖNDER - FİNAL ÇÖZÜM
-      onSave(movement);
-    });
-    
-    console.log(`✅ FİNAL ÇÖZÜM: ${selectedProducts.size} HAREKET TEK TEK GÖNDERİLDİ!`);
+    }));
+
+    // ARRAY OLARAK GÖNDER
+    onSave(movements);
   };
 
   const getSelectedProductsList = () => {

@@ -83,11 +83,16 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    console.log('🔥 FİNAL ÇÖZÜM: TEK HAREKET ALINDI:', movementData);
-    
-    // FİNAL ÇÖZÜM: SADECE TEK HAREKET KAYDET
-    const result = addMovement(movementData);
-    console.log('✅ HAREKET BAŞARIYLA KAYDEDİLDİ - ID:', result?.id);
+    // ARRAY MI TEK HAREKET Mİ KONTROL ET
+    if (Array.isArray(movementData)) {
+      // ARRAY İSE HER BİRİNİ KAYDET
+      movementData.forEach(movement => {
+        addMovement(movement);
+      });
+    } else {
+      // TEK HAREKET İSE DİREKT KAYDET
+      addMovement(movementData);
+    }
     
     setModalState({ isOpen: false, type: null });
   };
