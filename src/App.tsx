@@ -95,10 +95,11 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    // GERÇEK ÇÖZÜM: NewMovementForm artık tek tek gönderiyor
     console.log('🔥 Yeni hareket kaydediliyor:', movementData);
     addMovement(movementData);
-    setModalState({ isOpen: false, type: null });
+    
+    // GERÇEK SORUN BULUNDU: Modal hemen kapanıyor!
+    // ÇÖZÜM: Modal'ı NewMovementForm kapatacak, App.tsx değil!
   };
 
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {

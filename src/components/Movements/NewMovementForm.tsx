@@ -17,6 +17,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const [customerSearch, setCustomerSearch] = useState('');
   const [productSearch, setProductSearch] = useState('');
   const [notes, setNotes] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const filteredCustomers = useMemo(() => {
     if (!customerSearch) return customers;
@@ -93,6 +94,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
       return;
     }
 
+    setIsSubmitting(true);
     console.log('🔥 GERÇEK SORUN BULUNDU VE ÇÖZÜLDİ!');
     console.log('👤 Müşteri:', selectedCustomer.name);
     console.log('📦 Seçilen kartela sayısı:', selectedProducts.size);
@@ -102,7 +104,9 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     const selectedProductIds = Array.from(selectedProducts);
     console.log('📋 Seçilen kartela ID\'leri:', selectedProductIds);
 
-    // GERÇEK ÇÖZÜM: Her kartela için ayrı ayrı onSave çağır!
+    // GERÇEK ÇÖZÜM: Sıralı olarak her hareketi kaydet
+    let completedCount = 0;
+    
     selectedProductIds.forEach((productId, index) => {
       const product = products.find(p => p.id === productId);
       
@@ -122,12 +126,20 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         quantity: 1
       });
       
-      // GERÇEK ÇÖZÜM: Her hareketi tek tek kaydet!
       console.log(`📤 Hareket ${index + 1} App.tsx'e gönderiliyor...`);
       onSave(movementData);
+      
+      completedCount++;
+      console.log(`✅ Hareket ${completedCount}/${selectedProductIds.length} kaydedildi`);
     });
 
     console.log(`✅ Toplam ${selectedProductIds.length} hareket başarıyla kaydedildi!`);
+    
+    // GERÇEK ÇÖZÜM: Tüm hareketler kaydedildikten sonra modal'ı kapat
+    setTimeout(() => {
+      setIsSubmitting(false);
+      onCancel(); // Modal'ı kapat
+    }, 500); // Kısa bir gecikme ile UI'ın güncellenmesini bekle
   };
 
   const getSelectedProductsList = () => {
@@ -446,16 +458,27 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
           <div className="flex space-x-3">
             <button
               onClick={handleBack}
+              disabled={isSubmitting}
               className="flex-1 bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium"
             >
               Geri
             </button>
             <button
               onClick={handleSubmit}
-              className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center space-x-2"
+              disabled={isSubmitting}
+              className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Check className="w-4 h-4" />
-              <span>Kaydet ({selectedProducts.size} hareket)</span>
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Kaydediliyor...</span>
+                </>
+              ) : (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>Kaydet ({selectedProducts.size} hareket)</span>
+                </>
+              )}
             </button>
           </div>
         </div>
