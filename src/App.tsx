@@ -47,6 +47,8 @@ function App() {
     deleteProduct,
     addMovement,
     getCustomerProducts,
+    bulkImportCustomers,
+    bulkImportProducts,
   } = useAppState();
 
   const handleLogin = (username: string, password: string): boolean => {
@@ -105,24 +107,9 @@ function App() {
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
     console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR - Sayı:', customersData.length);
     
-    // BATCH İŞLEM - TÜM MÜŞTERİLERİ TEK SEFERDE EKLE
-    const newCustomers = customersData.map(customerData => ({
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      name: customerData.name.trim(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
-    
-    // MEVCUT MÜŞTERİLERLE BİRLEŞTİR
-    const updatedCustomers = [...customers, ...newCustomers];
-    
-    // TEK SEFERDE GÜNCELLE
-    if (typeof setCustomers === 'function') {
-      setCustomers(updatedCustomers);
-      console.log(`✅ ${customersData.length} müşteri toplu olarak eklendi!`);
-    } else {
-      console.error('❌ setCustomers fonksiyonu bulunamadı!');
-    }
+    // HOOK'TAN GELEN BULK IMPORT FONKSİYONUNU KULLAN
+    bulkImportCustomers(customersData);
+    console.log(`✅ ${customersData.length} müşteri toplu olarak eklendi!`);
     
     setModalState({ isOpen: false, type: null });
   };
@@ -131,26 +118,9 @@ function App() {
   const handleBulkProductUpload = (productsData: Array<{ name: string; code: string; category?: string }>) => {
     console.log('🔥 TOPLU KARTELA YÜKLEME BAŞLIYOR - Sayı:', productsData.length);
     
-    // BATCH İŞLEM - TÜM KARTELALAR TEK SEFERDE EKLE
-    const newProducts = productsData.map(productData => ({
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-      name: productData.name.trim(),
-      code: productData.code.trim(),
-      category: productData.category?.trim(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }));
-    
-    // MEVCUT KARTELALARLA BİRLEŞTİR
-    const updatedProducts = [...products, ...newProducts];
-    
-    // TEK SEFERDE GÜNCELLE
-    if (typeof setProducts === 'function') {
-      setProducts(updatedProducts);
-      console.log(`✅ ${productsData.length} kartela toplu olarak eklendi!`);
-    } else {
-      console.error('❌ setProducts fonksiyonu bulunamadı!');
-    }
+    // HOOK'TAN GELEN BULK IMPORT FONKSİYONUNU KULLAN
+    bulkImportProducts(productsData);
+    console.log(`✅ ${productsData.length} kartela toplu olarak eklendi!`);
     
     setModalState({ isOpen: false, type: null });
   };
