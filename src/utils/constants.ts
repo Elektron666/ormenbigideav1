@@ -96,10 +96,3 @@ export const EXPORT_CONFIG = {
   jsonIndent: 2,
   csvSeparator: ',',
 } as const;
-
-export const PERFORMANCE_CONFIG = {
-  lazyLoadThreshold: 100,
-  virtualScrollThreshold: 1000,
-  debounceSearchDelay: 300,
-  cacheTimeout: 5 * 60 * 1000, // 5 minutes
-} as const;
