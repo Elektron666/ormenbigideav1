@@ -14,7 +14,7 @@ import { CustomerForm } from './components/Customers/CustomerForm';
 import { ProductList } from './components/Products/ProductList';
 import { ProductForm } from './components/Products/ProductForm';
 import { MovementForm } from './components/Movements/MovementForm';
-import { QuickMovementForm } from './components/Movements/QuickMovementForm';
+import { NewMovementForm } from './components/Movements/NewMovementForm';
 import { Modal } from './components/Common/Modal';
 import { useAppState } from './hooks/useAppState';
 import { Customer, Product } from './types';
@@ -25,7 +25,7 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
-    type: 'customer' | 'product' | 'movement' | 'quick-movement' | 'bulk-customer' | null;
+    type: 'customer' | 'product' | 'movement' | 'new-movement' | 'bulk-customer' | null;
     data?: any;
   }>({ isOpen: false, type: null });
   const [customerDetailState, setCustomerDetailState] = useState<{
@@ -78,7 +78,7 @@ function App() {
     setModalState({ isOpen: false, type: null });
   };
 
-  const handleQuickMovementSave = (movementData: any) => {
+  const handleNewMovementSave = (movementData: any) => {
     addMovement(movementData);
     setModalState({ isOpen: false, type: null });
   };
@@ -156,16 +156,10 @@ function App() {
               <h2 className="text-2xl font-bold text-gray-900">Hareketler</h2>
               <div className="flex space-x-2">
                 <button
-                  onClick={() => setModalState({ isOpen: true, type: 'quick-movement' })}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  Hızlı Hareket
-                </button>
-                <button
-                  onClick={() => setModalState({ isOpen: true, type: 'movement' })}
+                  onClick={() => setModalState({ isOpen: true, type: 'new-movement' })}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Tekli Hareket
+                  Yeni Hareket
                 </button>
               </div>
             </div>
@@ -207,8 +201,8 @@ function App() {
         return modalState.data ? 'Kartela Düzenle' : 'Yeni Kartela';
       case 'movement':
         return 'Tekli Hareket';
-      case 'quick-movement':
-        return 'Hızlı Hareket - Çoklu Kartela Seçimi';
+      case 'new-movement':
+        return 'Yeni Hareket';
       case 'bulk-customer':
         return 'Toplu Müşteri Yükleme';
       default:
@@ -244,7 +238,7 @@ function App() {
         isOpen={modalState.isOpen}
         onClose={() => setModalState({ isOpen: false, type: null })}
         title={getModalTitle()}
-        size={modalState.type === 'movement' || modalState.type === 'quick-movement' ? 'lg' : 'md'}
+        size={modalState.type === 'movement' || modalState.type === 'new-movement' ? 'lg' : 'md'}
       >
         {modalState.type === 'customer' && (
           <CustomerForm
@@ -268,11 +262,11 @@ function App() {
             onCancel={() => setModalState({ isOpen: false, type: null })}
           />
         )}
-        {modalState.type === 'quick-movement' && (
-          <QuickMovementForm
+        {modalState.type === 'new-movement' && (
+          <NewMovementForm
             customers={customers}
             products={products}
-            onSave={handleQuickMovementSave}
+            onSave={handleNewMovementSave}
             onCancel={() => setModalState({ isOpen: false, type: null })}
           />
         )}
