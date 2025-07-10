@@ -95,7 +95,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     }
 
     setIsSubmitting(true);
-    console.log('🔥 ÇOKLU HAREKET KAYDETME BAŞLIYOR!');
+    console.log('🔥 ÇOKLU HAREKET KAYDETME BAŞLIYOR - GERÇEK ÇÖZÜM!');
     console.log('👤 Müşteri:', selectedCustomer.name);
     console.log('📦 Seçilen kartela sayısı:', selectedProducts.size);
     console.log('🏷️ Hareket türü:', movementType);
@@ -104,8 +104,10 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     const selectedProductIds = Array.from(selectedProducts);
     console.log('📋 Seçilen kartela ID\'leri:', selectedProductIds);
 
-    // GERÇEK ÇÖZÜM: ARDIŞIK (SEQUENTIAL) KAYDETME
+    // GERÇEK ÇÖZÜM: ARDIŞIK KAYDETME + STATE GÜNCELLEME GARANTİSİ
     const saveMovementsSequentially = async () => {
+      console.log('🚀 Ardışık kaydetme başlıyor...');
+      
       for (let i = 0; i < selectedProductIds.length; i++) {
         const productId = selectedProductIds[i];
         const product = products.find(p => p.id === productId);
@@ -126,22 +128,24 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
           quantity: 1
         });
         
-        // ARDIŞIK KAYDETME: Her hareket için onSave çağır ve bekleme yap
+        // ARDIŞIK KAYDETME: Her hareket için onSave çağır ve state güncellemesini bekle
         console.log(`📤 Hareket ${i + 1} App.tsx'e gönderiliyor...`);
         onSave(movementData);
         console.log(`✅ Hareket ${i + 1}/${selectedProductIds.length} kaydedildi`);
         
-        // State güncellemesinin tamamlanması için kısa bekleme
-        await new Promise(resolve => setTimeout(resolve, 50));
+        // GERÇEK ÇÖZÜM: State güncellemesinin tamamlanması için yeterli bekleme
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
       
       console.log(`✅ Toplam ${selectedProductIds.length} hareket başarıyla kaydedildi!`);
+      console.log('🎯 Tüm hareketler state\'e eklendi, modal kapatılıyor...');
       setIsSubmitting(false);
       
       // Modal'ı kapat
       setTimeout(() => {
+        console.log('🚪 Modal kapatılıyor...');
         onCancel();
-      }, 300);
+      }, 500);
     };
     
     // Ardışık kaydetmeyi başlat

@@ -95,13 +95,18 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    console.log('🔥 App.tsx - Hareket kaydediliyor:', movementData);
+    console.log('🔥 App.tsx - Hareket kaydediliyor:', {
+      customer: customers.find(c => c.id === movementData.customerId)?.name,
+      product: products.find(p => p.id === movementData.productId)?.name,
+      type: movementData.type,
+      quantity: movementData.quantity
+    });
     
-    // GERÇEK ÇÖZÜM: Her hareket için addMovement çağır
+    // GERÇEK ÇÖZÜM: addMovement çağır ve sonucu logla
     const result = addMovement(movementData);
-    console.log('✅ App.tsx - Hareket kaydedildi:', result.id);
+    console.log('✅ App.tsx - Hareket kaydedildi, ID:', result?.id);
     
-    // Modal'ı NewMovementForm kapatacak, burada kapatma!
+    // NOT: Modal'ı NewMovementForm kapatacak, burada kapatmıyoruz!
   };
 
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {

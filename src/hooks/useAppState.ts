@@ -83,7 +83,12 @@ export function useAppState() {
 
   // KUSURSUZ HAREKET İŞLEMLERİ
   const addMovement = useCallback((movementData: Omit<Movement, 'id' | 'createdAt'>) => {
-    console.log('🔥 addMovement çağrıldı:', movementData);
+    console.log('🔥 useAppState.addMovement çağrıldı:', {
+      customerId: movementData.customerId,
+      productId: movementData.productId,
+      type: movementData.type,
+      quantity: movementData.quantity
+    });
     
     const newMovement: Movement = {
       ...movementData,
@@ -92,13 +97,14 @@ export function useAppState() {
       createdBy: movementData.createdBy || currentUser?.id || 'system',
     };
     
-    console.log('✅ Yeni hareket oluşturuldu:', newMovement.id);
+    console.log('✅ useAppState - Yeni hareket oluşturuldu, ID:', newMovement.id);
     
     // SENKRON STATE GÜNCELLEME - GERÇEK ÇÖZÜM
     setMovements(prevMovements => {
       const updatedMovements = [...prevMovements, newMovement];
-      console.log('📊 Güncellenmiş hareket sayısı:', updatedMovements.length);
-      console.log('🔍 Son eklenen hareket ID:', newMovement.id);
+      console.log('📊 useAppState - Güncellenmiş hareket sayısı:', updatedMovements.length);
+      console.log('🔍 useAppState - Son eklenen hareket ID:', newMovement.id);
+      console.log('🎯 useAppState - State güncellendi!');
       return updatedMovements;
     });
     
