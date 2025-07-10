@@ -192,7 +192,7 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                         {onEdit && (
                           <button
                             onClick={() => onEdit(movement)}
-                            className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
+                            className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors shadow-sm"
                             title="Düzenle"
                           >
                             <Edit className="w-4 h-4" />
@@ -200,8 +200,12 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                         )}
                         {onDelete && (
                           <button
-                            onClick={() => onDelete(movement.id)}
-                            className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
+                            onClick={() => {
+                              if (window.confirm('Bu hareketi silmek istediğinizden emin misiniz?')) {
+                                onDelete(movement.id);
+                              }
+                            }}
+                            className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors shadow-sm"
                             title="Sil"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -230,15 +234,19 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                     {onEdit && (
                       <button
                         onClick={() => onEdit(movement)}
-                        className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
+                        className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors shadow-sm"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
                     )}
                     {onDelete && (
                       <button
-                        onClick={() => onDelete(movement.id)}
-                        className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
+                        onClick={() => {
+                          if (window.confirm('Bu hareketi silmek istediğinizden emin misiniz?')) {
+                            onDelete(movement.id);
+                          }
+                        }}
+                        className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors shadow-sm"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

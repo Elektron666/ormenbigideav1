@@ -19,7 +19,7 @@ import { NewMovementForm } from './components/Movements/NewMovementForm';
 import { MovementsList } from './components/Movements/MovementsList';
 import { Modal } from './components/Common/Modal';
 import { useAppState } from './hooks/useAppState';
-import { Customer, Product } from './types';
+import { Customer, Product, Movement } from './types';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -39,6 +39,7 @@ function App() {
     customers,
     products,
     movements,
+    setMovements,
     addCustomer,
     updateCustomer,
     deleteCustomer,
@@ -83,23 +84,31 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    console.log('🔥 handleNewMovementSave çağrıldı - FİNAL ÇÖZÜM');
-    console.log('📊 Gelen veri tipi:', Array.isArray(movementData) ? 'ARRAY' : 'OBJECT');
-    console.log('📋 Gelen veri:', movementData);
+    console.log('🔥 KESIN ÇÖZÜM - handleNewMovementSave');
+    console.log('📊 Veri tipi:', Array.isArray(movementData) ? 'ARRAY' : 'OBJECT');
     
     if (Array.isArray(movementData)) {
-      console.log(`🔄 ARRAY işleniyor - ${movementData.length} hareket`);
+      console.log(`🔄 ${movementData.length} hareket kaydediliyor...`);
       movementData.forEach(movement => {
-        console.log('💾 Hareket kaydediliyor:', movement);
         addMovement(movement);
       });
-      console.log('✅ Tüm hareketler kaydedildi!');
+      console.log('✅ BAŞARILI: Tüm hareketler kaydedildi!');
     } else {
-      console.log('💾 Tek hareket kaydediliyor:', movementData);
       addMovement(movementData);
+      console.log('✅ BAŞARILI: Tek hareket kaydedildi!');
     }
     
     setModalState({ isOpen: false, type: null });
+  };
+
+  const handleMovementEdit = (movement: Movement) => {
+    setModalState({ isOpen: true, type: 'movement', data: movement });
+  };
+
+  const handleMovementDelete = (id: string) => {
+    if (window.confirm('Bu hareketi silmek istediğinizden emin misiniz?')) {
+      setMovements(prev => prev.filter(m => m.id !== id));
+    }
   };
 
   // TOPLU MÜŞTERİ YÜKLEME - GERÇEK ÇÖZÜM
@@ -202,6 +211,8 @@ function App() {
               movements={movements}
               customers={customers}
               products={products}
+              onEdit={handleMovementEdit}
+              onDelete={handleMovementDelete}
             />
           </div>
         );

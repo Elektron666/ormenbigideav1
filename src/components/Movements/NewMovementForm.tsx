@@ -83,10 +83,10 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
-    console.log('🔥 NewMovementForm handleSubmit - FİNAL ÇÖZÜM');
-    console.log('👤 Seçili müşteri:', selectedCustomer.name);
-    console.log('📦 Seçili ürün sayısı:', selectedProducts.size);
-    console.log('🔄 Hareket türü:', movementType);
+    console.log('🔥 NewMovementForm - KESIN ÇÖZÜM');
+    console.log(`👤 Müşteri: ${selectedCustomer.name}`);
+    console.log(`📦 Ürün sayısı: ${selectedProducts.size}`);
+    console.log(`🔄 Tür: ${movementType}`);
     
     const movements = Array.from(selectedProducts).map(productId => ({
       customerId: selectedCustomer.id,
@@ -96,8 +96,8 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
       notes: notes || undefined,
     }));
 
-    console.log('📋 Oluşturulan hareketler array:', movements);
-    console.log('🚀 onSave fonksiyonuna gönderiliyor...');
+    console.log(`📋 ${movements.length} hareket oluşturuldu`);
+    console.log('🚀 onSave çağrılıyor...');
     
     onSave(movements);
   };

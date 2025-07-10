@@ -25,12 +25,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   // GERÇEK ÇÖZÜM: setValue fonksiyonunu useCallback ile optimize et
   const setValue = useCallback((value: T | ((val: T) => T)) => {
     try {
-      console.log(`🔄 localStorage güncelleniyor [${key}]...`);
-      
       // Yeni değeri hesapla
       const valueToStore = value instanceof Function ? value(storedValue) : value;
-      
-      console.log(`💾 Kaydedilecek değer [${key}]:`, valueToStore);
       
       // State'i güncelle
       setStoredValue(valueToStore);
@@ -38,12 +34,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       // localStorage'a kaydet
       if (typeof window !== 'undefined') {
         window.localStorage.setItem(key, JSON.stringify(valueToStore));
-        console.log(`✅ localStorage'a kaydedildi [${key}]`);
-        
-        // Doğrulama: Gerçekten kaydedildi mi?
-        const verification = window.localStorage.getItem(key);
-        const verificationParsed = verification ? JSON.parse(verification) : null;
-        console.log(`🔍 Doğrulama [${key}]:`, verificationParsed);
+        console.log(`✅ localStorage güncellendi [${key}]`);
       }
     } catch (error) {
       console.error(`❌ localStorage yazma hatası [${key}]:`, error);
@@ -56,7 +47,6 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       if (e.key === key && e.newValue !== null) {
         try {
           const newValue = JSON.parse(e.newValue);
-          console.log(`🔄 localStorage değişikliği algılandı [${key}]:`, newValue);
           setStoredValue(newValue);
         } catch (error) {
           console.error(`❌ Storage event parse hatası [${key}]:`, error);

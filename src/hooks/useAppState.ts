@@ -87,14 +87,7 @@ export function useAppState() {
 
   // HAREKET İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addMovement = useCallback((movementData: Omit<Movement, 'id' | 'createdAt'>) => {
-    console.log('🔥 addMovement çağrıldı - FİNAL ÇÖZÜM');
-    console.log('📊 Gelen hareket verisi:', {
-      customerId: movementData.customerId,
-      productId: movementData.productId,
-      type: movementData.type,
-      quantity: movementData.quantity,
-      notes: movementData.notes
-    });
+    console.log('🔥 addMovement - KESIN ÇÖZÜM');
     
     const newMovement: Movement = {
       ...movementData,
@@ -103,37 +96,12 @@ export function useAppState() {
       createdBy: currentUser?.id || 'system',
     };
     
-    console.log('✅ Yeni hareket objesi oluşturuldu:', {
-      id: newMovement.id,
-      type: newMovement.type,
-      customerId: newMovement.customerId,
-      productId: newMovement.productId,
-      quantity: newMovement.quantity
-    });
+    console.log('✅ Hareket objesi oluşturuldu:', newMovement.id);
     
-    // SENKRON GÜNCELLEME - FİNAL ÇÖZÜM
+    // KESIN ÇÖZÜM: Senkron güncelleme
     setMovements(prevMovements => {
-      console.log('🔄 setMovements çağrıldı - Mevcut hareket sayısı:', prevMovements.length);
       const updatedMovements = [...prevMovements, newMovement];
-      console.log('📊 Güncellenmiş toplam hareket sayısı:', updatedMovements.length);
-      console.log('🔍 Son eklenen hareket:', updatedMovements[updatedMovements.length - 1]);
-      
-      // DOĞRULAMA: localStorage'a gerçekten yazıldı mı?
-      setTimeout(() => {
-        const verification = localStorage.getItem('kartela_movements');
-        if (verification) {
-          const parsed = JSON.parse(verification);
-          console.log('✅ localStorage DOĞRULAMA - Kayıtlı hareket sayısı:', parsed.length);
-          const lastMovement = parsed[parsed.length - 1];
-          if (lastMovement && lastMovement.id === newMovement.id) {
-            console.log('🎯 BAŞARILI: Son hareket localStorage\'da bulundu!');
-          } else {
-            console.log('❌ HATA: Son hareket localStorage\'da bulunamadı!');
-          }
-        } else {
-          console.log('❌ HATA: localStorage boş!');
-        }
-      }, 50);
+      console.log(`📊 Hareket sayısı: ${prevMovements.length} → ${updatedMovements.length}`);
       
       return updatedMovements;
     });
@@ -235,6 +203,7 @@ export function useAppState() {
     customers,
     products,
     movements,
+    setMovements,
     currentUser,
     isLoading,
     error,
