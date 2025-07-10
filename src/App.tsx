@@ -267,8 +267,9 @@ function App() {
         />
         
         <main className="p-6">
-        <main className="p-4 md:p-6 min-h-screen">
-          {renderContent()}
+          <main className="p-4 md:p-6 min-h-screen">
+            {renderContent()}
+          </main>
         </main>
       </div>
 
