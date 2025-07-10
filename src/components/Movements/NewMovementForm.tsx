@@ -99,11 +99,11 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     console.log('🏷️ Hareket türü:', movementType);
     console.log('📝 Notlar:', notes);
 
-    // Her seçilen kartela için ayrı hareket oluştur
+    // GERÇEK ÇÖZÜM: Tüm hareketleri bir array olarak gönder
     const selectedProductIds = Array.from(selectedProducts);
     console.log('📋 Seçilen kartela ID\'leri:', selectedProductIds);
 
-    selectedProductIds.forEach((productId, index) => {
+    const allMovements = selectedProductIds.map((productId, index) => {
       const product = products.find(p => p.id === productId);
       const movementData = {
         customerId: selectedCustomer.id,
@@ -121,10 +121,13 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         quantity: 1
       });
       
-      onSave(movementData);
+      return movementData;
     });
 
-    console.log('✅ Tüm hareketler başarıyla kaydedildi!');
+    console.log('📤 Tüm hareketler App.tsx\'e gönderiliyor:', allMovements);
+    
+    // Tüm hareketleri tek seferde gönder
+    onSave(allMovements);
   };
 
   const getSelectedProductsList = () => {

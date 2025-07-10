@@ -95,10 +95,25 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    // GERÇEK ÇÖZÜM: NewMovementForm artık tek tek gönderiyor
-    console.log('🔥 Yeni hareket kaydediliyor:', movementData);
-    addMovement(movementData);
+    console.log('🔥 ÇOKLU HAREKET KAYDETME BAŞLIYOR:', movementData);
     
+    // Eğer movementData bir array ise (çoklu hareket)
+    if (Array.isArray(movementData)) {
+      console.log(`📦 ${movementData.length} hareket kaydedilecek`);
+      
+      movementData.forEach((movement, index) => {
+        console.log(`🚀 Hareket ${index + 1}/${movementData.length} kaydediliyor:`, movement);
+        addMovement(movement);
+      });
+      
+      console.log(`✅ Toplam ${movementData.length} hareket başarıyla kaydedildi!`);
+    } else {
+      // Tek hareket
+      console.log('🔥 Tek hareket kaydediliyor:', movementData);
+      addMovement(movementData);
+    }
+    
+    // Modal'ı kapat
     setModalState({ isOpen: false, type: null });
   };
 
