@@ -85,17 +85,22 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    // DOĞRU ÇÖZÜM: Array gelirse her birini kaydet, tek gelirse direkt kaydet
+    // GERÇEK ÇÖZÜM: NewMovementForm array gönderiyor, her birini kaydet
+    console.log('🔥 Gelen veri:', movementData);
+    
     if (Array.isArray(movementData)) {
-      movementData.forEach(movement => {
-        console.log('🔥 Hareket kaydediliyor:', movement);
+      // Array gelirse her birini ayrı ayrı kaydet
+      movementData.forEach((movement, index) => {
+        console.log(`📝 ${index + 1}. hareket kaydediliyor:`, movement);
         addMovement(movement);
       });
       console.log(`✅ ${movementData.length} hareket başarıyla kaydedildi!`);
     } else {
-      console.log('🔥 Tek hareket kaydediliyor:', movementData);
+      // Tek hareket gelirse direkt kaydet
+      console.log('📝 Tek hareket kaydediliyor:', movementData);
       addMovement(movementData);
     }
+    
     setModalState({ isOpen: false, type: null });
   };
 

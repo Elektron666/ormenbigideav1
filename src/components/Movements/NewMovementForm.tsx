@@ -83,7 +83,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
-    // DOĞRU ÇÖZÜM: Tüm hareketleri tek seferde gönder
+    // GERÇEK ÇÖZÜM: Her ürün için ayrı hareket objesi oluştur ve array olarak gönder
     const movements = Array.from(selectedProducts).map(productId => ({
       customerId: selectedCustomer.id,
       productId,
@@ -92,7 +92,10 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
       notes: notes || undefined,
     }));
     
-    // Tek çağrıda tüm hareketleri gönder
+    console.log('🚀 NewMovementForm - Gönderilen hareketler:', movements);
+    console.log('📊 Toplam hareket sayısı:', movements.length);
+    
+    // Array olarak gönder - App.tsx'te handle edilecek
     onSave(movements);
   };
 
