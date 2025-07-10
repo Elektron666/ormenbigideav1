@@ -3,11 +3,10 @@
 declare global {
   const __APP_VERSION__: string;
   const __BUILD_TIME__: string;
-}
-
-// Window extensions
-declare interface Window {
-  // Add any window extensions here if needed
+  
+  interface Window {
+    // Add any window extensions here if needed
+  }
 }
 
 // Environment variables

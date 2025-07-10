@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-export function useLocalStorage<T>(key: string, initialValue: T) {
+export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T | ((val: T) => T)) => void] {
   // GERÇEK ÇÖZÜM: Lazy initialization ile localStorage'dan oku
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
@@ -28,7 +28,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
         try {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         } catch (error) {
-          console.error(`localStorage yazma hatası [${key}]:`, error);
+          // Silent error handling for production
         }
       }
       
@@ -44,7 +44,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
           const newValue = JSON.parse(e.newValue);
           setStoredValue(newValue);
         } catch (error) {
-          console.error(`Storage event parse hatası [${key}]:`, error);
+          // Silent error handling for production
         }
       }
     };
@@ -53,6 +53,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       window.addEventListener('storage', handleStorageChange);
       return () => window.removeEventListener('storage', handleStorageChange);
     }
+    
+    return undefined;
   }, [key]);
 
   return [storedValue, setValue] as const;
