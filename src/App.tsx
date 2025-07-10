@@ -15,6 +15,7 @@ import { ProductList } from './components/Products/ProductList';
 import { ProductForm } from './components/Products/ProductForm';
 import { MovementForm } from './components/Movements/MovementForm';
 import { NewMovementForm } from './components/Movements/NewMovementForm';
+import { MovementsList } from './components/Movements/MovementsList';
 import { Modal } from './components/Common/Modal';
 import { useAppState } from './hooks/useAppState';
 import { Customer, Product } from './types';
@@ -163,9 +164,11 @@ function App() {
                 </button>
               </div>
             </div>
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <p className="text-gray-600">Hareket listesi yakında eklenecek...</p>
-            </div>
+            <MovementsList
+              movements={movements}
+              customers={customers}
+              products={products}
+            />
           </div>
         );
       
