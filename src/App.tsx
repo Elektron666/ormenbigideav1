@@ -85,17 +85,21 @@ function App() {
   const handleNewMovementSave = (movementData: any) => {
     console.log('🔥 YENİ HAREKET KAYDI - GERÇEK ÇÖZÜM:', movementData);
     
-    // EĞER ARRAY İSE HER BİRİNİ TEK TEK EKLE
+    // GERÇEK ÇÖZÜM: Array kontrolü ve tek tek kaydetme
     if (Array.isArray(movementData)) {
       console.log('📊 Çoklu hareket kaydı:', movementData.length);
-      for (let i = 0; i < movementData.length; i++) {
-        const movement = movementData[i];
+      
+      // Her hareketi sırayla kaydet
+      movementData.forEach((movement, i) => {
         console.log(`💾 Hareket ${i + 1} kaydediliyor:`, movement);
         const result = addMovement(movement);
         console.log(`✅ Hareket ${i + 1} kaydedildi:`, result);
-      }
+      });
+      
+      console.log(`🎉 TOPLAM ${movementData.length} HAREKET BAŞARIYLA KAYDEDİLDİ!`);
     } else {
       // TEK HAREKET
+      console.log('💾 Tek hareket kaydediliyor:', movementData);
       const result = addMovement(movementData);
       console.log('✅ Tek hareket kaydedildi:', result);
     }

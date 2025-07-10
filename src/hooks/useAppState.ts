@@ -87,7 +87,14 @@ export function useAppState() {
 
   // HAREKET İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addMovement = useCallback((movementData: Omit<Movement, 'id' | 'createdAt'>) => {
-    console.log('🔥 addMovement çağrıldı:', movementData.type, movementData.quantity);
+    console.log('🔥 addMovement çağrıldı - GERÇEK ÇÖZÜM');
+    console.log('📊 Hareket verisi:', {
+      customerId: movementData.customerId,
+      productId: movementData.productId,
+      type: movementData.type,
+      quantity: movementData.quantity,
+      notes: movementData.notes
+    });
     
     const newMovement: Movement = {
       ...movementData,
@@ -96,12 +103,19 @@ export function useAppState() {
       createdBy: currentUser?.id || 'system',
     };
     
-    console.log('✅ Yeni hareket oluşturuldu:', newMovement.type, newMovement.id);
+    console.log('✅ Yeni hareket oluşturuldu:', {
+      id: newMovement.id,
+      type: newMovement.type,
+      customerId: newMovement.customerId,
+      productId: newMovement.productId,
+      quantity: newMovement.quantity
+    });
     
     // SENKRON GÜNCELLEME - GERÇEK ÇÖZÜM
     setMovements(prevMovements => {
       const updatedMovements = [...prevMovements, newMovement];
-      console.log('📊 Güncellenmiş hareket sayısı:', updatedMovements.length);
+      console.log('📊 localStorage\'a kaydedilecek toplam hareket sayısı:', updatedMovements.length);
+      console.log('🔍 Son eklenen hareket localStorage\'da:', updatedMovements[updatedMovements.length - 1]);
       return updatedMovements;
     });
     
