@@ -77,10 +77,10 @@ export function NotesPage() {
   };
 
   const inspirationalPlaceholders = {
-    motivation: "Bugün kendime şunu hatırlatmak istiyorum...\n\n🦁 Aslan gibi güçlüyüm\n🐅 Kaplan gibi kararlıyım\n⚡ Her zorluk beni daha güçlü yapıyor",
-    business: "İş hedeflerim ve stratejilerim...\n\n📈 Bu ay ulaşmak istediğim hedefler\n💼 Yeni fırsatlar\n🎯 Odaklanmam gereken alanlar",
-    personal: "Kişisel gelişim notlarım...\n\n🌱 Bugün öğrendiğim yeni şey\n💪 Geliştirmek istediğim özellikler\n🙏 Minnettar olduğum şeyler",
-    goals: "Hedeflerim ve planlarım...\n\n🎯 Kısa vadeli hedefler\n🚀 Uzun vadeli vizyonum\n📋 Yapılacaklar listesi"
+    motivation: "Bugün kendime şunu hatırlatmak istiyorum...\n\n🦁 Aslan gibi güçlüyüm ve cesurca ilerliyorum\n🐅 Kaplan gibi kararlıyım ve hedefime odaklanıyorum\n⚡ Her zorluk beni daha güçlü yapıyor\n👑 Ben bir savaşçıyım, pes etmem!\n🔥 İçimdeki ateş hiç sönmeyecek",
+    business: "İş hedeflerim ve stratejilerim...\n\n🦁 Aslan gibi liderlik yapacağım\n🐅 Kaplan gibi fırsatları yakalayacağım\n📈 Bu ay ulaşmak istediğim hedefler\n💼 Yeni fırsatlar\n🎯 Odaklanmam gereken alanlar",
+    personal: "Kişisel gelişim notlarım...\n\n🦁 Aslan gibi kendime güveniyorum\n🐅 Kaplan gibi disiplinliyim\n🌱 Bugün öğrendiğim yeni şey\n💪 Geliştirmek istediğim özellikler\n🙏 Minnettar olduğum şeyler",
+    goals: "Hedeflerim ve planlarım...\n\n🦁 Aslan gibi büyük hedefler koyuyorum\n🐅 Kaplan gibi sabırla çalışıyorum\n🎯 Kısa vadeli hedefler\n🚀 Uzun vadeli vizyonum\n📋 Yapılacaklar listesi"
   };
 
   return (
@@ -225,17 +225,19 @@ export function NotesPage() {
 
       {notes.length === 0 && !isEditing && (
         <div className="text-center py-12">
-          <div className="w-20 h-20 bg-gradient-to-r from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <BookOpen className="w-10 h-10 text-orange-600" />
+          <div className="w-20 h-20 bg-gradient-to-r from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4 relative">
+            <div className="text-4xl">🦁</div>
+            <div className="absolute -bottom-1 -right-1 text-3xl">🐅</div>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz not yok</h3>
-          <p className="text-gray-600 mb-6">İlk motivasyon notunuzu ekleyerek başlayın!</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Henüz aslanlı not yok! 🦁</h3>
+          <p className="text-gray-600 mb-6">İlk kaplanlı motivasyon notunuzu ekleyerek başlayın! 🐅</p>
           <button
             onClick={() => setIsEditing(true)}
-            className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all shadow-lg"
+            className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all shadow-lg transform hover:scale-105"
           >
-            <Plus className="w-5 h-5" />
-            <span>İlk Notunu Ekle</span>
+            <span className="text-lg">🦁</span>
+            <span>İlk Aslanlı Notunu Ekle</span>
+            <span className="text-lg">🐅</span>
           </button>
         </div>
       )}
