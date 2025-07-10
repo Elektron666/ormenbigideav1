@@ -25,13 +25,19 @@ export function ProductList({ products, onEdit, onDelete, onAdd }: ProductListPr
   ];
 
   const filteredProducts = useMemo(() => {
-    return filterAndSort(
+    const filtered = filterAndSort(
       products,
       searchTerm,
       ['name', 'code', 'category', 'description'],
       sortBy,
       sortOrder
     );
+    
+    // Add numbering for display
+    return filtered.map((product, index) => ({
+      ...product,
+      displayIndex: index + 1
+    }));
   }, [products, searchTerm, sortBy, sortOrder]);
 
   return (
@@ -62,12 +68,15 @@ export function ProductList({ products, onEdit, onDelete, onAdd }: ProductListPr
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredProducts.map((product) => (
+        {filteredProducts.map((product, index) => (
           <div
             key={product.id}
             className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex justify-between items-start mb-4">
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                <span className="text-sm font-semibold text-green-600">{product.displayIndex}</span>
+              </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900 text-lg">{product.name}</h3>
                 <div className="flex items-center text-gray-600 mt-1">

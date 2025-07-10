@@ -25,13 +25,19 @@ export function CustomerList({ customers, onEdit, onDelete, onView, onAdd }: Cus
   ];
 
   const filteredCustomers = useMemo(() => {
-    return filterAndSort(
+    const filtered = filterAndSort(
       customers,
       searchTerm,
       ['name', 'company', 'phone', 'email'],
       sortBy,
       sortOrder
     );
+    
+    // Add numbering for display
+    return filtered.map((customer, index) => ({
+      ...customer,
+      displayIndex: index + 1
+    }));
   }, [customers, searchTerm, sortBy, sortOrder]);
 
   return (
@@ -62,12 +68,15 @@ export function CustomerList({ customers, onEdit, onDelete, onView, onAdd }: Cus
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredCustomers.map((customer) => (
+        {filteredCustomers.map((customer, index) => (
           <div
             key={customer.id}
             className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
           >
             <div className="flex justify-between items-start mb-4">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                <span className="text-sm font-semibold text-blue-600">{customer.displayIndex}</span>
+              </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900 text-lg">{customer.name}</h3>
                 {customer.company && (

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { LoginForm } from './components/Auth/LoginForm';
+import { CustomerDetail } from './components/Customers/CustomerDetail';
 import { Header } from './components/Layout/Header';
 import { Sidebar } from './components/Layout/Sidebar';
 import { Dashboard } from './components/Dashboard/Dashboard';
@@ -7,18 +9,24 @@ import { CustomerForm } from './components/Customers/CustomerForm';
 import { ProductList } from './components/Products/ProductList';
 import { ProductForm } from './components/Products/ProductForm';
 import { MovementForm } from './components/Movements/MovementForm';
+import { QuickMovementForm } from './components/Movements/QuickMovementForm';
 import { Modal } from './components/Common/Modal';
 import { useAppState } from './hooks/useAppState';
 import { Customer, Product } from './types';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
-    type: 'customer' | 'product' | 'movement' | null;
+    type: 'customer' | 'product' | 'movement' | 'quick-movement' | null;
     data?: any;
   }>({ isOpen: false, type: null });
+  const [customerDetailState, setCustomerDetailState] = useState<{
+    isOpen: boolean;
+    customer: Customer | null;
+  }>({ isOpen: false, customer: null });
 
   const {
     customers,
@@ -33,6 +41,14 @@ function App() {
     addMovement,
     getCustomerProducts,
   } = useAppState();
+
+  const handleLogin = (username: string, password: string): boolean => {
+    if (username === 'ORMEN' && password === 'ORMEN666-F1') {
+      setIsLoggedIn(true);
+      return true;
+    }
+    return false;
+  };
 
   const handleCustomerSave = (customerData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>) => {
     if (modalState.data) {
@@ -57,6 +73,11 @@ function App() {
     setModalState({ isOpen: false, type: null });
   };
 
+  const handleQuickMovementSave = (movementData: any) => {
+    addMovement(movementData);
+    setModalState({ isOpen: false, type: null });
+  };
+
   const handleCustomerDelete = (id: string) => {
     if (window.confirm('Bu müşteriyi silmek istediğinizden emin misiniz?')) {
       deleteCustomer(id);
@@ -70,9 +91,7 @@ function App() {
   };
 
   const handleCustomerView = (customer: Customer) => {
-    const customerProducts = getCustomerProducts(customer.id);
-    console.log('Customer products:', customerProducts);
-    // TODO: Implement customer detail view
+    setCustomerDetailState({ isOpen: true, customer });
   };
 
   const getPageTitle = () => {
@@ -119,12 +138,20 @@ function App() {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-2xl font-bold text-gray-900">Hareketler</h2>
-              <button
-                onClick={() => setModalState({ isOpen: true, type: 'movement' })}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Yeni Hareket
-              </button>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setModalState({ isOpen: true, type: 'quick-movement' })}
+                  className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Hızlı Hareket
+                </button>
+                <button
+                  onClick={() => setModalState({ isOpen: true, type: 'movement' })}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Tekli Hareket
+                </button>
+              </div>
             </div>
             <div className="bg-white rounded-lg border border-gray-200 p-6">
               <p className="text-gray-600">Hareket listesi yakında eklenecek...</p>
@@ -151,11 +178,17 @@ function App() {
       case 'product':
         return modalState.data ? 'Kartela Düzenle' : 'Yeni Kartela';
       case 'movement':
-        return 'Yeni Hareket';
+        return 'Tekli Hareket';
+      case 'quick-movement':
+        return 'Hızlı Hareket - Çoklu Kartela Seçimi';
       default:
         return '';
     }
   };
+
+  if (!isLoggedIn) {
+    return <LoginForm onLogin={handleLogin} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -181,7 +214,7 @@ function App() {
         isOpen={modalState.isOpen}
         onClose={() => setModalState({ isOpen: false, type: null })}
         title={getModalTitle()}
-        size={modalState.type === 'movement' ? 'lg' : 'md'}
+        size={modalState.type === 'movement' || modalState.type === 'quick-movement' ? 'lg' : 'md'}
       >
         {modalState.type === 'customer' && (
           <CustomerForm
@@ -205,7 +238,25 @@ function App() {
             onCancel={() => setModalState({ isOpen: false, type: null })}
           />
         )}
+        {modalState.type === 'quick-movement' && (
+          <QuickMovementForm
+            customers={customers}
+            products={products}
+            onSave={handleQuickMovementSave}
+            onCancel={() => setModalState({ isOpen: false, type: null })}
+          />
+        )}
       </Modal>
+
+      {customerDetailState.isOpen && customerDetailState.customer && (
+        <CustomerDetail
+          customer={customerDetailState.customer}
+          customerProducts={getCustomerProducts(customerDetailState.customer.id)}
+          movements={movements}
+          products={products}
+          onClose={() => setCustomerDetailState({ isOpen: false, customer: null })}
+        />
+      )}
     </div>
   );
 }
