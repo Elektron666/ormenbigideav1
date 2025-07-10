@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Package, TrendingUp, Calendar } from 'lucide-react';
+import { Users, Package, TrendingUp, Calendar, Scissors, Clock } from 'lucide-react';
 import { Customer, Product, Movement } from '../../types';
 import { formatDate } from '../../utils/helpers';
 
@@ -10,6 +10,16 @@ interface DashboardProps {
 }
 
 export function Dashboard({ customers, products, movements }: DashboardProps) {
+  const [currentTime, setCurrentTime] = React.useState(new Date());
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const recentMovements = movements
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5);
@@ -47,9 +57,46 @@ export function Dashboard({ customers, products, movements }: DashboardProps) {
 
   return (
     <div className="space-y-6">
+      {/* ORMEN TEKSTİL Banner */}
+      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+        
+        <div className="relative z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
+                <Scissors className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold mb-1">ORMEN TEKSTİL</h1>
+                <p className="text-white/80 text-lg">Kartela Yönetim Sistemi</p>
+              </div>
+            </div>
+            
+            <div className="text-right">
+              <div className="flex items-center space-x-2 text-white/90 mb-2">
+                <Clock className="w-5 h-5" />
+                <span className="text-lg font-semibold">
+                  {currentTime.toLocaleTimeString('tr-TR')}
+                </span>
+              </div>
+              <p className="text-white/70">
+                {currentTime.toLocaleDateString('tr-TR', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">Ana Sayfa</h2>
-        <p className="text-gray-600 mt-1">Kartela yönetim sistemi özeti</p>
+        <h2 className="text-2xl font-bold text-gray-900">Sistem Özeti</h2>
+        <p className="text-gray-600 mt-1">Güncel istatistikler ve son hareketler</p>
       </div>
 
       {/* Stats Grid */}

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Edit, Trash2, Package, Tag } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, Tag, Scissors } from 'lucide-react';
 import { Product } from '../../types';
 import { SearchFilter } from '../Common/SearchFilter';
 import { formatDate, formatCurrency, filterAndSort } from '../../utils/helpers';
@@ -44,12 +44,19 @@ export function ProductList({ products, onEdit, onDelete, onAdd }: ProductListPr
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Kartelalar</h2>
-          <p className="text-gray-600 mt-1">Toplam {products.length} kartela</p>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
+              <Scissors className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Kartelalar</h2>
+              <p className="text-gray-600">Toplam {products.length} kartela kayıtlı</p>
+            </div>
+          </div>
         </div>
         <button
           onClick={onAdd}
-          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2.5 rounded-xl hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
         >
           <Plus className="w-4 h-4" />
           <span>Yeni Kartela</span>
@@ -71,14 +78,14 @@ export function ProductList({ products, onEdit, onDelete, onAdd }: ProductListPr
         {filteredProducts.map((product, index) => (
           <div
             key={product.id}
-            className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow"
+            className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-green-300 transform hover:scale-[1.02]"
           >
             <div className="flex justify-between items-start mb-4">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                <span className="text-sm font-semibold text-green-600">{product.displayIndex}</span>
+              <div className="w-10 h-10 bg-gradient-to-r from-green-100 to-emerald-100 rounded-full flex items-center justify-center mr-3 border border-green-200">
+                <span className="text-sm font-bold text-green-700">{product.displayIndex}</span>
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900 text-lg">{product.name}</h3>
+                <h3 className="font-bold text-gray-900 text-lg">{product.name}</h3>
                 <div className="flex items-center text-gray-600 mt-1">
                   <Tag className="w-4 h-4 mr-1" />
                   <span className="text-sm">{product.code}</span>
@@ -88,7 +95,7 @@ export function ProductList({ products, onEdit, onDelete, onAdd }: ProductListPr
 
             <div className="space-y-2 mb-4">
               {product.category && (
-                <div className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                <div className="inline-block bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-xs px-3 py-1 rounded-full border border-blue-200 font-medium">
                   {product.category}
                 </div>
               )}
@@ -110,14 +117,14 @@ export function ProductList({ products, onEdit, onDelete, onAdd }: ProductListPr
             <div className="flex space-x-2">
               <button
                 onClick={() => onEdit(product)}
-                className="flex-1 flex items-center justify-center space-x-1 bg-blue-100 text-blue-700 px-3 py-2 rounded-lg hover:bg-blue-200 transition-colors"
+                className="flex-1 flex items-center justify-center space-x-1 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 px-3 py-2.5 rounded-lg hover:from-green-200 hover:to-emerald-200 transition-all duration-200 font-medium"
               >
                 <Edit className="w-4 h-4" />
                 <span className="text-sm">Düzenle</span>
               </button>
               <button
                 onClick={() => onDelete(product.id)}
-                className="flex items-center justify-center bg-red-100 text-red-700 px-3 py-2 rounded-lg hover:bg-red-200 transition-colors"
+                className="flex items-center justify-center bg-gradient-to-r from-red-100 to-pink-100 text-red-700 px-3 py-2.5 rounded-lg hover:from-red-200 hover:to-pink-200 transition-all duration-200"
               >
                 <Trash2 className="w-4 h-4" />
               </button>

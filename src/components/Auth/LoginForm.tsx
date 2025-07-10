@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Lock, Eye, EyeOff } from 'lucide-react';
+import { User, Lock, Eye, EyeOff, Scissors } from 'lucide-react';
 
 interface LoginFormProps {
   onLogin: (username: string, password: string) => boolean;
@@ -32,32 +32,43 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-10 left-10 w-20 h-20 border border-white rounded-full"></div>
+        <div className="absolute top-32 right-20 w-16 h-16 border border-white rounded-full"></div>
+        <div className="absolute bottom-20 left-32 w-24 h-24 border border-white rounded-full"></div>
+        <div className="absolute bottom-32 right-10 w-12 h-12 border border-white rounded-full"></div>
+      </div>
+      
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-8 py-6 text-center">
-            <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <User className="w-8 h-8 text-white" />
+          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 px-8 py-8 text-center relative">
+            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
+              <Scissors className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2">Kartela Yönetimi</h1>
-            <p className="text-blue-100 text-sm">Sisteme giriş yapın</p>
+            <h1 className="text-3xl font-bold text-white mb-2">ORMEN TEKSTİL</h1>
+            <p className="text-white/80 text-sm font-medium">Kartela Yönetim Sistemi V1</p>
+            <div className="absolute top-4 right-4 text-white/60 text-xs">
+              © 2025
+            </div>
           </div>
 
           {/* Form */}
-          <div className="p-8">
+          <div className="p-8 bg-white/50 backdrop-blur-sm">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-800 mb-3">
                   Kullanıcı Adı
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-indigo-500" />
                   <input
                     type="text"
                     value={formData.username}
                     onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-white/80 backdrop-blur-sm text-gray-800 font-medium"
                     placeholder="Kullanıcı adınızı giriniz"
                     required
                   />
@@ -65,23 +76,23 @@ export function LoginForm({ onLogin }: LoginFormProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-gray-800 mb-3">
                   Şifre
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-indigo-500" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={formData.password}
                     onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                    className="w-full pl-12 pr-14 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200 bg-white/80 backdrop-blur-sm text-gray-800 font-medium"
                     placeholder="Şifrenizi giriniz"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-indigo-400 hover:text-indigo-600 transition-colors p-1"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -89,30 +100,34 @@ export function LoginForm({ onLogin }: LoginFormProps) {
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                  <p className="text-red-600 text-sm text-center">{error}</p>
+                <div className="bg-red-50/80 backdrop-blur-sm border-2 border-red-200 rounded-xl p-4">
+                  <p className="text-red-700 text-sm text-center font-medium">{error}</p>
                 </div>
               )}
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-4 px-6 rounded-xl hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
               >
                 {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  'Giriş Yap'
+                  <>
+                    <Scissors className="w-5 h-5 mr-2" />
+                    Sisteme Giriş Yap
+                  </>
                 )}
               </button>
             </form>
 
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <div className="text-center text-xs text-gray-500">
-                <p>Demo Bilgileri:</p>
-                <p className="mt-1 font-mono bg-gray-50 px-2 py-1 rounded">
-                  Kullanıcı: ORMEN | Şifre: ORMEN666-F1
-                </p>
+            <div className="mt-8 pt-6 border-t border-gray-200/50">
+              <div className="text-center">
+                <div className="flex items-center justify-center space-x-2 text-gray-600 mb-2">
+                  <Scissors className="w-4 h-4" />
+                  <span className="text-sm font-semibold">ORMEN TEKSTİL</span>
+                </div>
+                <p className="text-xs text-gray-500">© 2025 Tüm hakları saklıdır</p>
               </div>
             </div>
           </div>

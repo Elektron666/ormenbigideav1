@@ -12,7 +12,8 @@ import {
   Upload,
   Home,
   X,
-  Heart
+  Heart,
+  Scissors
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -54,8 +55,15 @@ export function Sidebar({ isOpen, onClose, activeTab, onTabChange }: SidebarProp
       `}>
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div>
-            <h2 className="text-lg font-bold text-blue-900">ORMEN TEKSTİL</h2>
-            <p className="text-xs text-blue-600">Kartela Sistemi V1</p>
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
+                <Scissors className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">ORMEN TEKSTİL</h2>
+                <p className="text-xs text-gray-600">Kartela Sistemi V1</p>
+              </div>
+            </div>
           </div>
           <button
             onClick={onClose}

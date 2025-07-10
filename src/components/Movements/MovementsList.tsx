@@ -188,11 +188,12 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
+                      <div className="flex items-center space-x-2">
                         {onEdit && (
                           <button
                             onClick={() => onEdit(movement)}
-                            className="text-blue-600 hover:text-blue-900 transition-colors"
+                            className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="Düzenle"
                           >
                             <Edit className="w-4 h-4" />
                           </button>
@@ -200,7 +201,8 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                         {onDelete && (
                           <button
                             onClick={() => onDelete(movement.id)}
-                            className="text-red-600 hover:text-red-900 transition-colors"
+                            className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Sil"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -228,7 +230,7 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                     {onEdit && (
                       <button
                         onClick={() => onEdit(movement)}
-                        className="text-blue-600 hover:text-blue-900 transition-colors"
+                        className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -236,7 +238,7 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                     {onDelete && (
                       <button
                         onClick={() => onDelete(movement.id)}
-                        className="text-red-600 hover:text-red-900 transition-colors"
+                        className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
