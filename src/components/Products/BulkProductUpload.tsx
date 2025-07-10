@@ -72,17 +72,14 @@ export function BulkProductUpload({ onUpload, onClose, existingProducts }: BulkP
   const handleUpload = () => {
     const validProducts = previewData.filter(item => item.valid);
     if (validProducts.length > 0) {
-      try {
-        const productsToUpload = validProducts.map(item => ({
-          name: item.name.trim(),
-          code: item.code.trim(),
-          category: item.category?.trim()
-        }));
-        console.log('Uploading products:', productsToUpload); // Debug log
-        onUpload(productsToUpload);
-      } catch (error) {
-        console.error('Error in handleUpload:', error);
-      }
+      // Her ürünü ayrı ayrı ekle
+      validProducts.forEach(product => {
+        onUpload([{
+          name: product.name.trim(),
+          code: product.code.trim(),
+          category: product.category?.trim()
+        }]);
+      });
     }
   };
 

@@ -83,7 +83,10 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
-    selectedProducts.forEach(productId => {
+    // Her ürün için ayrı hareket kaydı oluştur
+    const productIds = Array.from(selectedProducts);
+    
+    productIds.forEach(productId => {
       onSave({
         customerId: selectedCustomer.id,
         productId,
@@ -92,6 +95,10 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         notes: notes || undefined,
       });
     });
+    
+    // Form temizle
+    setSelectedProducts(new Set());
+    setNotes('');
   };
 
   const getSelectedProductsList = () => {

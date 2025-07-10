@@ -86,37 +86,21 @@ function App() {
   };
 
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
-    console.log('Bulk upload data:', customersData); // Debug log
-    try {
-      customersData.forEach((customerData, index) => {
-        console.log(`Adding customer ${index + 1}:`, customerData); // Debug log
-        if (customerData.name && customerData.name.trim()) {
-          addCustomer({ name: customerData.name.trim() });
-        }
-      });
-      console.log('All customers added successfully'); // Debug log
-    } catch (error) {
-      console.error('Error adding customers:', error);
+    // Tek müşteri ekleme - her çağrıda bir müşteri
+    if (customersData.length > 0 && customersData[0].name && customersData[0].name.trim()) {
+      addCustomer({ name: customersData[0].name.trim() });
     }
     setModalState({ isOpen: false, type: null });
   };
 
   const handleBulkProductUpload = (productsData: Array<{ name: string; code: string; category?: string }>) => {
-    console.log('Bulk product upload data:', productsData); // Debug log
-    try {
-      productsData.forEach((productData, index) => {
-        console.log(`Adding product ${index + 1}:`, productData); // Debug log
-        if (productData.name && productData.name.trim() && productData.code && productData.code.trim()) {
-          addProduct({
-            name: productData.name.trim(),
-            code: productData.code.trim(),
-            category: productData.category?.trim()
-          });
-        }
+    // Tek ürün ekleme - her çağrıda bir ürün
+    if (productsData.length > 0 && productsData[0].name && productsData[0].name.trim() && productsData[0].code && productsData[0].code.trim()) {
+      addProduct({
+        name: productsData[0].name.trim(),
+        code: productsData[0].code.trim(),
+        category: productsData[0].category?.trim()
       });
-      console.log('All products added successfully'); // Debug log
-    } catch (error) {
-      console.error('Error adding products:', error);
     }
     setModalState({ isOpen: false, type: null });
   };

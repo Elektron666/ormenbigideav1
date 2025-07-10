@@ -77,11 +77,11 @@ export function filterAndSort<T>(
   let filtered = items;
 
   if (searchTerm) {
-    const term = searchTerm.toLowerCase();
+    const term = searchTerm.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     filtered = items.filter(item =>
       searchFields.some(field => {
         const value = item[field];
-        return value && String(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(term.normalize('NFD').replace(/[\u0300-\u036f]/g, ''));
+        return value && String(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(term);
       })
     );
   }
@@ -100,14 +100,18 @@ export function filterAndSort<T>(
       comparison = aVal.localeCompare(bVal, 'tr-TR', { 
         sensitivity: 'base',
         numeric: true,
-        caseFirst: 'lower'
+        caseFirst: 'lower',
+        ignorePunctuation: true
       });
     } else if (aVal instanceof Date && bVal instanceof Date) {
       comparison = aVal.getTime() - bVal.getTime();
     } else if (typeof aVal === 'number' && typeof bVal === 'number') {
       comparison = aVal - bVal;
     } else {
-      comparison = String(aVal).localeCompare(String(bVal), 'tr-TR', { sensitivity: 'base' });
+      comparison = String(aVal).localeCompare(String(bVal), 'tr-TR', { 
+        sensitivity: 'base',
+        ignorePunctuation: true 
+      });
     }
     
     return sortOrder === 'asc' ? comparison : -comparison;
