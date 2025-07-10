@@ -83,6 +83,24 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
+    // HER ÜRÜN İÇİN AYRI HAREKET OLUŞTUR - GERÇEK ÇÖZÜM
+    Array.from(selectedProducts).forEach(productId => {
+      const movementData = {
+        customerId: selectedCustomer.id,
+        productId,
+        type: movementType,
+        quantity: 1,
+        notes: notes || undefined,
+      };
+      
+      // TEK TEK KAYDET - GERÇEK ÇÖZÜM
+      onSave(movementData);
+    });
+  };
+
+  const handleSubmitOld = () => {
+    if (!selectedCustomer || selectedProducts.size === 0) return;
+
     const movements = Array.from(selectedProducts).map(productId => ({
       customerId: selectedCustomer.id,
       productId,
@@ -91,8 +109,8 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
       notes: notes || undefined,
     }));
 
-    // ARRAY GÖNDER - GERÇEK ÇÖZÜM
-    onSave(movements);
+    // Bu eski yöntem - artık kullanılmıyor
+    console.log('Eski array yöntemi:', movements);
   };
 
   const getSelectedProductsList = () => {

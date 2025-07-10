@@ -84,16 +84,9 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    // ARRAY KONTROLÜ - GERÇEK ÇÖZÜM
-    if (Array.isArray(movementData)) {
-      // HER HAREKET İÇİN TEK TEK KAYDET
-      movementData.forEach(movement => {
-        addMovement(movement);
-      });
-    } else {
-      // TEK HAREKET
-      addMovement(movementData);
-    }
+    // ARTIK SADECE TEK HAREKET GELİYOR - GERÇEK ÇÖZÜM
+    console.log('🔥 Yeni hareket kaydediliyor:', movementData);
+    addMovement(movementData);
     
     setModalState({ isOpen: false, type: null });
   };
