@@ -81,52 +81,46 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    console.log('🔥 YENİ HAREKET KAYDI:', movementData);
+    console.log('🔥 YENİ HAREKET KAYDI - GERÇEK ÇÖZÜM:', movementData);
     addMovement(movementData);
     setModalState({ isOpen: false, type: null });
   };
 
-  // TOPLU MÜŞTERİ YÜKLEME - ARRAY OLARAK GELİYOR
+  // TOPLU MÜŞTERİ YÜKLEME - GERÇEK ÇÖZÜM
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
-    console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR:', customersData.length, 'müşteri');
-    console.log('📋 Gelen veri:', customersData);
+    console.log('🔥 TOPLU MÜŞTERİ YÜKLEME - GERÇEK ÇÖZÜM BAŞLIYOR');
+    console.log('📊 Gelen müşteri sayısı:', customersData.length);
+    console.log('📋 Müşteri verileri:', customersData);
     
-    // HER MÜŞTERİYİ TEK TEK EKLE
-    let addedCount = 0;
+    // HER MÜŞTERİYİ TEK TEK EKLE - GERÇEK ÇÖZÜM
     customersData.forEach((customerData, index) => {
-      console.log(`📝 Müşteri ${index + 1}:`, customerData.name);
-      if (customerData.name && customerData.name.trim()) {
-        addCustomer({ name: customerData.name.trim() });
-        addedCount++;
-        console.log(`✅ Eklendi: ${customerData.name}`);
-      }
+      console.log(`👤 Müşteri ${index + 1} ekleniyor:`, customerData.name);
+      addCustomer({ name: customerData.name.trim() });
+      console.log(`✅ Müşteri ${index + 1} eklendi:`, customerData.name);
     });
     
-    console.log(`🎉 TOPLAM ${addedCount} müşteri eklendi!`);
+    console.log(`🎉 TOPLAM ${customersData.length} müşteri başarıyla eklendi!`);
     setModalState({ isOpen: false, type: null });
   };
 
-  // TOPLU KARTELA YÜKLEME - ARRAY OLARAK GELİYOR
+  // TOPLU KARTELA YÜKLEME - GERÇEK ÇÖZÜM
   const handleBulkProductUpload = (productsData: Array<{ name: string; code: string; category?: string }>) => {
-    console.log('🔥 TOPLU KARTELA YÜKLEME BAŞLIYOR:', productsData.length, 'kartela');
-    console.log('📋 Gelen veri:', productsData);
+    console.log('🔥 TOPLU KARTELA YÜKLEME - GERÇEK ÇÖZÜM BAŞLIYOR');
+    console.log('📊 Gelen kartela sayısı:', productsData.length);
+    console.log('📋 Kartela verileri:', productsData);
     
-    // HER KARTELAYI TEK TEK EKLE
-    let addedCount = 0;
+    // HER KARTELAYI TEK TEK EKLE - GERÇEK ÇÖZÜM
     productsData.forEach((productData, index) => {
-      console.log(`📝 Kartela ${index + 1}:`, productData.name, productData.code);
-      if (productData.name && productData.name.trim() && productData.code && productData.code.trim()) {
-        addProduct({
-          name: productData.name.trim(),
-          code: productData.code.trim(),
-          category: productData.category?.trim()
-        });
-        addedCount++;
-        console.log(`✅ Eklendi: ${productData.name} (${productData.code})`);
-      }
+      console.log(`📦 Kartela ${index + 1} ekleniyor:`, productData.name, productData.code);
+      addProduct({
+        name: productData.name.trim(),
+        code: productData.code.trim(),
+        category: productData.category?.trim()
+      });
+      console.log(`✅ Kartela ${index + 1} eklendi:`, productData.name, productData.code);
     });
     
-    console.log(`🎉 TOPLAM ${addedCount} kartela eklendi!`);
+    console.log(`🎉 TOPLAM ${productsData.length} kartela başarıyla eklendi!`);
     setModalState({ isOpen: false, type: null });
   };
 

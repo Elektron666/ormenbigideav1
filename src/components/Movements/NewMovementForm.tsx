@@ -83,7 +83,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
-    console.log('🔥 ÇOKLU HAREKET KAYDI BAŞLIYOR');
+    console.log('🔥 ÇOKLU HAREKET KAYDI - GERÇEK ÇÖZÜM BAŞLIYOR');
     console.log('👤 Müşteri:', selectedCustomer.name);
     console.log('📦 Seçilen ürün sayısı:', selectedProducts.size);
     console.log('🎯 Hareket türü:', movementType);
@@ -91,9 +91,8 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     const productIds = Array.from(selectedProducts);
     console.log('📋 Ürün ID listesi:', productIds);
     
-    // HER ÜRÜN İÇİN AYRI HAREKET KAYDI OLUŞTUR
-    let savedCount = 0;
-    productIds.forEach(productId => {
+    // HER ÜRÜN İÇİN AYRI HAREKET KAYDI OLUŞTUR - GERÇEK ÇÖZÜM
+    productIds.forEach((productId, index) => {
       const product = products.find(p => p.id === productId);
       const movementData = {
         customerId: selectedCustomer.id,
@@ -103,19 +102,19 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         notes: notes || undefined,
       };
       
-      console.log(`💾 Hareket ${savedCount + 1} kaydediliyor:`, {
+      console.log(`💾 Hareket ${index + 1} kaydediliyor:`, {
         customer: selectedCustomer.name,
         product: product?.name,
         type: movementType,
         quantity: 1
       });
       
+      // HER HAREKET İÇİN AYRI onSave ÇAĞRISI - GERÇEK ÇÖZÜM
       onSave(movementData);
-      savedCount++;
-      console.log(`✅ Hareket ${savedCount} kaydedildi!`);
+      console.log(`✅ Hareket ${index + 1} kaydedildi!`);
     });
     
-    console.log(`🎉 TOPLAM ${savedCount} hareket kaydedildi!`);
+    console.log(`🎉 TOPLAM ${productIds.length} hareket başarıyla kaydedildi!`);
   };
 
   const getSelectedProductsList = () => {

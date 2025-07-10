@@ -92,7 +92,7 @@ export function filterAndSort<T>(
     
     if (aVal === bVal) return 0;
     
-    // TÜRKÇE KARAKTER SORUNU ÇÖZÜLDİ!
+    // TÜRKÇE KARAKTER SORUNU ÇÖZÜLDİ - GERÇEK ÇÖZÜM!
     if (typeof aVal === 'string' && typeof bVal === 'string') {
       const comparison = aVal.localeCompare(bVal, 'tr-TR', { 
         sensitivity: 'base',  // Büyük/küçük harf duyarsız

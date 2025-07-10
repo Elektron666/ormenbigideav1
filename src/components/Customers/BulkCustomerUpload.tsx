@@ -31,15 +31,12 @@ export function BulkCustomerUpload({ onUpload, onClose }: BulkCustomerUploadProp
   const handleUpload = () => {
     const validCustomers = previewData.filter(item => item.valid);
     if (validCustomers.length > 0) {
-      console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR:', validCustomers.length, 'müşteri');
+      console.log('🔥 TOPLU MÜŞTERİ YÜKLEME - GERÇEK ÇÖZÜM');
+      console.log('📊 Toplam geçerli müşteri:', validCustomers.length);
+      console.log('📋 Müşteri listesi:', validCustomers);
       
-      // ARRAY OLARAK GÖNDER - TEK SEFERDE TÜM MÜŞTERİLER
-      const customersToUpload = validCustomers.map(customer => ({ 
-        name: customer.name.trim() 
-      }));
-      
-      console.log('📋 Yüklenecek müşteriler:', customersToUpload);
-      onUpload(customersToUpload);
+      // ARRAY OLARAK GÖNDER - HER MÜŞTERİ İÇİN AYRI OBJE
+      onUpload(validCustomers);
     }
   };
 

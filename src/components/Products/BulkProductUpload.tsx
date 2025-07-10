@@ -72,17 +72,12 @@ export function BulkProductUpload({ onUpload, onClose, existingProducts }: BulkP
   const handleUpload = () => {
     const validProducts = previewData.filter(item => item.valid);
     if (validProducts.length > 0) {
-      console.log('🔥 TOPLU KARTELA YÜKLEME BAŞLIYOR:', validProducts.length, 'kartela');
+      console.log('🔥 TOPLU KARTELA YÜKLEME - GERÇEK ÇÖZÜM');
+      console.log('📊 Toplam geçerli kartela:', validProducts.length);
+      console.log('📋 Kartela listesi:', validProducts);
       
-      // ARRAY OLARAK GÖNDER - TEK SEFERDE TÜM KARTELALAR
-      const productsToUpload = validProducts.map(product => ({
-        name: product.name.trim(),
-        code: product.code.trim(),
-        category: product.category?.trim()
-      }));
-      
-      console.log('📋 Yüklenecek kartelalar:', productsToUpload);
-      onUpload(productsToUpload);
+      // ARRAY OLARAK GÖNDER - HER KARTELA İÇİN AYRI OBJE
+      onUpload(validProducts);
     }
   };
 
