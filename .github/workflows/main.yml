@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build and Deploy
 
 on:
   push:
@@ -7,6 +7,11 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build-web:
     runs-on: ubuntu-latest
@@ -14,7 +19,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+      with:
+        fetch-depth: 0
+        
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -32,13 +39,22 @@ jobs:
       with:
         name: web-build
         path: dist/
+        retention-days: 1
+        
+    - name: Setup Pages
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: actions/configure-pages@v4
+      
+    - name: Upload to GitHub Pages
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./dist
         
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+      id: deployment
+      uses: actions/deploy-pages@v4
 
   build-android:
     needs: build-web
@@ -47,7 +63,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+      with:
+        fetch-depth: 0
+        
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -72,25 +90,31 @@ jobs:
         name: web-build
         path: dist/
         
+    - name: Build for Android
+      run: npm run build:android
+        
     - name: Sync Capacitor
       run: |
         npx cap sync android
         
+    - name: Make gradlew executable
+      run: chmod +x android/gradlew
+        
     - name: Build Android APK
       run: |
         cd android
-        chmod +x ./gradlew
-        ./gradlew assembleDebug
+        ./gradlew assembleDebug --no-daemon --stacktrace
         
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: ormen-tekstil-kartela-debug.apk
         path: android/app/build/outputs/apk/debug/app-debug.apk
+        retention-days: 30
         
     - name: Create Release
       if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-      uses: softprops/action-gh-releases@v1
+      uses: softprops/action-gh-release@v1
       with:
         tag_name: v1.0.${{ github.run_number }}
         name: ORMEN TEKSTİL Kartela v1.0.${{ github.run_number }}
@@ -103,6 +127,8 @@ jobs:
           - Toplu müşteri/kartela yükleme
           - Motivasyon merkezi
           - Detaylı raporlama
+          - Stok yönetimi
+          - Notlar sistemi
           
           📱 **Android APK İndir:**
           Aşağıdaki APK dosyasını indirip Android cihazınıza kurun.
@@ -112,6 +138,11 @@ jobs:
           🔐 **Giriş Bilgileri:**
           - Kullanıcı: `ORMEN`
           - Şifre: `ORMEN666-F1`
+          
+          📊 **Build Bilgileri:**
+          - Commit: ${{ github.sha }}
+          - Build: #${{ github.run_number }}
+          - Tarih: ${{ github.event.head_commit.timestamp }}
         files: android/app/build/outputs/apk/debug/app-debug.apk
         draft: false
         prerelease: false
