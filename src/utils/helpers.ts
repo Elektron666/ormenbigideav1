@@ -92,11 +92,12 @@ export function filterAndSort<T>(
     
     if (aVal === bVal) return 0;
     
-    // Türkçe karakterleri doğru sırala
+    // TÜRKÇE KARAKTER SORUNU ÇÖZÜLDİ!
     if (typeof aVal === 'string' && typeof bVal === 'string') {
       const comparison = aVal.localeCompare(bVal, 'tr-TR', { 
-        sensitivity: 'accent',
-        numeric: true
+        sensitivity: 'base',  // Büyük/küçük harf duyarsız
+        numeric: true,        // Sayısal sıralama
+        ignorePunctuation: true
       });
       return sortOrder === 'asc' ? comparison : -comparison;
     } else if (aVal instanceof Date && bVal instanceof Date) {
@@ -106,7 +107,8 @@ export function filterAndSort<T>(
       const comparison = aVal - bVal;
       return sortOrder === 'asc' ? comparison : -comparison;
     } else {
-      const comparison = String(aVal).localeCompare(String(bVal), 'tr-TR');
+      // Diğer türler için string'e çevir ve Türkçe sırala
+      const comparison = String(aVal).localeCompare(String(bVal), 'tr-TR', { sensitivity: 'base' });
       return sortOrder === 'asc' ? comparison : -comparison;
     }
   });

@@ -81,12 +81,15 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
+    console.log('🔥 YENİ HAREKET KAYDI:', movementData);
     addMovement(movementData);
     setModalState({ isOpen: false, type: null });
   };
 
+  // TOPLU MÜŞTERİ YÜKLEME - ARRAY OLARAK GELİYOR
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
-    console.log('🔥 TOPLU MÜŞTERİ YÜKLEME:', customersData.length, 'müşteri');
+    console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR:', customersData.length, 'müşteri');
+    console.log('📋 Gelen veri:', customersData);
     
     // HER MÜŞTERİYİ TEK TEK EKLE
     let addedCount = 0;
@@ -103,8 +106,10 @@ function App() {
     setModalState({ isOpen: false, type: null });
   };
 
+  // TOPLU KARTELA YÜKLEME - ARRAY OLARAK GELİYOR
   const handleBulkProductUpload = (productsData: Array<{ name: string; code: string; category?: string }>) => {
-    console.log('🔥 TOPLU KARTELA YÜKLEME:', productsData.length, 'kartela');
+    console.log('🔥 TOPLU KARTELA YÜKLEME BAŞLIYOR:', productsData.length, 'kartela');
+    console.log('📋 Gelen veri:', productsData);
     
     // HER KARTELAYI TEK TEK EKLE
     let addedCount = 0;

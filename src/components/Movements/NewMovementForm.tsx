@@ -35,11 +35,11 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   }, [products, productSearch]);
 
   const sortedCustomers = useMemo(() => {
-    return filteredCustomers.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+    return filteredCustomers.sort((a, b) => a.name.localeCompare(b.name, 'tr-TR', { sensitivity: 'base' }));
   }, [filteredCustomers]);
 
   const sortedProducts = useMemo(() => {
-    return filteredProducts.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+    return filteredProducts.sort((a, b) => a.name.localeCompare(b.name, 'tr-TR', { sensitivity: 'base' }));
   }, [filteredProducts]);
 
   const handleCustomerSelect = (customer: Customer) => {
@@ -116,9 +116,6 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     });
     
     console.log(`🎉 TOPLAM ${savedCount} hareket kaydedildi!`);
-    
-    // Form kapat
-    onCancel();
   };
 
   const getSelectedProductsList = () => {
