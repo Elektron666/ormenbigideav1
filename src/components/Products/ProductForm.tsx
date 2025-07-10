@@ -35,7 +35,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
       }
     });
     
-    // Bir sonraki numarayı oluştur
+    // Bir sonraki numarayı oluştur (sıralı devam)
     const nextNumber = maxCodeNumber + 1;
     return `ORM-${nextNumber.toString().padStart(4, '0')}`;
   };

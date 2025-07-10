@@ -26,8 +26,8 @@ export function BulkProductUpload({ onUpload, onClose, existingProducts }: BulkP
       }
     });
     
-    // Index'i ekleyerek sıralı kodlar oluştur (1'den başlayarak)
-    const finalNumber = maxCodeNumber + index + 1;
+    // Index'i ekleyerek sıralı kodlar oluştur (0'dan başlayarak)
+    const finalNumber = maxCodeNumber + 1 + index;
     return `ORM-${finalNumber.toString().padStart(4, '0')}`;
   };
 
