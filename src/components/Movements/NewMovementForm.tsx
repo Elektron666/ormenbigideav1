@@ -83,8 +83,13 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
+    console.log('🔥 GERÇEK ÇÖZÜM: Her ürün için ayrı hareket kaydediliyor');
+    console.log('📊 Seçilen ürün sayısı:', selectedProducts.size);
+    console.log('👤 Müşteri:', selectedCustomer.name);
+    console.log('🏷️ Hareket türü:', movementType);
+
     // GERÇEK ÇÖZÜM: Her ürün için ayrı hareket objesi oluştur ve TEK TEK KAYDET
-    Array.from(selectedProducts).forEach(productId => {
+    Array.from(selectedProducts).forEach((productId, index) => {
       const movementData = {
         customerId: selectedCustomer.id,
         productId,
@@ -94,26 +99,11 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         createdBy: 'system',
       };
       
-      console.log('🚀 Tek hareket kaydediliyor:', movementData);
+      console.log(`🚀 Hareket ${index + 1}/${selectedProducts.size} kaydediliyor:`, movementData);
       onSave(movementData);
     });
-  };
 
-  const handleSubmitOld = () => {
-    if (!selectedCustomer || selectedProducts.size === 0) return;
-
-    // ESKİ YÖNTEM - ARRAY GÖNDERME (ÇALIŞMIYOR)
-    const movements = Array.from(selectedProducts).map(productId => ({
-      customerId: selectedCustomer.id,
-      productId,
-      type: movementType,
-      quantity: 1,
-      notes: notes || undefined,
-      createdBy: 'system',
-    }));
-    
-    // Bu çalışmıyor çünkü onSave tek hareket bekliyor
-    onSave(movements);
+    console.log('✅ Tüm hareketler başarıyla kaydedildi!');
   };
 
   const getSelectedProductsList = () => {

@@ -136,6 +136,8 @@ export function useAppState() {
   }, [movements, products]);
 
   const bulkImportCustomers = useCallback((customersData: Array<{ name: string }>) => {
+    console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR - Sayı:', customersData.length);
+    
     setIsLoading(true);
     try {
       const newCustomers: Customer[] = customersData.map(data => ({
@@ -149,6 +151,7 @@ export function useAppState() {
         createdAt: new Date(),
         updatedAt: new Date(),
       }));
+      
       setCustomers(prev => [...prev, ...newCustomers]);
       console.log(`✅ ${newCustomers.length} müşteri başarıyla eklendi!`);
     } catch (error) {
@@ -160,6 +163,8 @@ export function useAppState() {
   }, [setCustomers]);
 
   const bulkImportProducts = useCallback((productsData: Array<{ name: string; code: string; category?: string }>) => {
+    console.log('🔥 TOPLU KARTELA YÜKLEME BAŞLIYOR - Sayı:', productsData.length);
+    
     setIsLoading(true);
     try {
       const newProducts: Product[] = productsData.map(data => ({
@@ -173,6 +178,7 @@ export function useAppState() {
         createdAt: new Date(),
         updatedAt: new Date(),
       }));
+      
       setProducts(prev => [...prev, ...newProducts]);
       console.log(`✅ ${newProducts.length} ürün başarıyla eklendi!`);
     } catch (error) {

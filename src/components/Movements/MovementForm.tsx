@@ -8,6 +8,7 @@ interface MovementFormProps {
   onCancel: () => void;
   preselectedCustomer?: string;
   preselectedProduct?: string;
+  movement?: Movement;
 }
 
 export function MovementForm({ 
@@ -16,14 +17,15 @@ export function MovementForm({
   onSave, 
   onCancel, 
   preselectedCustomer,
-  preselectedProduct 
+  preselectedProduct,
+  movement
 }: MovementFormProps) {
   const [formData, setFormData] = useState({
-    customerId: preselectedCustomer || '',
-    productId: preselectedProduct || '',
-    type: 'given' as Movement['type'],
-    quantity: '1',
-    notes: '',
+    customerId: preselectedCustomer || movement?.customerId || '',
+    productId: preselectedProduct || movement?.productId || '',
+    type: movement?.type || 'given' as Movement['type'],
+    quantity: movement?.quantity?.toString() || '1',
+    notes: movement?.notes || '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -180,7 +182,7 @@ export function MovementForm({
           type="submit"
           className="flex-1 bg-blue-600 text-white py-2.5 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium"
         >
-          Kaydet
+          {movement ? 'Güncelle' : 'Kaydet'}
         </button>
         <button
           type="button"

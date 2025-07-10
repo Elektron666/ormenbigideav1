@@ -80,7 +80,17 @@ function App() {
   };
 
   const handleMovementSave = (movementData: any) => {
-    addMovement(movementData);
+    if (modalState.data) {
+      // Güncelleme işlemi
+      setMovements(prev => prev.map(m => 
+        m.id === modalState.data.id 
+          ? { ...m, ...movementData, updatedAt: new Date() }
+          : m
+      ));
+    } else {
+      // Yeni hareket ekleme
+      addMovement(movementData);
+    }
     setModalState({ isOpen: false, type: null });
   };
 
@@ -241,7 +251,7 @@ function App() {
       case 'product':
         return modalState.data ? 'Kartela Düzenle' : 'Yeni Kartela';
       case 'movement':
-        return 'Tekli Hareket';
+        return modalState.data ? 'Hareket Düzenle' : 'Tekli Hareket';
       case 'new-movement':
         return 'Yeni Hareket';
       case 'bulk-customer':
@@ -301,6 +311,7 @@ function App() {
           <MovementForm
             customers={customers}
             products={products}
+            movement={modalState.data}
             onSave={handleMovementSave}
             onCancel={() => setModalState({ isOpen: false, type: null })}
           />
