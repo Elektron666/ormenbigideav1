@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Edit, Trash2, Eye, Phone, Mail, Building } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Phone, Mail, Building, Users } from 'lucide-react';
 import { Customer } from '../../types';
 import { SearchFilter } from '../Common/SearchFilter';
 import { formatDate, filterAndSort } from '../../utils/helpers';
