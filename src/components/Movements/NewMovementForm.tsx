@@ -83,7 +83,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
-    console.log('🔥 ÇOKLU HAREKET HAZIRLANYOR - FİNAL ÇÖZÜM');
+    console.log('🔥 ÇOKLU HAREKET HAZIRLANYOR - GERÇEK ÇÖZÜM');
     console.log('👤 Seçilen müşteri:', selectedCustomer.name, selectedCustomer.id);
     console.log('📦 Seçilen ürün sayısı:', selectedProducts.size);
     console.log('🎯 Hareket türü:', movementType);
@@ -91,7 +91,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     const productIds = Array.from(selectedProducts);
     console.log('📋 Seçilen ürün ID\'leri:', productIds.slice(0, 3), '...');
     
-    // TÜM HAREKETLERİ HAZIRLA - FİNAL ÇÖZÜM
+    // TÜM HAREKETLERİ HAZIRLA - GERÇEK ÇÖZÜM
     const allMovements = productIds.map((productId, index) => {
       const movement = {
         customerId: selectedCustomer.id,
@@ -107,11 +107,11 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
       return movement;
     });
     
-    console.log('📤 FİNAL: ARRAY OLARAK GÖNDERİLİYOR');
+    console.log('📤 GERÇEK ÇÖZÜM: ARRAY OLARAK GÖNDERİLİYOR');
     console.log('📊 Toplam hareket sayısı:', allMovements.length);
     console.log('📋 İlk 2 hareket örneği:', allMovements.slice(0, 2));
     
-    // ARRAY OLARAK GÖNDER - FİNAL ÇÖZÜM
+    // ARRAY OLARAK GÖNDER - GERÇEK ÇÖZÜM
     onSave(allMovements);
   };
 

@@ -83,14 +83,15 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    console.log('🔥 YENİ HAREKET KAYDI - FİNAL ÇÖZÜM:', movementData);
+    console.log('🔥 YENİ HAREKET KAYDI - GERÇEK ÇÖZÜM:', movementData);
     
-    // FİNAL ÇÖZÜM: Array kontrolü ve sıralı kaydetme
+    // GERÇEK ÇÖZÜM: Array kontrolü ve SENKRON kaydetme
     if (Array.isArray(movementData)) {
       console.log('📊 ARRAY ALINDI - Çoklu hareket kaydı:', movementData.length);
       
-      // SENKRON OLARAK HER HAREKETİ TEK TEK KAYDET
-      movementData.forEach((movement, i) => {
+      // SENKRON FOR LOOP - GERÇEK ÇÖZÜM
+      for (let i = 0; i < movementData.length; i++) {
+        const movement = movementData[i];
         console.log(`💾 Hareket ${i + 1}/${movementData.length} kaydediliyor:`, {
           customerId: movement.customerId,
           productId: movement.productId,
@@ -100,9 +101,9 @@ function App() {
         
         const result = addMovement(movement);
         console.log(`✅ Hareket ${i + 1} BAŞARIYLA KAYDEDİLDİ - ID:`, result?.id);
-      });
+      }
       
-      console.log(`🎉 FİNAL: TOPLAM ${movementData.length} HAREKET BAŞARIYLA KAYDEDİLDİ!`);
+      console.log(`🎉 GERÇEK ÇÖZÜM: TOPLAM ${movementData.length} HAREKET BAŞARIYLA KAYDEDİLDİ!`);
       
       // localStorage'ı kontrol et
       setTimeout(() => {
