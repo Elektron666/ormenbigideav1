@@ -190,7 +190,19 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => alert(`Hareket Detayları:\nMüşteri: ${movement.customerName}\nKartela: ${movement.productName}\nTür: ${getMovementTypeText(movement.type)}\nMiktar: ${movement.quantity}\nTarih: ${formatDate(movement.createdAt)}`)}
+                          onClick={() => {
+                            const details = `
+HAREKET DETAYLARI
+================
+Müşteri: ${movement.customerName}
+Kartela: ${movement.productName} (${movement.productCode})
+Hareket Türü: ${getMovementTypeText(movement.type)}
+Miktar: ${movement.quantity} adet
+Tarih: ${formatDate(movement.createdAt)}
+${movement.notes ? `\nNotlar: ${movement.notes}` : ''}
+                            `.trim();
+                            alert(details);
+                          }}
                           className="p-1.5 text-green-600 hover:text-green-900 hover:bg-green-50 rounded-lg transition-colors shadow-sm"
                           title="Görüntüle"
                         >
@@ -231,7 +243,19 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                   </div>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => alert(`Hareket Detayları:\nMüşteri: ${movement.customerName}\nKartela: ${movement.productName}\nTür: ${getMovementTypeText(movement.type)}\nMiktar: ${movement.quantity}\nTarih: ${formatDate(movement.createdAt)}`)}
+                      onClick={() => {
+                        const details = `
+HAREKET DETAYLARI
+================
+Müşteri: ${movement.customerName}
+Kartela: ${movement.productName} (${movement.productCode})
+Hareket Türü: ${getMovementTypeText(movement.type)}
+Miktar: ${movement.quantity} adet
+Tarih: ${formatDate(movement.createdAt)}
+${movement.notes ? `\nNotlar: ${movement.notes}` : ''}
+                        `.trim();
+                        alert(details);
+                      }}
                       className="p-1.5 text-green-600 hover:text-green-900 hover:bg-green-50 rounded-lg transition-colors shadow-sm"
                     >
                       <Eye className="w-4 h-4" />

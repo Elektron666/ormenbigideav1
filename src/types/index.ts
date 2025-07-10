@@ -30,7 +30,7 @@ export interface Movement {
   quantity: number;
   notes?: string;
   createdAt: Date;
-  createdBy?: string;
+  createdBy: string;
 }
 
 export interface CustomerProduct {

@@ -87,16 +87,21 @@ export function useAppState() {
 
   // HAREKET İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addMovement = useCallback((movementData: Omit<Movement, 'id' | 'createdAt'>) => {
+    console.log('🔥 addMovement çağrıldı:', movementData);
+    
     const newMovement: Movement = {
       ...movementData,
       id: generateId(),
       createdAt: new Date(),
-      createdBy: currentUser?.id || 'system',
+      createdBy: movementData.createdBy || currentUser?.id || 'system',
     };
+    
+    console.log('✅ Yeni hareket oluşturuldu:', newMovement.id);
     
     // SENKRON GÜNCELLEME
     setMovements(prevMovements => {
       const updatedMovements = [...prevMovements, newMovement];
+      console.log('📊 Güncellenmiş hareket sayısı:', updatedMovements.length);
       return updatedMovements;
     });
     

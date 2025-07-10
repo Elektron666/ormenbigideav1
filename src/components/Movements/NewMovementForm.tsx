@@ -5,7 +5,7 @@ import { Customer, Product, Movement } from '../../types';
 interface NewMovementFormProps {
   customers: Customer[];
   products: Product[];
-  onSave: (movementData: Array<Omit<Movement, 'id' | 'createdAt'>>) => void;
+  onSave: (movementData: Omit<Movement, 'id' | 'createdAt'>) => void;
   onCancel: () => void;
 }
 
@@ -83,7 +83,26 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
-    // GERÇEK ÇÖZÜM: Her ürün için ayrı hareket objesi oluştur ve array olarak gönder
+    // GERÇEK ÇÖZÜM: Her ürün için ayrı hareket objesi oluştur ve TEK TEK KAYDET
+    Array.from(selectedProducts).forEach(productId => {
+      const movementData = {
+        customerId: selectedCustomer.id,
+        productId,
+        type: movementType,
+        quantity: 1,
+        notes: notes || undefined,
+        createdBy: 'system',
+      };
+      
+      console.log('🚀 Tek hareket kaydediliyor:', movementData);
+      onSave(movementData);
+    });
+  };
+
+  const handleSubmitOld = () => {
+    if (!selectedCustomer || selectedProducts.size === 0) return;
+
+    // ESKİ YÖNTEM - ARRAY GÖNDERME (ÇALIŞMIYOR)
     const movements = Array.from(selectedProducts).map(productId => ({
       customerId: selectedCustomer.id,
       productId,
@@ -93,10 +112,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
       createdBy: 'system',
     }));
     
-    console.log('🚀 NewMovementForm - Gönderilen hareketler:', movements);
-    console.log('📊 Toplam hareket sayısı:', movements.length);
-    
-    // Array olarak gönder - App.tsx'te handle edilecek
+    // Bu çalışmıyor çünkü onSave tek hareket bekliyor
     onSave(movements);
   };
 
