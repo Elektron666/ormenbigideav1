@@ -116,21 +116,6 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     onSave(movements);
   };
 
-  const handleSubmitOld = () => {
-    if (!selectedCustomer || selectedProducts.size === 0) return;
-
-    const movements = Array.from(selectedProducts).map(productId => ({
-      customerId: selectedCustomer.id,
-      productId,
-      type: movementType,
-      quantity: 1,
-      notes: notes || undefined,
-    }));
-
-    // Bu eski yöntem - artık kullanılmıyor
-    console.log('Eski array yöntemi:', movements);
-  };
-
   const getSelectedProductsList = () => {
     return Array.from(selectedProducts).map(id => products.find(p => p.id === id)).filter(Boolean) as Product[];
   };
