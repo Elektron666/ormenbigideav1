@@ -87,8 +87,8 @@ export function useAppState() {
 
   // HAREKET İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addMovement = useCallback((movementData: Omit<Movement, 'id' | 'createdAt'>) => {
-    console.log('🔥 addMovement çağrıldı - GERÇEK ÇÖZÜM');
-    console.log('📊 Hareket verisi:', {
+    console.log('🔥 addMovement çağrıldı - FİNAL ÇÖZÜM');
+    console.log('📊 Gelen hareket verisi:', {
       customerId: movementData.customerId,
       productId: movementData.productId,
       type: movementData.type,
@@ -103,7 +103,7 @@ export function useAppState() {
       createdBy: currentUser?.id || 'system',
     };
     
-    console.log('✅ Yeni hareket oluşturuldu:', {
+    console.log('✅ Yeni hareket objesi oluşturuldu:', {
       id: newMovement.id,
       type: newMovement.type,
       customerId: newMovement.customerId,
@@ -111,11 +111,30 @@ export function useAppState() {
       quantity: newMovement.quantity
     });
     
-    // SENKRON GÜNCELLEME - GERÇEK ÇÖZÜM
+    // SENKRON GÜNCELLEME - FİNAL ÇÖZÜM
     setMovements(prevMovements => {
+      console.log('🔄 setMovements çağrıldı - Mevcut hareket sayısı:', prevMovements.length);
       const updatedMovements = [...prevMovements, newMovement];
-      console.log('📊 localStorage\'a kaydedilecek toplam hareket sayısı:', updatedMovements.length);
-      console.log('🔍 Son eklenen hareket localStorage\'da:', updatedMovements[updatedMovements.length - 1]);
+      console.log('📊 Güncellenmiş toplam hareket sayısı:', updatedMovements.length);
+      console.log('🔍 Son eklenen hareket:', updatedMovements[updatedMovements.length - 1]);
+      
+      // DOĞRULAMA: localStorage'a gerçekten yazıldı mı?
+      setTimeout(() => {
+        const verification = localStorage.getItem('kartela_movements');
+        if (verification) {
+          const parsed = JSON.parse(verification);
+          console.log('✅ localStorage DOĞRULAMA - Kayıtlı hareket sayısı:', parsed.length);
+          const lastMovement = parsed[parsed.length - 1];
+          if (lastMovement && lastMovement.id === newMovement.id) {
+            console.log('🎯 BAŞARILI: Son hareket localStorage\'da bulundu!');
+          } else {
+            console.log('❌ HATA: Son hareket localStorage\'da bulunamadı!');
+          }
+        } else {
+          console.log('❌ HATA: localStorage boş!');
+        }
+      }, 50);
+      
       return updatedMovements;
     });
     
