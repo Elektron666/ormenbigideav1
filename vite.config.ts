@@ -36,7 +36,7 @@ export default defineConfig({
   // Development optimizations
   server: {
     host: '0.0.0.0',
-    port: 5174,
+    port: 5175,
     strictPort: true,
     hmr: {
       overlay: true
@@ -46,7 +46,7 @@ export default defineConfig({
   // Preview optimizations
   preview: {
     host: '0.0.0.0',
-    port: 4174,
+    port: 4175,
     strictPort: true
   },
 
