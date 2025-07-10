@@ -77,11 +77,11 @@ export function filterAndSort<T>(
   let filtered = items;
 
   if (searchTerm) {
-    const term = searchTerm.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    const term = searchTerm.toLowerCase();
     filtered = items.filter(item =>
       searchFields.some(field => {
         const value = item[field];
-        return value && String(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').includes(term);
+        return value && String(value).toLowerCase().includes(term);
       })
     );
   }
@@ -92,28 +92,22 @@ export function filterAndSort<T>(
     
     if (aVal === bVal) return 0;
     
-    let comparison = 0;
-    
-    // Handle different data types properly
+    // Türkçe karakterleri doğru sırala
     if (typeof aVal === 'string' && typeof bVal === 'string') {
-      // Use Turkish locale for proper sorting
-      comparison = aVal.localeCompare(bVal, 'tr-TR', { 
-        sensitivity: 'base',
-        numeric: true,
-        caseFirst: 'lower',
-        ignorePunctuation: true
+      const comparison = aVal.localeCompare(bVal, 'tr-TR', { 
+        sensitivity: 'accent',
+        numeric: true
       });
+      return sortOrder === 'asc' ? comparison : -comparison;
     } else if (aVal instanceof Date && bVal instanceof Date) {
-      comparison = aVal.getTime() - bVal.getTime();
+      const comparison = aVal.getTime() - bVal.getTime();
+      return sortOrder === 'asc' ? comparison : -comparison;
     } else if (typeof aVal === 'number' && typeof bVal === 'number') {
-      comparison = aVal - bVal;
+      const comparison = aVal - bVal;
+      return sortOrder === 'asc' ? comparison : -comparison;
     } else {
-      comparison = String(aVal).localeCompare(String(bVal), 'tr-TR', { 
-        sensitivity: 'base',
-        ignorePunctuation: true 
-      });
+      const comparison = String(aVal).localeCompare(String(bVal), 'tr-TR');
+      return sortOrder === 'asc' ? comparison : -comparison;
     }
-    
-    return sortOrder === 'asc' ? comparison : -comparison;
   });
 }

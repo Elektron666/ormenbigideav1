@@ -72,7 +72,7 @@ export function BulkProductUpload({ onUpload, onClose, existingProducts }: BulkP
   const handleUpload = () => {
     const validProducts = previewData.filter(item => item.valid);
     if (validProducts.length > 0) {
-      // TÜM ÜRÜNLERİ TEK SEFERDE GÖNDER
+      console.log('🔥 TOPLU KARTELA YÜKLEME:', validProducts.length, 'kartela');
       onUpload(validProducts.map(product => ({
         name: product.name.trim(),
         code: product.code.trim(),

@@ -83,16 +83,18 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
-    // ÇOKLU HAREKET KAYDI - HER ÜRÜN İÇİN AYRI KAYIT
+    console.log('🔥 ÇOKLU HAREKET KAYDI BAŞLIYOR');
+    console.log('👤 Müşteri:', selectedCustomer.name);
+    console.log('📦 Seçilen ürün sayısı:', selectedProducts.size);
+    console.log('🎯 Hareket türü:', movementType);
+    
     const productIds = Array.from(selectedProducts);
+    console.log('📋 Ürün ID listesi:', productIds);
     
-    console.log('🚀 Hareket kaydediliyor:', {
-      customer: selectedCustomer.name,
-      productCount: productIds.length,
-      type: movementType
-    });
-    
+    // HER ÜRÜN İÇİN AYRI HAREKET KAYDI OLUŞTUR
+    let savedCount = 0;
     productIds.forEach(productId => {
+      const product = products.find(p => p.id === productId);
       const movementData = {
         customerId: selectedCustomer.id,
         productId,
@@ -101,15 +103,22 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         notes: notes || undefined,
       };
       
-      console.log('💾 Kaydedilen hareket:', movementData);
+      console.log(`💾 Hareket ${savedCount + 1} kaydediliyor:`, {
+        customer: selectedCustomer.name,
+        product: product?.name,
+        type: movementType,
+        quantity: 1
+      });
+      
       onSave(movementData);
+      savedCount++;
+      console.log(`✅ Hareket ${savedCount} kaydedildi!`);
     });
     
-    console.log('✅ Tüm hareketler kaydedildi!');
+    console.log(`🎉 TOPLAM ${savedCount} hareket kaydedildi!`);
     
-    // Form temizle ve kapat
-    setSelectedProducts(new Set());
-    setNotes('');
+    // Form kapat
+    onCancel();
   };
 
   const getSelectedProductsList = () => {

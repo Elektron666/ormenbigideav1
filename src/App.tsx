@@ -86,26 +86,42 @@ function App() {
   };
 
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
-    // TÜM MÜŞTERİLERİ TOPLU OLARAK EKLE
-    customersData.forEach(customerData => {
+    console.log('🔥 TOPLU MÜŞTERİ YÜKLEME:', customersData.length, 'müşteri');
+    
+    // HER MÜŞTERİYİ TEK TEK EKLE
+    let addedCount = 0;
+    customersData.forEach((customerData, index) => {
+      console.log(`📝 Müşteri ${index + 1}:`, customerData.name);
       if (customerData.name && customerData.name.trim()) {
         addCustomer({ name: customerData.name.trim() });
+        addedCount++;
+        console.log(`✅ Eklendi: ${customerData.name}`);
       }
     });
+    
+    console.log(`🎉 TOPLAM ${addedCount} müşteri eklendi!`);
     setModalState({ isOpen: false, type: null });
   };
 
   const handleBulkProductUpload = (productsData: Array<{ name: string; code: string; category?: string }>) => {
-    // TÜM ÜRÜNLERİ TOPLU OLARAK EKLE
-    productsData.forEach(productData => {
+    console.log('🔥 TOPLU KARTELA YÜKLEME:', productsData.length, 'kartela');
+    
+    // HER KARTELAYI TEK TEK EKLE
+    let addedCount = 0;
+    productsData.forEach((productData, index) => {
+      console.log(`📝 Kartela ${index + 1}:`, productData.name, productData.code);
       if (productData.name && productData.name.trim() && productData.code && productData.code.trim()) {
         addProduct({
           name: productData.name.trim(),
           code: productData.code.trim(),
           category: productData.category?.trim()
         });
+        addedCount++;
+        console.log(`✅ Eklendi: ${productData.name} (${productData.code})`);
       }
     });
+    
+    console.log(`🎉 TOPLAM ${addedCount} kartela eklendi!`);
     setModalState({ isOpen: false, type: null });
   };
 
