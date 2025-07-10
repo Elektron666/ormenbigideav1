@@ -13,8 +13,6 @@ export function useAppState() {
 
   // KUSURSUZ MÜŞTERİ İŞLEMLERİ
   const addCustomer = useCallback((customerData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>) => {
-    console.log('🔥 addCustomer çağrıldı:', customerData.name);
-    
     const newCustomer: Customer = {
       ...customerData,
       id: generateId(),
@@ -22,11 +20,8 @@ export function useAppState() {
       updatedAt: new Date(),
     };
     
-    console.log('✅ Yeni müşteri oluşturuldu:', newCustomer.name, newCustomer.id);
-    
     setCustomers(prevCustomers => {
       const updatedCustomers = [...prevCustomers, newCustomer];
-      console.log('📊 Güncellenmiş müşteri sayısı:', updatedCustomers.length);
       return updatedCustomers;
     });
     
@@ -48,8 +43,6 @@ export function useAppState() {
 
   // KUSURSUZ ÜRÜN İŞLEMLERİ
   const addProduct = useCallback((productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
-    console.log('🔥 addProduct çağrıldı:', productData.name, productData.code);
-    
     const newProduct: Product = {
       ...productData,
       id: generateId(),
@@ -57,11 +50,8 @@ export function useAppState() {
       updatedAt: new Date(),
     };
     
-    console.log('✅ Yeni ürün oluşturuldu:', newProduct.name, newProduct.id);
-    
     setProducts(prevProducts => {
       const updatedProducts = [...prevProducts, newProduct];
-      console.log('📊 Güncellenmiş ürün sayısı:', updatedProducts.length);
       return updatedProducts;
     });
     
@@ -83,13 +73,6 @@ export function useAppState() {
 
   // KUSURSUZ HAREKET İŞLEMLERİ
   const addMovement = useCallback((movementData: Omit<Movement, 'id' | 'createdAt'>) => {
-    console.log('🔥 useAppState.addMovement çağrıldı:', {
-      customerId: movementData.customerId,
-      productId: movementData.productId,
-      type: movementData.type,
-      quantity: movementData.quantity
-    });
-    
     const newMovement: Movement = {
       ...movementData,
       id: generateId(),
@@ -97,14 +80,8 @@ export function useAppState() {
       createdBy: movementData.createdBy || currentUser?.id || 'system',
     };
     
-    console.log('✅ useAppState - Yeni hareket oluşturuldu, ID:', newMovement.id);
-    
-    // SENKRON STATE GÜNCELLEME - GERÇEK ÇÖZÜM
     setMovements(prevMovements => {
       const updatedMovements = [...prevMovements, newMovement];
-      console.log('📊 useAppState - Güncellenmiş hareket sayısı:', updatedMovements.length);
-      console.log('🔍 useAppState - Son eklenen hareket ID:', newMovement.id);
-      console.log('🎯 useAppState - State güncellendi!');
       return updatedMovements;
     });
     
@@ -140,8 +117,6 @@ export function useAppState() {
 
   // KUSURSUZ TOPLU İŞLEMLER
   const bulkImportCustomers = useCallback((customersData: Array<{ name: string }>) => {
-    console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR - Sayı:', customersData.length);
-    
     setIsLoading(true);
     try {
       const newCustomers: Customer[] = customersData.map(data => ({
@@ -157,18 +132,14 @@ export function useAppState() {
       }));
       
       setCustomers(prev => [...prev, ...newCustomers]);
-      console.log(`✅ ${newCustomers.length} müşteri başarıyla eklendi!`);
     } catch (error) {
       setError('Toplu müşteri yükleme hatası');
-      console.error('❌ Toplu müşteri yükleme hatası:', error);
     } finally {
       setIsLoading(false);
     }
   }, [setCustomers]);
 
   const bulkImportProducts = useCallback((productsData: Array<{ name: string; code: string; category?: string }>) => {
-    console.log('🔥 TOPLU KARTELA YÜKLEME BAŞLIYOR - Sayı:', productsData.length);
-    
     setIsLoading(true);
     try {
       const newProducts: Product[] = productsData.map(data => ({
@@ -184,10 +155,8 @@ export function useAppState() {
       }));
       
       setProducts(prev => [...prev, ...newProducts]);
-      console.log(`✅ ${newProducts.length} ürün başarıyla eklendi!`);
     } catch (error) {
       setError('Toplu ürün yükleme hatası');
-      console.error('❌ Toplu ürün yükleme hatası:', error);
     } finally {
       setIsLoading(false);
     }

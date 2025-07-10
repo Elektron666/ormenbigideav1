@@ -95,31 +95,16 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    console.log('🔥 App.tsx - Hareket kaydediliyor:', {
-      customer: customers.find(c => c.id === movementData.customerId)?.name,
-      product: products.find(p => p.id === movementData.productId)?.name,
-      type: movementData.type,
-      quantity: movementData.quantity
-    });
-    
-    // GERÇEK ÇÖZÜM: addMovement çağır ve sonucu logla
-    const result = addMovement(movementData);
-    console.log('✅ App.tsx - Hareket kaydedildi, ID:', result?.id);
-    
-    // NOT: Modal'ı NewMovementForm kapatacak, burada kapatmıyoruz!
+    addMovement(movementData);
   };
 
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
-    console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR - Sayı:', customersData.length);
     bulkImportCustomers(customersData);
-    console.log(`✅ ${customersData.length} müşteri toplu olarak eklendi!`);
     setModalState({ isOpen: false, type: null });
   };
 
   const handleBulkProductUpload = (productsData: Array<{ name: string; code: string; category?: string }>) => {
-    console.log('🔥 TOPLU KARTELA YÜKLEME BAŞLIYOR - Sayı:', productsData.length);
     bulkImportProducts(productsData);
-    console.log(`✅ ${productsData.length} kartela toplu olarak eklendi!`);
     setModalState({ isOpen: false, type: null });
   };
 

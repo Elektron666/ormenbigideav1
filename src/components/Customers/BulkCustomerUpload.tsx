@@ -31,11 +31,6 @@ export function BulkCustomerUpload({ onUpload, onClose }: BulkCustomerUploadProp
   const handleUpload = () => {
     const validCustomers = previewData.filter(item => item.valid);
     if (validCustomers.length > 0) {
-      console.log('🔥 TOPLU MÜŞTERİ YÜKLEME - GERÇEK ÇÖZÜM');
-      console.log('📊 Toplam geçerli müşteri:', validCustomers.length);
-      console.log('📋 Müşteri listesi:', validCustomers);
-      
-      // SADECE NAME FIELD'I İLE ARRAY GÖNDER - TYPE SAFE ÇÖZÜM
       onUpload(validCustomers.map(customer => ({ name: customer.name })));
     }
   };

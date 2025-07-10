@@ -53,10 +53,8 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
       const newSelected = new Set(prev);
       if (newSelected.has(productId)) {
         newSelected.delete(productId);
-        console.log(`❌ Kartela kaldırıldı: ${productId}, Kalan: ${newSelected.size}`);
       } else {
         newSelected.add(productId);
-        console.log(`✅ Kartela eklendi: ${productId}, Toplam: ${newSelected.size}`);
       }
       return newSelected;
     });
@@ -65,16 +63,13 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSelectAll = () => {
     if (selectedProducts.size === filteredProducts.length) {
       setSelectedProducts(new Set());
-      console.log('🔄 Tüm kartelalar kaldırıldı');
     } else {
       setSelectedProducts(new Set(filteredProducts.map(p => p.id)));
-      console.log(`🔄 Tüm kartelalar seçildi: ${filteredProducts.length} adet`);
     }
   };
 
   const handleNext = () => {
     if (step === 'products' && selectedProducts.size > 0) {
-      console.log(`🚀 Önizlemeye geçiliyor - Seçilen kartela sayısı: ${selectedProducts.size}`);
       setStep('preview');
     }
   };
@@ -90,27 +85,16 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
 
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) {
-      console.error('❌ Eksik bilgi: Müşteri veya kartela seçilmemiş');
       return;
     }
 
     setIsSubmitting(true);
-    console.log('🔥 ÇOKLU HAREKET KAYDETME BAŞLIYOR - GERÇEK ÇÖZÜM!');
-    console.log('👤 Müşteri:', selectedCustomer.name);
-    console.log('📦 Seçilen kartela sayısı:', selectedProducts.size);
-    console.log('🏷️ Hareket türü:', movementType);
-    console.log('📝 Notlar:', notes);
 
     const selectedProductIds = Array.from(selectedProducts);
-    console.log('📋 Seçilen kartela ID\'leri:', selectedProductIds);
 
-    // GERÇEK ÇÖZÜM: ARDIŞIK KAYDETME + STATE GÜNCELLEME GARANTİSİ
     const saveMovementsSequentially = async () => {
-      console.log('🚀 Ardışık kaydetme başlıyor...');
-      
       for (let i = 0; i < selectedProductIds.length; i++) {
         const productId = selectedProductIds[i];
-        const product = products.find(p => p.id === productId);
         
         const movementData = {
           customerId: selectedCustomer.id,
@@ -121,34 +105,18 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
           createdBy: 'system',
         };
         
-        console.log(`🚀 Hareket ${i + 1}/${selectedProductIds.length} hazırlandı:`, {
-          customer: selectedCustomer.name,
-          product: product?.name,
-          type: movementType,
-          quantity: 1
-        });
-        
-        // ARDIŞIK KAYDETME: Her hareket için onSave çağır ve state güncellemesini bekle
-        console.log(`📤 Hareket ${i + 1} App.tsx'e gönderiliyor...`);
         onSave(movementData);
-        console.log(`✅ Hareket ${i + 1}/${selectedProductIds.length} kaydedildi`);
         
-        // GERÇEK ÇÖZÜM: State güncellemesinin tamamlanması için yeterli bekleme
         await new Promise(resolve => setTimeout(resolve, 100));
       }
       
-      console.log(`✅ Toplam ${selectedProductIds.length} hareket başarıyla kaydedildi!`);
-      console.log('🎯 Tüm hareketler state\'e eklendi, modal kapatılıyor...');
       setIsSubmitting(false);
       
-      // Modal'ı kapat
       setTimeout(() => {
-        console.log('🚪 Modal kapatılıyor...');
         onCancel();
       }, 500);
     };
     
-    // Ardışık kaydetmeyi başlat
     saveMovementsSequentially();
   };
 

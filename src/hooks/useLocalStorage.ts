@@ -14,33 +14,21 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       }
       
       const parsed = JSON.parse(item);
-      console.log(`📖 localStorage'dan okundu [${key}]:`, parsed);
       return parsed;
     } catch (error) {
-      console.error(`❌ localStorage okuma hatası [${key}]:`, error);
       return initialValue;
     }
   });
 
-  // KUSURSUZ ÇÖZÜM: React'ın functional update desteğini tam olarak sağla
   const setValue = useCallback((value: T | ((val: T) => T)) => {
-    console.log(`🔄 setValue çağrıldı [${key}]`);
-    
-    // GERÇEK ÇÖZÜM: setStoredValue'ı functional şekilde çağır
     setStoredValue(prev => {
-      console.log(`📝 Functional update çalışıyor [${key}] - Önceki değer:`, prev);
-      
-      // Yeni değeri hesapla - EN GÜNCEL state'i kullan
       const valueToStore = value instanceof Function ? value(prev) : value;
-      console.log(`✅ Yeni değer hesaplandı [${key}]:`, valueToStore);
       
-      // localStorage'a kaydet
       if (typeof window !== 'undefined') {
         try {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
-          console.log(`💾 localStorage güncellendi [${key}]`);
         } catch (error) {
-          console.error(`❌ localStorage yazma hatası [${key}]:`, error);
+          console.error(`localStorage yazma hatası [${key}]:`, error);
         }
       }
       
@@ -56,7 +44,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
           const newValue = JSON.parse(e.newValue);
           setStoredValue(newValue);
         } catch (error) {
-          console.error(`❌ Storage event parse hatası [${key}]:`, error);
+          console.error(`Storage event parse hatası [${key}]:`, error);
         }
       }
     };
