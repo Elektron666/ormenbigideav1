@@ -99,16 +99,6 @@ function App() {
     setModalState({ isOpen: false, type: null });
   };
 
-  const handleMovementEdit = (movement: Movement) => {
-    setModalState({ isOpen: true, type: 'movement', data: movement });
-  };
-
-  const handleMovementDelete = (id: string) => {
-    if (window.confirm('Bu hareketi silmek istediğinizden emin misiniz?')) {
-      setMovements(prev => prev.filter(m => m.id !== id));
-    }
-  };
-
   // TOPLU MÜŞTERİ YÜKLEME - GERÇEK ÇÖZÜM
   const handleBulkCustomerUpload = (customersData: Array<{ name: string }>) => {
     console.log('🔥 TOPLU MÜŞTERİ YÜKLEME BAŞLIYOR - Sayı:', customersData.length);
@@ -209,8 +199,12 @@ function App() {
               movements={movements}
               customers={customers}
               products={products}
-              onEdit={handleMovementEdit}
-              onDelete={handleMovementDelete}
+              onEdit={(movement) => setModalState({ isOpen: true, type: 'movement', data: movement })}
+              onDelete={(id) => {
+                if (window.confirm('Bu hareketi silmek istediğinizden emin misiniz?')) {
+                  setMovements(prev => prev.filter(m => m.id !== id));
+                }
+              }}
             />
           </div>
         );

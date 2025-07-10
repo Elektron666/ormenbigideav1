@@ -8,8 +8,8 @@ interface MovementsListProps {
   movements: Movement[];
   customers: Customer[];
   products: Product[];
-  onEdit?: (movement: Movement) => void;
-  onDelete?: (id: string) => void;
+  onEdit: (movement: Movement) => void;
+  onDelete: (id: string) => void;
 }
 
 export function MovementsList({ movements, customers, products, onEdit, onDelete }: MovementsListProps) {
@@ -189,28 +189,27 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
-                        {onEdit && (
-                          <button
-                            onClick={() => onEdit(movement)}
-                            className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors shadow-sm"
-                            title="Düzenle"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </button>
-                        )}
-                        {onDelete && (
-                          <button
-                            onClick={() => {
-                              if (window.confirm('Bu hareketi silmek istediğinizden emin misiniz?')) {
-                                onDelete(movement.id);
-                              }
-                            }}
-                            className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors shadow-sm"
-                            title="Sil"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => alert(`Hareket Detayları:\nMüşteri: ${movement.customerName}\nKartela: ${movement.productName}\nTür: ${getMovementTypeText(movement.type)}\nMiktar: ${movement.quantity}\nTarih: ${formatDate(movement.createdAt)}`)}
+                          className="p-1.5 text-green-600 hover:text-green-900 hover:bg-green-50 rounded-lg transition-colors shadow-sm"
+                          title="Görüntüle"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => onEdit(movement)}
+                          className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors shadow-sm"
+                          title="Düzenle"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => onDelete(movement.id)}
+                          className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors shadow-sm"
+                          title="Sil"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -231,26 +230,24 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
                     </span>
                   </div>
                   <div className="flex space-x-2">
-                    {onEdit && (
-                      <button
-                        onClick={() => onEdit(movement)}
-                        className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors shadow-sm"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </button>
-                    )}
-                    {onDelete && (
-                      <button
-                        onClick={() => {
-                          if (window.confirm('Bu hareketi silmek istediğinizden emin misiniz?')) {
-                            onDelete(movement.id);
-                          }
-                        }}
-                        className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors shadow-sm"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    )}
+                    <button
+                      onClick={() => alert(`Hareket Detayları:\nMüşteri: ${movement.customerName}\nKartela: ${movement.productName}\nTür: ${getMovementTypeText(movement.type)}\nMiktar: ${movement.quantity}\nTarih: ${formatDate(movement.createdAt)}`)}
+                      className="p-1.5 text-green-600 hover:text-green-900 hover:bg-green-50 rounded-lg transition-colors shadow-sm"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onEdit(movement)}
+                      className="p-1.5 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded-lg transition-colors shadow-sm"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => onDelete(movement.id)}
+                      className="p-1.5 text-red-600 hover:text-red-900 hover:bg-red-50 rounded-lg transition-colors shadow-sm"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
                 
