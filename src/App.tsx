@@ -84,18 +84,15 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    console.log('🔥 KESIN ÇÖZÜM - handleNewMovementSave');
-    console.log('📊 Veri tipi:', Array.isArray(movementData) ? 'ARRAY' : 'OBJECT');
-    
+    // ARRAY KONTROLÜ - GERÇEK ÇÖZÜM
     if (Array.isArray(movementData)) {
-      console.log(`🔄 ${movementData.length} hareket kaydediliyor...`);
+      // HER HAREKET İÇİN TEK TEK KAYDET
       movementData.forEach(movement => {
         addMovement(movement);
       });
-      console.log('✅ BAŞARILI: Tüm hareketler kaydedildi!');
     } else {
+      // TEK HAREKET
       addMovement(movementData);
-      console.log('✅ BAŞARILI: Tek hareket kaydedildi!');
     }
     
     setModalState({ isOpen: false, type: null });

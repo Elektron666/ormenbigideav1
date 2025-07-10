@@ -87,8 +87,6 @@ export function useAppState() {
 
   // HAREKET İŞLEMLERİ - GERÇEK ÇÖZÜM
   const addMovement = useCallback((movementData: Omit<Movement, 'id' | 'createdAt'>) => {
-    console.log('🔥 addMovement - KESIN ÇÖZÜM');
-    
     const newMovement: Movement = {
       ...movementData,
       id: generateId(),
@@ -96,13 +94,9 @@ export function useAppState() {
       createdBy: currentUser?.id || 'system',
     };
     
-    console.log('✅ Hareket objesi oluşturuldu:', newMovement.id);
-    
-    // KESIN ÇÖZÜM: Senkron güncelleme
+    // SENKRON GÜNCELLEME
     setMovements(prevMovements => {
       const updatedMovements = [...prevMovements, newMovement];
-      console.log(`📊 Hareket sayısı: ${prevMovements.length} → ${updatedMovements.length}`);
-      
       return updatedMovements;
     });
     
