@@ -83,16 +83,14 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const handleSubmit = () => {
     if (!selectedCustomer || selectedProducts.size === 0) return;
 
-    console.log('🔥 ÇOKLU HAREKET HAZIRLANYOR - GERÇEK ÇÖZÜM');
-    console.log('👤 Seçilen müşteri:', selectedCustomer.name, selectedCustomer.id);
+    console.log('🔥 FİNAL ÇÖZÜM: HER HAREKET AYRI AYRI GÖNDERİLİYOR');
+    console.log('👤 Seçilen müşteri:', selectedCustomer.name);
     console.log('📦 Seçilen ürün sayısı:', selectedProducts.size);
-    console.log('🎯 Hareket türü:', movementType);
-    
-    const productIds = Array.from(selectedProducts);
-    console.log('📋 Seçilen ürün ID\'leri:', productIds.slice(0, 3), '...');
-    
-    // TÜM HAREKETLERİ HAZIRLA - GERÇEK ÇÖZÜM
-    const allMovements = productIds.map((productId, index) => {
+
+    // FİNAL ÇÖZÜM: HER HAREKETİ AYRI AYRI GÖNDER
+    Array.from(selectedProducts).forEach((productId, index) => {
+      console.log(`📝 Hareket ${index + 1}/${selectedProducts.size} gönderiliyor...`);
+      
       const movement = {
         customerId: selectedCustomer.id,
         productId,
@@ -101,18 +99,13 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
         notes: notes || undefined,
       };
       
-      if (index < 3) { // İlk 3 hareketi logla
-        console.log(`📝 Hareket ${index + 1} hazırlandı:`, movement);
-      }
-      return movement;
+      console.log(`💾 Hareket ${index + 1} detayı:`, movement);
+      
+      // TEK TEK GÖNDER - FİNAL ÇÖZÜM
+      onSave(movement);
     });
     
-    console.log('📤 GERÇEK ÇÖZÜM: ARRAY OLARAK GÖNDERİLİYOR');
-    console.log('📊 Toplam hareket sayısı:', allMovements.length);
-    console.log('📋 İlk 2 hareket örneği:', allMovements.slice(0, 2));
-    
-    // ARRAY OLARAK GÖNDER - GERÇEK ÇÖZÜM
-    onSave(allMovements);
+    console.log(`✅ FİNAL ÇÖZÜM: ${selectedProducts.size} HAREKET TEK TEK GÖNDERİLDİ!`);
   };
 
   const getSelectedProductsList = () => {
