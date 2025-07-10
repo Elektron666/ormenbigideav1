@@ -104,9 +104,10 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
     const selectedProductIds = Array.from(selectedProducts);
     console.log('📋 Seçilen kartela ID\'leri:', selectedProductIds);
 
-    // GERÇEK ÇÖZÜM: Promise.all ile tüm hareketleri paralel kaydet
-    const movementPromises = selectedProductIds.map((productId, index) => {
-      return new Promise<void>((resolve) => {
+    // GERÇEK ÇÖZÜM: ARDIŞIK (SEQUENTIAL) KAYDETME
+    const saveMovementsSequentially = async () => {
+      for (let i = 0; i < selectedProductIds.length; i++) {
+        const productId = selectedProductIds[i];
         const product = products.find(p => p.id === productId);
         
         const movementData = {
@@ -118,33 +119,33 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
           createdBy: 'system',
         };
         
-        console.log(`🚀 Hareket ${index + 1}/${selectedProductIds.length} hazırlandı:`, {
+        console.log(`🚀 Hareket ${i + 1}/${selectedProductIds.length} hazırlandı:`, {
           customer: selectedCustomer.name,
           product: product?.name,
           type: movementType,
           quantity: 1
         });
         
-        // Kısa gecikme ile sıralı kaydetme
-        setTimeout(() => {
-          console.log(`📤 Hareket ${index + 1} App.tsx'e gönderiliyor...`);
-          onSave(movementData);
-          console.log(`✅ Hareket ${index + 1}/${selectedProductIds.length} kaydedildi`);
-          resolve();
-        }, index * 100); // Her hareket için 100ms gecikme
-      });
-    });
-    
-    // Tüm hareketlerin kaydedilmesini bekle
-    Promise.all(movementPromises).then(() => {
+        // ARDIŞIK KAYDETME: Her hareket için onSave çağır ve bekleme yap
+        console.log(`📤 Hareket ${i + 1} App.tsx'e gönderiliyor...`);
+        onSave(movementData);
+        console.log(`✅ Hareket ${i + 1}/${selectedProductIds.length} kaydedildi`);
+        
+        // State güncellemesinin tamamlanması için kısa bekleme
+        await new Promise(resolve => setTimeout(resolve, 50));
+      }
+      
       console.log(`✅ Toplam ${selectedProductIds.length} hareket başarıyla kaydedildi!`);
       setIsSubmitting(false);
       
       // Modal'ı kapat
       setTimeout(() => {
         onCancel();
-      }, 500);
-    });
+      }, 300);
+    };
+    
+    // Ardışık kaydetmeyi başlat
+    saveMovementsSequentially();
   };
 
   const getSelectedProductsList = () => {

@@ -94,9 +94,11 @@ export function useAppState() {
     
     console.log('✅ Yeni hareket oluşturuldu:', newMovement.id);
     
+    // SENKRON STATE GÜNCELLEME - GERÇEK ÇÖZÜM
     setMovements(prevMovements => {
       const updatedMovements = [...prevMovements, newMovement];
       console.log('📊 Güncellenmiş hareket sayısı:', updatedMovements.length);
+      console.log('🔍 Son eklenen hareket ID:', newMovement.id);
       return updatedMovements;
     });
     
