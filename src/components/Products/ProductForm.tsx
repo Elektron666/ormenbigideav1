@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Product } from '../../types';
+import { useAppState } from '../../hooks/useAppState';
 
 interface ProductFormProps {
   product?: Product;
@@ -8,6 +9,7 @@ interface ProductFormProps {
 }
 
 export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
+  const { products } = useAppState();
   const [formData, setFormData] = useState({
     name: '',
     code: '',
@@ -17,6 +19,24 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     unit: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Otomatik kod oluşturma fonksiyonu
+  const generateNextCode = () => {
+    const existingCodes = products.map(p => p.code);
+    let codeNumber = 1;
+    
+    // Mevcut ORM kodlarından en yüksek numarayı bul
+    existingCodes.forEach(code => {
+      if (code.startsWith('ORM-')) {
+        const num = parseInt(code.replace('ORM-', ''));
+        if (!isNaN(num) && num >= codeNumber) {
+          codeNumber = num + 1;
+        }
+      }
+    });
+    
+    return `ORM-${codeNumber.toString().padStart(4, '0')}`;
+  };
 
   useEffect(() => {
     if (product) {
@@ -28,8 +48,14 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
         price: product.price?.toString() || '',
         unit: product.unit || '',
       });
+    } else {
+      // Yeni ürün ekleme durumunda otomatik kod oluştur
+      setFormData(prev => ({
+        ...prev,
+        code: generateNextCode()
+      }));
     }
-  }, [product]);
+  }, [product, products]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -92,18 +118,24 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Kartela Kodu *
+            Kartela Kodu * {!product && <span className="text-xs text-blue-600">(Otomatik oluşturuldu)</span>}
           </label>
           <input
             type="text"
             value={formData.code}
             onChange={(e) => handleChange('code', e.target.value)}
+            disabled={!product} // Yeni ürün eklerken kod değiştirilemez
             className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-              errors.code ? 'border-red-500' : 'border-gray-300'
+              errors.code ? 'border-red-500' : !product ? 'border-blue-300 bg-blue-50' : 'border-gray-300'
             }`}
-            placeholder="KRT001"
+            placeholder="ORM-0001"
           />
           {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code}</p>}
+          {!product && (
+            <p className="text-xs text-blue-600 mt-1">
+              Kod otomatik olarak sıralamaya göre oluşturulmuştur
+            </p>
+          )}
         </div>
 
         <div>

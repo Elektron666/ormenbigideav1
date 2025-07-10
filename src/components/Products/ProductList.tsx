@@ -98,7 +98,9 @@ export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: Pr
                 <h3 className="font-bold text-gray-900 text-lg">{product.name}</h3>
                 <div className="flex items-center text-gray-600 mt-1">
                   <Tag className="w-4 h-4 mr-1" />
-                  <span className="text-sm">{product.code}</span>
+                  <span className="text-sm font-mono bg-gray-100 px-2 py-1 rounded text-blue-700">
+                    {product.code}
+                  </span>
                 </div>
               </div>
             </div>
