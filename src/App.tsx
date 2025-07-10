@@ -3,6 +3,7 @@ import { LoginForm } from './components/Auth/LoginForm';
 import { CustomerDetail } from './components/Customers/CustomerDetail';
 import { BulkCustomerUpload } from './components/Customers/BulkCustomerUpload';
 import { BulkProductUpload } from './components/Products/BulkProductUpload';
+import { ReportsPage } from './components/Reports/ReportsPage';
 import { StockManagement } from './components/Stock/StockManagement';
 import { MotivationPage } from './components/Motivation/MotivationPage';
 import { NotesPage } from './components/Notes/NotesPage';
@@ -84,10 +85,17 @@ function App() {
   };
 
   const handleNewMovementSave = (movementData: any) => {
-    // ARTIK SADECE TEK HAREKET GELİYOR - GERÇEK ÇÖZÜM
-    console.log('🔥 Yeni hareket kaydediliyor:', movementData);
-    addMovement(movementData);
-    
+    // DOĞRU ÇÖZÜM: Array gelirse her birini kaydet, tek gelirse direkt kaydet
+    if (Array.isArray(movementData)) {
+      movementData.forEach(movement => {
+        console.log('🔥 Hareket kaydediliyor:', movement);
+        addMovement(movement);
+      });
+      console.log(`✅ ${movementData.length} hareket başarıyla kaydedildi!`);
+    } else {
+      console.log('🔥 Tek hareket kaydediliyor:', movementData);
+      addMovement(movementData);
+    }
     setModalState({ isOpen: false, type: null });
   };
 
@@ -218,6 +226,9 @@ function App() {
       
       case 'backup':
         return <BackupManager />;
+      
+      case 'reports':
+        return <ReportsPage customers={customers} products={products} movements={movements} />;
       
       default:
         return (
