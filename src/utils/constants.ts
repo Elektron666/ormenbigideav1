@@ -2,8 +2,8 @@
 
 export const APP_CONFIG = {
   name: 'ORMEN TEKSTİL',
-  version: __APP_VERSION__ || '1.2.0',
-  buildTime: __BUILD_TIME__ || new Date().toISOString(),
+  version: '1.2.0',
+  buildTime: new Date().toISOString(),
   description: 'Kartela Yönetim Sistemi V1.2',
   author: 'ORMEN TEKSTİL',
 } as const;
@@ -95,4 +95,11 @@ export const EXPORT_CONFIG = {
   dateFormat: 'yyyy-MM-dd',
   jsonIndent: 2,
   csvSeparator: ',',
+} as const;
+
+export const PERFORMANCE_CONFIG = {
+  lazyLoadThreshold: 100,
+  virtualScrollThreshold: 1000,
+  debounceSearchDelay: 300,
+  cacheTimeout: 5 * 60 * 1000, // 5 minutes
 } as const;

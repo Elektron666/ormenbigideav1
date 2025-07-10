@@ -1,13 +1,11 @@
 // Performance utilities for ORMEN TEKSTİL
 
-import { PERFORMANCE_CONFIG } from './constants';
-
 /**
  * Debounce function to limit the rate of function calls
  */
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number = PERFORMANCE_CONFIG.debounceSearchDelay
+  wait: number = 300
 ): (...args: Parameters<T>) => void {
   let timeout: NodeJS.Timeout;
   return (...args: Parameters<T>) => {
@@ -55,47 +53,10 @@ export function memoize<T extends (...args: any[]) => any>(
     // Clear cache after timeout to prevent memory leaks
     setTimeout(() => {
       cache.delete(key);
-    }, PERFORMANCE_CONFIG.cacheTimeout);
+    }, 5 * 60 * 1000); // 5 minutes
     
     return result;
   }) as T;
-}
-
-/**
- * Lazy loading utility for components
- */
-export function createLazyComponent<T extends React.ComponentType<any>>(
-  importFunc: () => Promise<{ default: T }>
-): React.LazyExoticComponent<T> {
-  return React.lazy(importFunc);
-}
-
-/**
- * Virtual scrolling utility for large lists
- */
-export function useVirtualScroll<T>(
-  items: T[],
-  itemHeight: number,
-  containerHeight: number,
-  scrollTop: number
-) {
-  const startIndex = Math.floor(scrollTop / itemHeight);
-  const endIndex = Math.min(
-    startIndex + Math.ceil(containerHeight / itemHeight) + 1,
-    items.length
-  );
-  
-  const visibleItems = items.slice(startIndex, endIndex);
-  const totalHeight = items.length * itemHeight;
-  const offsetY = startIndex * itemHeight;
-  
-  return {
-    visibleItems,
-    totalHeight,
-    offsetY,
-    startIndex,
-    endIndex,
-  };
 }
 
 /**
@@ -111,12 +72,10 @@ export class PerformanceMonitor {
   static measure(name: string, startMark: string): number {
     const startTime = this.marks.get(startMark);
     if (!startTime) {
-      console.warn(`Start mark "${startMark}" not found`);
       return 0;
     }
     
     const duration = performance.now() - startTime;
-    console.log(`${name}: ${duration.toFixed(2)}ms`);
     return duration;
   }
   
@@ -143,23 +102,3 @@ export function getMemoryUsage(): {
   }
   return null;
 }
-
-/**
- * Bundle size analyzer
- */
-export function analyzeBundleSize(): void {
-  if (process.env.NODE_ENV === 'development') {
-    const scripts = Array.from(document.querySelectorAll('script[src]'));
-    const styles = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
-    
-    console.group('Bundle Analysis');
-    console.log('Scripts:', scripts.length);
-    console.log('Stylesheets:', styles.length);
-    console.groupEnd();
-  }
-}
-
-/**
- * React import for lazy loading
- */
-import React from 'react';
