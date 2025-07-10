@@ -7,9 +7,10 @@ interface DashboardProps {
   customers: Customer[];
   products: Product[];
   movements: Movement[];
+  onNavigate: (tab: string) => void;
 }
 
-export function Dashboard({ customers, products, movements }: DashboardProps) {
+export function Dashboard({ customers, products, movements, onNavigate }: DashboardProps) {
   const [currentTime, setCurrentTime] = React.useState(new Date());
 
   React.useEffect(() => {
@@ -179,7 +180,10 @@ export function Dashboard({ customers, products, movements }: DashboardProps) {
         <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-6 text-white">
           <h4 className="font-semibold mb-2">Hızlı Müşteri Ekleme</h4>
           <p className="text-blue-100 text-sm mb-4">Yeni müşteri ekleyerek sistemi genişletin</p>
-          <button className="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors">
+          <button 
+            onClick={() => onNavigate('customers')}
+            className="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors"
+          >
             Müşteri Ekle
           </button>
         </div>
@@ -187,7 +191,10 @@ export function Dashboard({ customers, products, movements }: DashboardProps) {
         <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-lg p-6 text-white">
           <h4 className="font-semibold mb-2">Kartela Yönetimi</h4>
           <p className="text-green-100 text-sm mb-4">Yeni kartela ekleyin veya mevcut olanları düzenleyin</p>
-          <button className="bg-white text-green-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-50 transition-colors">
+          <button 
+            onClick={() => onNavigate('products')}
+            className="bg-white text-green-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-50 transition-colors"
+          >
             Kartela Ekle
           </button>
         </div>
@@ -195,7 +202,10 @@ export function Dashboard({ customers, products, movements }: DashboardProps) {
         <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg p-6 text-white">
           <h4 className="font-semibold mb-2">Hareket Kaydı</h4>
           <p className="text-purple-100 text-sm mb-4">Kartela verme/alma işlemlerini kaydedin</p>
-          <button className="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-50 transition-colors">
+          <button 
+            onClick={() => onNavigate('movements')}
+            className="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-50 transition-colors"
+          >
             Hareket Ekle
           </button>
         </div>

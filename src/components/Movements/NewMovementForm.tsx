@@ -5,7 +5,7 @@ import { Customer, Product, Movement } from '../../types';
 interface NewMovementFormProps {
   customers: Customer[];
   products: Product[];
-  onSave: (movementData: Array<Omit<Movement, 'id' | 'createdAt' | 'createdBy'>>) => void;
+  onSave: (movementData: Array<Omit<Movement, 'id' | 'createdAt'>>) => void;
   onCancel: () => void;
 }
 
@@ -90,6 +90,7 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
       type: movementType,
       quantity: 1,
       notes: notes || undefined,
+      createdBy: 'system',
     }));
     
     console.log('🚀 NewMovementForm - Gönderilen hareketler:', movements);

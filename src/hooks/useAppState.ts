@@ -130,39 +130,49 @@ export function useAppState() {
       .filter(item => item.product);
   }, [movements, products]);
 
-  const bulkImportCustomers = useCallback(async (customersData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>[]) => {
+  const bulkImportCustomers = useCallback((customersData: Array<{ name: string }>) => {
     setIsLoading(true);
     try {
-      const newCustomers = customersData.map(data => ({
-        ...data,
+      const newCustomers: Customer[] = customersData.map(data => ({
+        name: data.name,
+        company: undefined,
+        phone: undefined,
+        email: undefined,
+        address: undefined,
+        notes: undefined,
         id: generateId(),
         createdAt: new Date(),
         updatedAt: new Date(),
       }));
       setCustomers(prev => [...prev, ...newCustomers]);
-      return { success: newCustomers.length, errors: [], total: customersData.length };
+      console.log(`✅ ${newCustomers.length} müşteri başarıyla eklendi!`);
     } catch (error) {
       setError('Toplu müşteri yükleme hatası');
-      return { success: 0, errors: [{ row: 0, error: 'Genel hata' }], total: customersData.length };
+      console.error('❌ Toplu müşteri yükleme hatası:', error);
     } finally {
       setIsLoading(false);
     }
   }, [setCustomers]);
 
-  const bulkImportProducts = useCallback(async (productsData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>[]) => {
+  const bulkImportProducts = useCallback((productsData: Array<{ name: string; code: string; category?: string }>) => {
     setIsLoading(true);
     try {
-      const newProducts = productsData.map(data => ({
-        ...data,
+      const newProducts: Product[] = productsData.map(data => ({
+        name: data.name,
+        code: data.code,
+        category: data.category,
+        description: undefined,
+        price: undefined,
+        unit: undefined,
         id: generateId(),
         createdAt: new Date(),
         updatedAt: new Date(),
       }));
       setProducts(prev => [...prev, ...newProducts]);
-      return { success: newProducts.length, errors: [], total: productsData.length };
+      console.log(`✅ ${newProducts.length} ürün başarıyla eklendi!`);
     } catch (error) {
       setError('Toplu ürün yükleme hatası');
-      return { success: 0, errors: [{ row: 0, error: 'Genel hata' }], total: productsData.length };
+      console.error('❌ Toplu ürün yükleme hatası:', error);
     } finally {
       setIsLoading(false);
     }

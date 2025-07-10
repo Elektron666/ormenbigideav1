@@ -161,7 +161,12 @@ function App() {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard customers={customers} products={products} movements={movements} />;
+        return <Dashboard 
+          customers={customers} 
+          products={products} 
+          movements={movements} 
+          onNavigate={setActiveTab}
+        />;
       
       case 'customers':
         return (

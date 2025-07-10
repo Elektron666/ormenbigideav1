@@ -4,7 +4,7 @@ import { Customer, Product, Movement } from '../../types';
 interface MovementFormProps {
   customers: Customer[];
   products: Product[];
-  onSave: (movementData: Omit<Movement, 'id' | 'createdAt' | 'createdBy'>) => void;
+  onSave: (movementData: Omit<Movement, 'id' | 'createdAt'>) => void;
   onCancel: () => void;
   preselectedCustomer?: string;
   preselectedProduct?: string;
@@ -55,6 +55,7 @@ export function MovementForm({
         type: formData.type,
         quantity: Number(formData.quantity),
         notes: formData.notes || undefined,
+        createdBy: 'system',
       });
     }
   };

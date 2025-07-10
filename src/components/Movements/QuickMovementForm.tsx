@@ -5,7 +5,7 @@ import { Customer, Product, Movement } from '../../types';
 interface QuickMovementFormProps {
   customers: Customer[];
   products: Product[];
-  onSave: (movementData: Omit<Movement, 'id' | 'createdAt' | 'createdBy'>) => void;
+  onSave: (movementData: Omit<Movement, 'id' | 'createdAt'>) => void;
   onCancel: () => void;
 }
 
@@ -56,6 +56,7 @@ export function QuickMovementForm({ customers, products, onSave, onCancel }: Qui
         type: movementType,
         quantity: 1,
         notes: notes || undefined,
+        createdBy: 'system',
       });
     });
   };
