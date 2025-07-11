@@ -9,15 +9,44 @@ export function BackupManager() {
 
   const handleExportData = () => {
     const data = exportData();
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `ormen-tekstil-yedek-${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+    
+    try {
+      const jsonData = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      // Mobile/tablet için farklı yaklaşım
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        // Mobile cihazlar için
+        const newWindow = window.open();
+        if (newWindow) {
+          newWindow.document.write(`
+            <html>
+              <head><title>ORMEN TEKSTİL Yedek</title></head>
+              <body>
+                <h2>ORMEN TEKSTİL Yedek Dosyası</h2>
+                <p>Aşağıdaki metni kopyalayıp .json uzantılı dosya olarak kaydedin:</p>
+                <textarea style="width:100%;height:400px;" readonly>${jsonData}</textarea>
+                <br><br>
+                <button onclick="navigator.clipboard.writeText(document.querySelector('textarea').value)">Panoya Kopyala</button>
+              </body>
+            </html>
+          `);
+        }
+      } else {
+        // Desktop için normal indirme
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `ormen-tekstil-yedek-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      alert('Yedek alma sırasında hata oluştu: ' + error);
+    }
   };
 
   const handleImportData = (event: React.ChangeEvent<HTMLInputElement>) => {

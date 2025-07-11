@@ -3,6 +3,7 @@ import { LoginForm } from './components/Auth/LoginForm';
 import { CustomerDetail } from './components/Customers/CustomerDetail';
 import { BulkCustomerUpload } from './components/Customers/BulkCustomerUpload';
 import { BulkProductUpload } from './components/Products/BulkProductUpload';
+import { SettingsPage } from './components/Settings/SettingsPage';
 import { ReportsPage } from './components/Reports/ReportsPage';
 import { StockManagement } from './components/Stock/StockManagement';
 import { MotivationPage } from './components/Motivation/MotivationPage';
@@ -215,6 +216,9 @@ function App() {
       
       case 'reports':
         return <ReportsPage customers={customers} products={products} movements={movements} />;
+      
+      case 'settings':
+        return <SettingsPage />;
       
       default:
         return (
