@@ -105,11 +105,10 @@ export function Sidebar({ isOpen, onClose, activeTab, onTabChange }: SidebarProp
         
         <div className="absolute bottom-4 left-4 right-4">
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-3 border border-blue-100">
-            <div className="flex items-center space-x-2 mb-1">
-              <Heart className="w-3 h-3 text-red-500" />
-              <p className="text-xs text-blue-700 font-semibold">ORMEN TEKSTİL</p>
+            <div className="flex items-center justify-center space-x-2">
+              <Heart className="w-4 h-4 text-red-500" />
+              <p className="text-sm text-blue-700 font-semibold">ORMEN TEKSTİL</p>
             </div>
-            <p className="text-xs text-blue-600">Modern & İlham Verici</p>
           </div>
         </div>
       </aside>
