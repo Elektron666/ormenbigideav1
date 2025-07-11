@@ -3,15 +3,14 @@ name: Release
 on:
   push:
     tags:
-      - 'v*' # Örnek: v1.0.0, v2.3.4 gibi tag'lerde çalışır
+      - 'v*'
 
 jobs:
   release:
-    name: GitHub Release
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
 
       - name: Create GitHub Release
