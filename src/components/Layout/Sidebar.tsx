@@ -42,7 +42,7 @@ export function Sidebar({ isOpen, onClose, activeTab, onTabChange }: SidebarProp
       {/* Mobile overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 2xl:hidden"
           onClick={onClose}
         />
       )}
@@ -50,7 +50,7 @@ export function Sidebar({ isOpen, onClose, activeTab, onTabChange }: SidebarProp
       {/* Sidebar */}
       <aside className={`
         fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
-        xl:relative xl:translate-x-0 xl:shadow-none xl:border-r xl:border-gray-200
+        2xl:relative 2xl:translate-x-0 2xl:shadow-none 2xl:border-r 2xl:border-gray-200
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -67,7 +67,7 @@ export function Sidebar({ isOpen, onClose, activeTab, onTabChange }: SidebarProp
           </div>
           <button
             onClick={onClose}
-            className="p-1 rounded-lg hover:bg-gray-100 lg:hidden"
+            className="p-1 rounded-lg hover:bg-gray-100 2xl:hidden"
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>

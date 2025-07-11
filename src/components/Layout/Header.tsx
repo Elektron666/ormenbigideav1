@@ -13,12 +13,12 @@ export function Header({ onMenuToggle, title }: HeaderProps) {
         <div className="flex items-center space-x-4">
           <button
             onClick={onMenuToggle}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors xl:hidden"
+            className="p-2 rounded-xl hover:bg-gray-100 transition-colors 2xl:hidden"
           >
             <Menu className="w-6 h-6 text-gray-600" />
           </button>
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center lg:hidden">
+            <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center 2xl:hidden">
               <Scissors className="w-4 h-4 text-white" />
             </div>
             <h1 className="text-xl font-bold text-gray-900">{title}</h1>

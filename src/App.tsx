@@ -260,7 +260,7 @@ function App() {
         onTabChange={setActiveTab}
       />
       
-      <div className="xl:ml-64">
+      <div className="2xl:ml-64">
         <Header
           onMenuToggle={() => setSidebarOpen(true)}
           title={getPageTitle()}
