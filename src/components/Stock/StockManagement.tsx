@@ -346,16 +346,13 @@ export function StockManagement() {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Kategori *</label>
-              <select
+              <input
+                type="text"
                 value={newItem.category}
                 onChange={(e) => setNewItem(prev => ({ ...prev, category: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
-              >
-                <option value="">Kategori seçin veya yazın</option>
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="Kategori yazın (Pamuk, Polyester, vb.)"
+              />
             </div>
             
             <div>
@@ -372,16 +369,13 @@ export function StockManagement() {
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Konum *</label>
-              <select
+              <input
+                type="text"
                 value={newItem.location}
                 onChange={(e) => setNewItem(prev => ({ ...prev, location: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
-              >
-                <option value="">Konum seçin veya yazın</option>
-                {locations.map(loc => (
-                  <option key={loc} value={loc}>{loc}</option>
-                ))}
-              </select>
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="Konum yazın (Depo A - Raf 1, vb.)"
+              />
             </div>
             
             <div>
