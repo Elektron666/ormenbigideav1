@@ -15,29 +15,22 @@ export function BackupManager() {
       const blob = new Blob([jsonData], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       
-      // Mobile/tablet için farklı yaklaşım
-      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        // Mobile cihazlar için
-        const newWindow = window.open();
-        if (newWindow) {
-          newWindow.document.write(`
-            <html>
-              <head><title>ORMEN TEKSTİL Yedek</title></head>
-              <body>
-                <h2>ORMEN TEKSTİL Yedek Dosyası</h2>
-                <p>Aşağıdaki metni kopyalayıp .json uzantılı dosya olarak kaydedin:</p>
-                <textarea style="width:100%;height:400px;" readonly>${jsonData}</textarea>
-                <br><br>
-                <button onclick="navigator.clipboard.writeText(document.querySelector('textarea').value)">Panoya Kopyala</button>
-              </body>
-            </html>
-          `);
-        }
-      } else {
-        // Desktop için normal indirme
+      // Tablet/Mobile için gelişmiş yedekleme
+      const fileName = `ormen-tekstil-yedek-${new Date().toISOString().split('T')[0]}.json`;
+      
+      // Modern tarayıcılar için File System Access API
+      if ('showSaveFilePicker' in window) {
+        handleModernSave(jsonData, fileName);
+      } 
+      // Huawei tablet için özel çözüm
+      else if (/Android/i.test(navigator.userAgent)) {
+        handleTabletSave(jsonData, fileName);
+      }
+      // Fallback - normal indirme
+      else {
         const link = document.createElement('a');
         link.href = url;
-        link.download = `ormen-tekstil-yedek-${new Date().toISOString().split('T')[0]}.json`;
+        link.download = fileName;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -46,6 +39,131 @@ export function BackupManager() {
       URL.revokeObjectURL(url);
     } catch (error) {
       alert('Yedek alma sırasında hata oluştu: ' + error);
+    }
+  };
+
+  // Modern tarayıcılar için dosya kaydetme
+  const handleModernSave = async (data: string, fileName: string) => {
+    try {
+      const fileHandle = await (window as any).showSaveFilePicker({
+        suggestedName: fileName,
+        types: [{
+          description: 'JSON files',
+          accept: { 'application/json': ['.json'] }
+        }]
+      });
+      
+      const writable = await fileHandle.createWritable();
+      await writable.write(data);
+      await writable.close();
+      
+      alert('✅ Yedek başarıyla kaydedildi!');
+    } catch (error) {
+      // Kullanıcı iptal etti veya hata oluştu
+      handleTabletSave(data, fileName);
+    }
+  };
+
+  // Tablet için özel kaydetme
+  const handleTabletSave = (data: string, fileName: string) => {
+    // Clipboard API ile panoya kopyala
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(data).then(() => {
+        showTabletInstructions(fileName);
+      }).catch(() => {
+        showManualCopy(data, fileName);
+      });
+    } else {
+      showManualCopy(data, fileName);
+    }
+  };
+
+  // Tablet için talimatlar göster
+  const showTabletInstructions = (fileName: string) => {
+    const instructions = `
+✅ YEDEK PANOYA KOPYALANDI!
+
+📱 HUAWEI TABLET İÇİN ADIMLAR:
+
+1️⃣ Dosya Yöneticisi'ni aç
+2️⃣ "İndirilenler" veya "Belgeler" klasörüne git
+3️⃣ Yeni dosya oluştur: "${fileName}"
+4️⃣ Dosyayı aç ve YAPIŞTIR (Ctrl+V)
+5️⃣ Kaydet ve kapat
+
+💾 Dosya boyutu: ~30MB
+🔒 Güvenli konum: /storage/emulated/0/Documents/
+
+✨ Alternatif: WhatsApp'ta kendine gönder!
+`;
+    
+    alert(instructions);
+  };
+
+  // Manuel kopyalama için popup
+  const showManualCopy = (data: string, fileName: string) => {
+    const newWindow = window.open('', '_blank', 'width=800,height=600');
+    if (newWindow) {
+      newWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>ORMEN TEKSTİL Yedek</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+            .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+            textarea { width: 100%; height: 300px; border: 2px solid #ddd; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 12px; }
+            .buttons { margin-top: 15px; text-align: center; }
+            button { background: #4CAF50; color: white; border: none; padding: 12px 24px; border-radius: 6px; margin: 5px; cursor: pointer; font-size: 16px; }
+            button:hover { background: #45a049; }
+            .copy-btn { background: #2196F3; }
+            .copy-btn:hover { background: #1976D2; }
+            .instructions { background: #e3f2fd; border-left: 4px solid #2196F3; padding: 15px; margin: 15px 0; border-radius: 4px; }
+            .step { margin: 8px 0; padding: 5px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2>🧵 ORMEN TEKSTİL Yedek Dosyası</h2>
+              <p>Dosya: ${fileName}</p>
+            </div>
+            
+            <div class="instructions">
+              <h3>📱 HUAWEI TABLET İÇİN ADIMLAR:</h3>
+              <div class="step">1️⃣ Aşağıdaki "Panoya Kopyala" butonuna tıkla</div>
+              <div class="step">2️⃣ Dosya Yöneticisi → Belgeler klasörüne git</div>
+              <div class="step">3️⃣ Yeni dosya oluştur: "${fileName}"</div>
+              <div class="step">4️⃣ Dosyayı aç ve yapıştır (Ctrl+V)</div>
+              <div class="step">5️⃣ Kaydet ve bu pencereyi kapat</div>
+            </div>
+            
+            <textarea id="backupData" readonly>${data}</textarea>
+            
+            <div class="buttons">
+              <button class="copy-btn" onclick="copyToClipboard()">📋 Panoya Kopyala</button>
+              <button onclick="selectAll()">🔍 Tümünü Seç</button>
+              <button onclick="window.close()">❌ Kapat</button>
+            </div>
+          </div>
+          
+          <script>
+            function copyToClipboard() {
+              const textarea = document.getElementById('backupData');
+              textarea.select();
+              document.execCommand('copy');
+              alert('✅ Yedek panoya kopyalandı!\\n\\nŞimdi Dosya Yöneticisi\\'nde yeni dosya oluşturup yapıştırabilirsin.');
+            }
+            
+            function selectAll() {
+              document.getElementById('backupData').select();
+            }
+          </script>
+        </body>
+        </html>
+      `);
     }
   };
 
