@@ -50,7 +50,7 @@ export function Sidebar({ isOpen, onClose, activeTab, onTabChange }: SidebarProp
       {/* Sidebar */}
       <aside className={`
         fixed top-0 left-0 z-50 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
-        lg:relative lg:translate-x-0 lg:shadow-none lg:border-r lg:border-gray-200
+        xl:relative xl:translate-x-0 xl:shadow-none xl:border-r xl:border-gray-200
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex items-center justify-between p-4 border-b border-gray-200">

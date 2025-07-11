@@ -13,7 +13,7 @@ export function Header({ onMenuToggle, title }: HeaderProps) {
         <div className="flex items-center space-x-4">
           <button
             onClick={onMenuToggle}
-            className="p-2 rounded-xl hover:bg-gray-100 transition-colors lg:hidden"
+            className="p-2 rounded-xl hover:bg-gray-100 transition-colors xl:hidden"
           >
             <Menu className="w-6 h-6 text-gray-600" />
           </button>
