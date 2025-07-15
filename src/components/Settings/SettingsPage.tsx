@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Settings, User, Bell, Shield, Palette, Database, Info, Save, RotateCcw } from 'lucide-react';
+import { Settings, User, Bell, Shield, Palette, Database, Info, Save, RotateCcw, RefreshCw } from 'lucide-react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { UpdateManager } from './UpdateManager';
 
 interface AppSettings {
   theme: 'light' | 'dark' | 'auto';
@@ -34,6 +35,7 @@ export function SettingsPage() {
   const [settings, setSettings] = useLocalStorage<AppSettings>('ormen_settings', defaultSettings);
   const [tempSettings, setTempSettings] = useState<AppSettings>(settings);
   const [isSaved, setIsSaved] = useState(false);
+  const [activeTab, setActiveTab] = useState<'settings' | 'updates'>('settings');
 
   const handleSave = () => {
     setSettings(tempSettings);
@@ -62,6 +64,36 @@ export function SettingsPage() {
         <p className="text-gray-600">Uygulamanızı kişiselleştirin</p>
       </div>
 
+      {/* Tab Navigation */}
+      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+        <button
+          onClick={() => setActiveTab('settings')}
+          className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md transition-colors ${
+            activeTab === 'settings'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <Settings className="w-4 h-4" />
+          <span>Genel Ayarlar</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('updates')}
+          className={`flex-1 flex items-center justify-center space-x-2 py-2 px-4 rounded-md transition-colors ${
+            activeTab === 'updates'
+              ? 'bg-white text-gray-900 shadow-sm'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          <RefreshCw className="w-4 h-4" />
+          <span>Güncelleme</span>
+        </button>
+      </div>
+
+      {activeTab === 'updates' ? (
+        <UpdateManager />
+      ) : (
+        <>
       {/* Save Status */}
       {isSaved && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -278,6 +310,8 @@ export function SettingsPage() {
           <span>Varsayılana Sıfırla</span>
         </button>
       </div>
+        </>
+      )}
     </div>
   );
 }
