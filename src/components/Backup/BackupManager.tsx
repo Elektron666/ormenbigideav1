@@ -11,8 +11,6 @@ export function BackupManager() {
   const [copySuccess, setCopySuccess] = useState(false);
   const [showUpdateSystem, setShowUpdateSystem] = useState(false);
   const [updateData, setUpdateData] = useState('');
-  const [showUpdateSystem, setShowUpdateSystem] = useState(false);
-  const [updateData, setUpdateData] = useState('');
 
   const handleExportData = () => {
     const data = exportData();
