@@ -19,6 +19,7 @@ import { ProductForm } from './components/Products/ProductForm';
 import { MovementForm } from './components/Movements/MovementForm';
 import { NewMovementForm } from './components/Movements/NewMovementForm';
 import { MovementsList } from './components/Movements/MovementsList';
+import { MissingProductsPage } from './components/MissingProducts/MissingProductsPage';
 import { Modal } from './components/Common/Modal';
 import { useAppState } from './hooks/useAppState';
 import { Customer, Product, Movement } from './types';
@@ -131,6 +132,7 @@ function App() {
       case 'customers': return 'Müşteriler';
       case 'products': return 'Kartelalar';
       case 'movements': return 'Hareketler';
+      case 'missing': return 'Eksik Kartelalar';
       case 'reports': return 'Raporlar';
       case 'stock': return 'Kartela Stok';
       case 'motivation': return 'Motivasyon';
@@ -204,6 +206,9 @@ function App() {
       
       case 'stock':
         return <StockManagement />;
+      
+      case 'missing':
+        return <MissingProductsPage customers={customers} products={products} movements={movements} />;
       
       case 'motivation':
         return <MotivationPage />;
