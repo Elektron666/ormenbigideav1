@@ -91,32 +91,6 @@ export function BackupManager() {
     }
   };
 
-  const handleManualImport = () => {
-    if (!updateData.trim()) {
-      setImportStatus('error');
-      setImportMessage('Lütfen yedek verisini yapıştırın.');
-      return;
-    }
-
-    try {
-      const data = JSON.parse(updateData);
-      const success = importData(data);
-      
-      if (success) {
-        setImportStatus('success');
-        setImportMessage('Sistem başarıyla güncellendi!');
-        setUpdateData('');
-        setShowUpdateSystem(false);
-      } else {
-        setImportStatus('error');
-        setImportMessage('Güncelleme sırasında hata oluştu.');
-      }
-    } catch (error) {
-      setImportStatus('error');
-      setImportMessage('Geçersiz yedek formatı. JSON formatında olmalı.');
-    }
-  };
-
   const stats = {
     customers: customers.length,
     products: products.length,
