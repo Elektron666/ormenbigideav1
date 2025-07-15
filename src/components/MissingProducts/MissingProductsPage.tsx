@@ -494,7 +494,7 @@ export function MissingProductsPage({ customers, products, movements }: MissingP
             </div>
           </div>
         </>
-      ) : (
+      ) : selectedCustomer && (
         // Müşteri Detay Ekranı (Mevcut kod)
         <>
           <div className="flex items-center justify-between">
