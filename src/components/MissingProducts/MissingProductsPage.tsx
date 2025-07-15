@@ -11,7 +11,6 @@ interface MissingProductsPageProps {
 export function MissingProductsPage({ customers, products, movements }: MissingProductsPageProps) {
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [customerSearch, setCustomerSearch] = useState('');
-  const [viewMode, setViewMode] = useState<'cards' | 'detailed'>('cards');
 
   // Müşteri arama - Türkçe karakter desteği
   const filteredCustomers = useMemo(() => {
@@ -77,6 +76,31 @@ export function MissingProductsPage({ customers, products, movements }: MissingP
     };
   }, [selectedCustomer, products, movements]);
 
+  // Tüm müşteriler için genel istatistik
+  const overallProductStats = useMemo(() => {
+    const productStats = new Map<string, { given: number; customers: Set<string> }>();
+    
+    // Her ürün için verilen toplam miktarı hesapla
+    movements.forEach(movement => {
+      if (movement.type === 'given') {
+        const current = productStats.get(movement.productId) || { given: 0, customers: new Set() };
+        current.given += movement.quantity;
+        current.customers.add(movement.customerId);
+        productStats.set(movement.productId, current);
+      }
+    });
+
+    return products.map(product => {
+      const stats = productStats.get(product.id) || { given: 0, customers: new Set() };
+      return {
+        product,
+        totalGiven: stats.given,
+        customerCount: stats.customers.size,
+        isDistributed: stats.given > 0
+      };
+    }).sort((a, b) => a.product.name.localeCompare(b.product.name, 'tr-TR'));
+  }, [products, movements]);
+
   const handleCustomerSelect = (customer: Customer) => {
     setSelectedCustomer(customer);
   };
@@ -109,6 +133,89 @@ export function MissingProductsPage({ customers, products, movements }: MissingP
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">Eksik Kartelalar</h2>
                 <p className="text-gray-600">Müşteri seçerek eksik kartelaları görüntüleyin</p>
+              </div>
+            </div>
+            
+            {/* Genel İstatistikler */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl p-4 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-blue-100 text-sm">Toplam Kartela</p>
+                    <p className="text-2xl font-bold">{products.length}</p>
+                  </div>
+                  <Package className="w-8 h-8 text-blue-200" />
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl p-4 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-green-100 text-sm">Dağıtılan Kartela</p>
+                    <p className="text-2xl font-bold">{overallProductStats.filter(p => p.isDistributed).length}</p>
+                  </div>
+                  <CheckCircle className="w-8 h-8 text-green-200" />
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-xl p-4 text-white">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-red-100 text-sm">Hiç Dağıtılmayan</p>
+                    <p className="text-2xl font-bold">{overallProductStats.filter(p => !p.isDistributed).length}</p>
+                  </div>
+                  <AlertTriangle className="w-8 h-8 text-red-200" />
+                </div>
+              </div>
+            </div>
+            
+            {/* Tüm Kartelalar Detaylı Liste */}
+            <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+              <div className="flex items-center space-x-2 mb-4">
+                <BarChart3 className="w-5 h-5 text-purple-600" />
+                <h3 className="text-lg font-semibold text-gray-900">Tüm Kartelalar - Detaylı Durum</h3>
+              </div>
+              
+              <div className="max-h-96 overflow-y-auto space-y-2">
+                {overallProductStats.map((item, index) => (
+                  <div key={item.product.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                        <span className="text-sm font-bold text-gray-600">{index + 1}</span>
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">{item.product.name}</h4>
+                        <p className="text-sm text-gray-600">{item.product.code}</p>
+                        {item.product.category && (
+                          <span className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full mt-1">
+                            {item.product.category}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="text-right">
+                      {item.isDistributed ? (
+                        <div className="space-y-1">
+                          <div className="flex items-center space-x-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            <span className="font-semibold text-green-700">
+                              {item.totalGiven} ADET DAĞITILDI
+                            </span>
+                          </div>
+                          <p className="text-xs text-green-600">
+                            {item.customerCount} müşteriye verildi
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-2">
+                          <AlertTriangle className="w-4 h-4 text-red-500" />
+                          <span className="font-semibold text-red-700">HİÇ DAĞITILMADI</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -214,35 +321,7 @@ export function MissingProductsPage({ customers, products, movements }: MissingP
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
-            {/* View Mode Toggle */}
-            <div className="md:col-span-2 flex justify-center space-x-2 mb-4">
-              <button
-                onClick={() => setViewMode('cards')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                  viewMode === 'cards'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                <Package className="w-4 h-4" />
-                <span>Kartela Kartları</span>
-              </button>
-              <button
-                onClick={() => setViewMode('detailed')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-colors ${
-                  viewMode === 'detailed'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                <List className="w-4 h-4" />
-                <span>Detaylı Liste</span>
-              </button>
-            </div>
 
-            {viewMode === 'cards' ? (
-              // Mevcut kart görünümü
-              <>
             {/* Verilen Kartelalar */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center space-x-2 mb-4">
@@ -324,64 +403,6 @@ export function MissingProductsPage({ customers, products, movements }: MissingP
                 )}
               </div>
             </div>
-              </>
-            ) : (
-              // Yeni detaylı liste görünümü
-              <div className="md:col-span-2">
-                <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <div className="flex items-center space-x-2 mb-6">
-                    <BarChart3 className="w-5 h-5 text-blue-600" />
-                    <h3 className="text-lg font-semibold text-gray-900">Detaylı Kartela Durumu</h3>
-                  </div>
-
-                  <div className="space-y-4">
-                    {products.sort((a, b) => a.name.localeCompare(b.name, 'tr-TR')).map((product, index) => {
-                      const givenItem = customerProductStatus.given.find(item => item.product.id === product.id);
-                      const isGiven = !!givenItem;
-                      const givenQuantity = givenItem?.quantity || 0;
-                      
-                      return (
-                        <div key={product.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                              <span className="text-sm font-bold text-gray-600">{index + 1}</span>
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-900">{product.name}</h4>
-                              <p className="text-sm text-gray-600">{product.code}</p>
-                              {product.category && (
-                                <span className="inline-block bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full mt-1">
-                                  {product.category}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          
-                          <div className="text-right">
-                            {isGiven ? (
-                              <div className="space-y-1">
-                                <div className="flex items-center space-x-2">
-                                  <CheckCircle className="w-4 h-4 text-green-500" />
-                                  <span className="font-semibold text-green-700">{givenQuantity} ADET VERİLDİ</span>
-                                </div>
-                                <p className="text-xs text-green-600">
-                                  {formatDate(givenItem.lastMovementDate)}
-                                </p>
-                              </div>
-                            ) : (
-                              <div className="flex items-center space-x-2">
-                                <AlertTriangle className="w-4 h-4 text-red-500" />
-                                <span className="font-semibold text-red-700">EKSİK</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </>
       )}
