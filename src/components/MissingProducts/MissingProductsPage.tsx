@@ -92,11 +92,15 @@ export function MissingProductsPage({ customers, products, movements }: MissingP
 
     return products.map(product => {
       const stats = productStats.get(product.id) || { given: 0, customers: new Set() };
+      const customersWithProduct = stats.customers.size;
+      const customersWithoutProduct = customers.length - customersWithProduct;
+      
       return {
         product,
         totalGiven: stats.given,
         customerCount: stats.customers.size,
-        isDistributed: stats.given > 0
+        isDistributed: stats.given > 0,
+        missingCustomerCount: customersWithoutProduct
       };
     }).sort((a, b) => a.product.name.localeCompare(b.product.name, 'tr-TR'));
   }, [products, movements]);
@@ -206,11 +210,21 @@ export function MissingProductsPage({ customers, products, movements }: MissingP
                           <p className="text-xs text-green-600">
                             {item.customerCount} müşteriye verildi
                           </p>
+                          {item.missingCustomerCount > 0 && (
+                            <p className="text-xs text-red-600">
+                              {item.missingCustomerCount} müşteride eksik
+                            </p>
+                          )}
                         </div>
                       ) : (
                         <div className="flex items-center space-x-2">
                           <AlertTriangle className="w-4 h-4 text-red-500" />
-                          <span className="font-semibold text-red-700">HİÇ DAĞITILMADI</span>
+                          <div>
+                            <span className="font-semibold text-red-700 block">HİÇ DAĞITILMADI</span>
+                            <p className="text-xs text-red-600">
+                              {customers.length} müşteride eksik
+                            </p>
+                          </div>
                         </div>
                       )}
                     </div>
