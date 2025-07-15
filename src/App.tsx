@@ -313,6 +313,7 @@ function App() {
           <NewMovementForm
             customers={customers}
             products={products}
+            movements={movements}
             onSave={handleNewMovementSave}
             onCancel={() => setModalState({ isOpen: false, type: null })}
           />

@@ -1,15 +1,16 @@
 import React, { useState, useMemo } from 'react';
-import { Search, ArrowLeft, Eye, Check, X } from 'lucide-react';
+import { Search, ArrowLeft, Eye, Check, X, Package, User } from 'lucide-react';
 import { Customer, Product, Movement } from '../../types';
 
 interface NewMovementFormProps {
   customers: Customer[];
   products: Product[];
+  movements: Movement[];
   onSave: (movementData: Omit<Movement, 'id' | 'createdAt'>) => void;
   onCancel: () => void;
 }
 
-export function NewMovementForm({ customers, products, onSave, onCancel }: NewMovementFormProps) {
+export function NewMovementForm({ customers, products, movements, onSave, onCancel }: NewMovementFormProps) {
   const [step, setStep] = useState<'customer' | 'products' | 'preview'>('customer');
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [selectedProducts, setSelectedProducts] = useState<Set<string>>(new Set());
@@ -42,6 +43,32 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
   const sortedProducts = useMemo(() => {
     return filteredProducts.sort((a, b) => a.name.localeCompare(b.name, 'tr-TR', { sensitivity: 'base' }));
   }, [filteredProducts]);
+
+  // Seçili müşterinin mevcut kartelaları
+  const customerCurrentProducts = useMemo(() => {
+    if (!selectedCustomer) return [];
+    
+    const customerMovements = movements.filter(m => m.customerId === selectedCustomer.id);
+    const productQuantities = new Map<string, number>();
+
+    customerMovements.forEach(movement => {
+      const current = productQuantities.get(movement.productId) || 0;
+      if (movement.type === 'given') {
+        productQuantities.set(movement.productId, current + movement.quantity);
+      } else if (movement.type === 'taken' || movement.type === 'returned') {
+        productQuantities.set(movement.productId, current - movement.quantity);
+      }
+    });
+
+    return Array.from(productQuantities.entries())
+      .filter(([_, quantity]) => quantity > 0)
+      .map(([productId, quantity]) => ({
+        product: products.find(p => p.id === productId)!,
+        quantity,
+      }))
+      .filter(item => item.product)
+      .sort((a, b) => a.product.name.localeCompare(b.product.name, 'tr-TR'));
+  }, [selectedCustomer, movements, products]);
 
   const handleCustomerSelect = (customer: Customer) => {
     setSelectedCustomer(customer);
@@ -249,6 +276,40 @@ export function NewMovementForm({ customers, products, onSave, onCancel }: NewMo
               </button>
             </div>
           </div>
+
+          {/* Müşterinin Mevcut Kartelaları */}
+          {selectedCustomer && customerCurrentProducts.length > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center space-x-2 mb-3">
+                <User className="w-5 h-5 text-blue-600" />
+                <h4 className="font-medium text-blue-900">
+                  {selectedCustomer.name} - Mevcut Kartelalar
+                </h4>
+                <span className="bg-blue-200 text-blue-800 text-xs px-2 py-1 rounded-full">
+                  {customerCurrentProducts.length} çeşit
+                </span>
+              </div>
+              
+              <div className="max-h-32 overflow-y-auto">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  {customerCurrentProducts.map((item, index) => (
+                    <div key={item.product.id} className="flex items-center justify-between bg-white rounded p-2 border border-blue-200">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                          <span className="text-xs font-medium text-blue-600">{index + 1}</span>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-blue-900">{item.product.name}</p>
+                          <p className="text-xs text-blue-700">{item.product.code}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-bold text-blue-800">{item.quantity} adet</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Product Search */}
           <div className="relative">
