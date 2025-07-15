@@ -11,6 +11,8 @@ export function BackupManager() {
   const [copySuccess, setCopySuccess] = useState(false);
   const [showUpdateSystem, setShowUpdateSystem] = useState(false);
   const [updateData, setUpdateData] = useState('');
+  const [showUpdateSystem, setShowUpdateSystem] = useState(false);
+  const [updateData, setUpdateData] = useState('');
 
   const handleExportData = () => {
     const data = exportData();
@@ -63,6 +65,32 @@ export function BackupManager() {
     
     // Reset file input
     event.target.value = '';
+  };
+
+  const handleManualImport = () => {
+    if (!updateData.trim()) {
+      setImportStatus('error');
+      setImportMessage('Lütfen yedek verisini yapıştırın.');
+      return;
+    }
+
+    try {
+      const data = JSON.parse(updateData);
+      const success = importData(data);
+      
+      if (success) {
+        setImportStatus('success');
+        setImportMessage('Sistem başarıyla güncellendi!');
+        setUpdateData('');
+        setShowUpdateSystem(false);
+      } else {
+        setImportStatus('error');
+        setImportMessage('Güncelleme sırasında hata oluştu.');
+      }
+    } catch (error) {
+      setImportStatus('error');
+      setImportMessage('Geçersiz yedek formatı. JSON formatında olmalı.');
+    }
   };
 
   const handleManualImport = () => {
@@ -186,13 +214,26 @@ export function BackupManager() {
             </div>
           </div>
 
-          <button
-            onClick={handleExportData}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center space-x-2"
-          >
-            <Copy className="w-4 h-4" />
-            <span>Manuel Yedek Hazırla</span>
-          </button>
+          <div className="space-y-2">
+            <button
+              onClick={() => setShowUpdateSystem(true)}
+              className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium flex items-center justify-center space-x-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              <span>Sistem Güncelle</span>
+            </button>
+            
+            <label className="w-full bg-green-100 text-green-700 py-2 px-4 rounded-lg hover:bg-green-200 transition-colors font-medium flex items-center justify-center space-x-2 cursor-pointer text-sm">
+              <Upload className="w-4 h-4" />
+              <span>Dosyadan Güncelle</span>
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleImportData}
+                className="hidden"
+              />
+            </label>
+          </div>
         </div>
 
         {/* System Update */}
@@ -330,6 +371,66 @@ export function BackupManager() {
                 />
               </div>
             </details>
+          </div>
+        </div>
+      )}
+
+      {/* Update System Modal */}
+      {showUpdateSystem && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">🔄 Sistem Güncelleme</h3>
+            <button
+              onClick={() => setShowUpdateSystem(false)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <AlertCircle className="w-5 h-5 text-yellow-600" />
+              <h4 className="font-medium text-yellow-900">⚠️ Önemli Uyarı</h4>
+            </div>
+            <p className="text-yellow-800 text-sm">
+              Bu işlem mevcut tüm verileri değiştirecektir. Devam etmeden önce mevcut verilerinizi yedeklediğinizden emin olun.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Yedek Verisini Yapıştırın
+              </label>
+              <textarea
+                value={updateData}
+                onChange={(e) => setUpdateData(e.target.value)}
+                rows={10}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm"
+                placeholder="WhatsApp'tan kopyaladığınız yedek verisini buraya yapıştırın..."
+              />
+            </div>
+
+            <div className="flex space-x-3">
+              <button
+                onClick={handleManualImport}
+                disabled={!updateData.trim()}
+                className="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>Sistemi Güncelle</span>
+              </button>
+              <button
+                onClick={() => {
+                  setShowUpdateSystem(false);
+                  setUpdateData('');
+                }}
+                className="flex-1 bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+              >
+                İptal
+              </button>
+            </div>
           </div>
         </div>
       )}
