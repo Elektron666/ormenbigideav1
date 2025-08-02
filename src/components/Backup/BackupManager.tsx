@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Download, Upload, Database, AlertCircle, CheckCircle, Copy, FileText } from 'lucide-react';
 import { useAppState } from '../../hooks/useAppState';
+import { compressData, decompressData } from '../../utils/compression';
 
 export function BackupManager() {
   const { customers, products, movements, exportData, importData } = useAppState();
@@ -22,8 +23,8 @@ export function BackupManager() {
   // Yedek hazırla ve göster
   const handleCreateBackup = () => {
     const data = exportData();
-    const jsonData = JSON.stringify(data, null, 2);
-    setBackupData(jsonData);
+    const compressed = compressData(data);
+    setBackupData(compressed);
     setShowBackupData(true);
   };
 
@@ -54,9 +55,10 @@ export function BackupManager() {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const data = JSON.parse(e.target?.result as string);
+        const text = e.target?.result as string;
+        const data = decompressData(text);
+        if (!data) throw new Error('invalid');
         const success = importData(data);
-        
         if (success) {
           setImportStatus('success');
           setImportMessage('Yedek başarıyla yüklendi!');
@@ -84,9 +86,9 @@ export function BackupManager() {
     }
 
     try {
-      const data = JSON.parse(restoreData);
+      const data = decompressData(restoreData);
+      if (!data) throw new Error('invalid');
       const success = importData(data);
-      
       if (success) {
         setImportStatus('success');
         setImportMessage('Yedek başarıyla yüklendi!');
@@ -98,19 +100,19 @@ export function BackupManager() {
       }
     } catch (error) {
       setImportStatus('error');
-      setImportMessage('Geçersiz yedek formatı. JSON formatında olmalı.');
+      setImportMessage('Geçersiz yedek formatı.');
     }
   };
 
   // Dosya indirme
   const handleDownloadBackup = () => {
     const data = exportData();
-    const jsonData = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonData], { type: 'application/json' });
+    const compressed = compressData(data);
+    const blob = new Blob([compressed], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `ormen-tekstil-yedek-${new Date().toISOString().split('T')[0]}.json`;
+    link.download = `ormen-tekstil-yedek-${new Date().toISOString().split('T')[0]}.bak`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
