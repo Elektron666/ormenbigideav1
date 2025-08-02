@@ -174,9 +174,29 @@ export function useAppState() {
 
   const importData = useCallback((data: any) => {
     try {
-      if (data.customers) setCustomers(data.customers);
-      if (data.products) setProducts(data.products);
-      if (data.movements) setMovements(data.movements);
+      if (data.customers) {
+        setCustomers(data.customers.map((customer: any) => ({
+          ...customer,
+          createdAt: new Date(customer.createdAt),
+          updatedAt: new Date(customer.updatedAt),
+        })));
+      }
+
+      if (data.products) {
+        setProducts(data.products.map((product: any) => ({
+          ...product,
+          createdAt: new Date(product.createdAt),
+          updatedAt: new Date(product.updatedAt),
+        })));
+      }
+
+      if (data.movements) {
+        setMovements(data.movements.map((movement: any) => ({
+          ...movement,
+          createdAt: new Date(movement.createdAt),
+        })));
+      }
+
       return true;
     } catch (error) {
       setError('Veri içe aktarma hatası');
