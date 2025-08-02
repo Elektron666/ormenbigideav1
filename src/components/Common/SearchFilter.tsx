@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter, SortAsc, SortDesc } from 'lucide-react';
+import { useDebounce } from '../../hooks/useDebounce';
 
 interface SearchFilterProps {
   searchTerm: string;
@@ -20,8 +21,19 @@ export function SearchFilter({
   onSortChange,
   onSortOrderToggle,
   sortOptions,
-  placeholder = "Ara..."
+  placeholder = "Ara...",
 }: SearchFilterProps) {
+  const [inputValue, setInputValue] = useState(searchTerm);
+  const debouncedSearch = useDebounce(inputValue, 300);
+
+  useEffect(() => {
+    setInputValue(searchTerm);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    onSearchChange(debouncedSearch);
+  }, [debouncedSearch, onSearchChange]);
+
   return (
     <div className="flex flex-col sm:flex-row gap-4 mb-6">
       <div className="relative flex-1">
@@ -29,12 +41,12 @@ export function SearchFilter({
         <input
           type="text"
           placeholder={placeholder}
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
           className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
-      
+
       <div className="flex gap-2">
         <select
           value={sortBy}
@@ -47,7 +59,7 @@ export function SearchFilter({
             </option>
           ))}
         </select>
-        
+
         <button
           onClick={onSortOrderToggle}
           className="px-3 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
