@@ -52,7 +52,7 @@ export function validateEmail(email: string): boolean {
 }
 
 export function validatePhone(phone: string): boolean {
-  const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
+  const phoneRegex = /^\+?[0-9\s\-()]{10,}$/;
   return phoneRegex.test(phone);
 }
 
