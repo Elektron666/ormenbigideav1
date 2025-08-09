@@ -3,6 +3,7 @@ import { Edit, Trash2, Calendar, User, Package, ArrowUpDown, Eye } from 'lucide-
 import { Movement, Customer, Product } from '../../types';
 import { SearchFilter } from '../Common/SearchFilter';
 import { formatDate } from '../../utils/helpers';
+import { debounce } from '../../utils/performance';
 
 interface MovementsListProps {
   movements: Movement[];
@@ -16,12 +17,19 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<keyof Movement>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [displayCount, setDisplayCount] = useState(50); // Show more movements initially
 
   const sortOptions = [
     { value: 'createdAt', label: 'Tarih' },
     { value: 'type', label: 'Tür' },
     { value: 'quantity', label: 'Miktar' },
   ];
+
+  // Debounced search for better performance
+  const debouncedSetSearchTerm = useMemo(
+    () => debounce(setSearchTerm, 300),
+    []
+  );
 
   const enrichedMovements = useMemo(() => {
     return movements.map(movement => {
@@ -75,8 +83,12 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
       }
       
       return sortOrder === 'asc' ? comparison : -comparison;
-    });
-  }, [enrichedMovements, searchTerm, sortBy, sortOrder]);
+    }).slice(0, displayCount); // Limit display for performance
+  }, [enrichedMovements, searchTerm, sortBy, sortOrder, displayCount]);
+
+  const handleLoadMore = () => {
+    setDisplayCount(prev => prev + 50);
+  };
 
   const getMovementTypeColor = (type: Movement['type']) => {
     switch (type) {
@@ -113,7 +125,7 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
 
       <SearchFilter
         searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
+        onSearchChange={debouncedSetSearchTerm}
         sortBy={sortBy}
         sortOrder={sortOrder}
         onSortChange={(field) => setSortBy(field as keyof Movement)}
@@ -241,6 +253,18 @@ ${movement.notes ? `\nNotlar: ${movement.notes}` : ''}
               </tbody>
             </table>
           </div>
+          
+          {/* Load More Button for Desktop */}
+          {movements.length > displayCount && (
+            <div className="text-center p-4 border-t border-gray-200">
+              <button
+                onClick={handleLoadMore}
+                className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                Daha Fazla Yükle ({movements.length - displayCount} kaldı)
+              </button>
+            </div>
+          )}
 
           {/* Mobile Cards */}
           <div className="md:hidden divide-y divide-gray-200">
@@ -313,6 +337,18 @@ ${movement.notes ? `\nNotlar: ${movement.notes}` : ''}
               </div>
             ))}
           </div>
+          
+          {/* Load More Button for Mobile */}
+          {movements.length > displayCount && (
+            <div className="text-center p-4 border-t border-gray-200">
+              <button
+                onClick={handleLoadMore}
+                className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                Daha Fazla Yükle ({movements.length - displayCount} kaldı)
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
