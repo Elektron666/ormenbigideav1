@@ -53,10 +53,66 @@ export function memoize<T extends (...args: any[]) => any>(
     // Clear cache after timeout to prevent memory leaks
     setTimeout(() => {
       cache.delete(key);
-    }, 5 * 60 * 1000); // 5 minutes
+    }, 2 * 60 * 1000); // 2 minutes for better performance
     
     return result;
   }) as T;
+}
+
+/**
+ * Virtual scrolling utility for large lists
+ */
+export function useVirtualScrolling<T>(
+  items: T[],
+  itemHeight: number,
+  containerHeight: number
+) {
+  const [scrollTop, setScrollTop] = React.useState(0);
+  
+  const startIndex = Math.floor(scrollTop / itemHeight);
+  const endIndex = Math.min(
+    startIndex + Math.ceil(containerHeight / itemHeight) + 1,
+    items.length
+  );
+  
+  const visibleItems = items.slice(startIndex, endIndex);
+  const totalHeight = items.length * itemHeight;
+  const offsetY = startIndex * itemHeight;
+  
+  return {
+    visibleItems,
+    totalHeight,
+    offsetY,
+    setScrollTop,
+  };
+}
+
+/**
+ * Lazy loading hook for components
+ */
+export function useLazyLoading(threshold = 100) {
+  const [isVisible, setIsVisible] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+  
+  React.useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: `${threshold}px` }
+    );
+    
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+    
+    return () => observer.disconnect();
+  }, [threshold]);
+  
+  return { ref, isVisible };
 }
 
 /**

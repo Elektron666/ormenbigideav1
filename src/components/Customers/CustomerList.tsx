@@ -3,6 +3,7 @@ import { Plus, Edit, Trash2, Eye, Phone, Mail, Building, Users, Scissors } from 
 import { Customer } from '../../types';
 import { SearchFilter } from '../Common/SearchFilter';
 import { formatDate, filterAndSort } from '../../utils/helpers';
+import { debounce } from '../../utils/performance';
 
 interface CustomerListProps {
   customers: Customer[];
@@ -17,6 +18,7 @@ export function CustomerList({ customers, onEdit, onDelete, onView, onAdd, onBul
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<keyof Customer>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [displayCount, setDisplayCount] = useState(20); // Pagination for performance
 
   const sortOptions = [
     { value: 'name', label: 'İsim' },
@@ -25,6 +27,12 @@ export function CustomerList({ customers, onEdit, onDelete, onView, onAdd, onBul
     { value: 'updatedAt', label: 'Güncelleme Tarihi' },
   ];
 
+  // Debounced search for better performance
+  const debouncedSetSearchTerm = useMemo(
+    () => debounce(setSearchTerm, 300),
+    []
+  );
+
   const filteredCustomers = useMemo(() => {
     const filtered = filterAndSort(
       customers,
@@ -32,15 +40,18 @@ export function CustomerList({ customers, onEdit, onDelete, onView, onAdd, onBul
       ['name', 'company', 'phone', 'email'],
       sortBy,
       sortOrder
-    );
+    ).slice(0, displayCount); // Limit display for performance
     
     // Add numbering for display
     return filtered.map((customer, index) => ({
       ...customer,
       displayIndex: index + 1
     }));
-  }, [customers, searchTerm, sortBy, sortOrder]);
+  }, [customers, searchTerm, sortBy, sortOrder, displayCount]);
 
+  const handleLoadMore = () => {
+    setDisplayCount(prev => prev + 20);
+  };
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -75,7 +86,7 @@ export function CustomerList({ customers, onEdit, onDelete, onView, onAdd, onBul
 
       <SearchFilter
         searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
+        onSearchChange={debouncedSetSearchTerm}
         sortBy={sortBy}
         sortOrder={sortOrder}
         onSortChange={(field) => setSortBy(field as keyof Customer)}
@@ -148,6 +159,18 @@ export function CustomerList({ customers, onEdit, onDelete, onView, onAdd, onBul
           </div>
         ))}
       </div>
+
+      {/* Load More Button */}
+      {customers.length > displayCount && (
+        <div className="text-center">
+          <button
+            onClick={handleLoadMore}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Daha Fazla Yükle ({customers.length - displayCount} kaldı)
+          </button>
+        </div>
+      )}
 
       {filteredCustomers.length === 0 && (
         <div className="text-center py-12">

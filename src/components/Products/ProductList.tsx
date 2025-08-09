@@ -3,6 +3,7 @@ import { Plus, Edit, Trash2, Package, Tag, Scissors } from 'lucide-react';
 import { Product } from '../../types';
 import { SearchFilter } from '../Common/SearchFilter';
 import { formatDate, formatCurrency, filterAndSort } from '../../utils/helpers';
+import { debounce } from '../../utils/performance';
 
 interface ProductListProps {
   products: Product[];
@@ -16,6 +17,7 @@ export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: Pr
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<keyof Product>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [displayCount, setDisplayCount] = useState(20); // Pagination for performance
 
   const sortOptions = [
     { value: 'name', label: 'İsim' },
@@ -25,6 +27,12 @@ export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: Pr
     { value: 'createdAt', label: 'Oluşturma Tarihi' },
   ];
 
+  // Debounced search for better performance
+  const debouncedSetSearchTerm = useMemo(
+    () => debounce(setSearchTerm, 300),
+    []
+  );
+
   const filteredProducts = useMemo(() => {
     const filtered = filterAndSort(
       products,
@@ -32,15 +40,18 @@ export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: Pr
       ['name', 'code', 'category', 'description'],
       sortBy,
       sortOrder
-    );
+    ).slice(0, displayCount); // Limit display for performance
     
     // Add numbering for display
     return filtered.map((product, index) => ({
       ...product,
       displayIndex: index + 1
     }));
-  }, [products, searchTerm, sortBy, sortOrder]);
+  }, [products, searchTerm, sortBy, sortOrder, displayCount]);
 
+  const handleLoadMore = () => {
+    setDisplayCount(prev => prev + 20);
+  };
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -75,7 +86,7 @@ export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: Pr
 
       <SearchFilter
         searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
+        onSearchChange={debouncedSetSearchTerm}
         sortBy={sortBy}
         sortOrder={sortOrder}
         onSortChange={(field) => setSortBy(field as keyof Product)}
@@ -144,6 +155,18 @@ export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: Pr
           </div>
         ))}
       </div>
+
+      {/* Load More Button */}
+      {products.length > displayCount && (
+        <div className="text-center">
+          <button
+            onClick={handleLoadMore}
+            className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Daha Fazla Yükle ({products.length - displayCount} kaldı)
+          </button>
+        </div>
+      )}
 
       {filteredProducts.length === 0 && (
         <div className="text-center py-12">

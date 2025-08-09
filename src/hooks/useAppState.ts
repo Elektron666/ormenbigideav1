@@ -20,10 +20,7 @@ export function useAppState() {
       updatedAt: new Date(),
     };
     
-    setCustomers(prevCustomers => {
-      const updatedCustomers = [...prevCustomers, newCustomer];
-      return updatedCustomers;
-    });
+    setCustomers(prevCustomers => [...prevCustomers, newCustomer]);
     
     return newCustomer;
   }, [setCustomers]);
@@ -50,10 +47,7 @@ export function useAppState() {
       updatedAt: new Date(),
     };
     
-    setProducts(prevProducts => {
-      const updatedProducts = [...prevProducts, newProduct];
-      return updatedProducts;
-    });
+    setProducts(prevProducts => [...prevProducts, newProduct]);
     
     return newProduct;
   }, [setProducts]);
@@ -80,10 +74,7 @@ export function useAppState() {
       createdBy: movementData.createdBy || currentUser?.id || 'system',
     };
     
-    setMovements(prevMovements => {
-      const updatedMovements = [...prevMovements, newMovement];
-      return updatedMovements;
-    });
+    setMovements(prevMovements => [...prevMovements, newMovement]);
     
     return newMovement;
   }, [setMovements, currentUser]);
@@ -117,49 +108,35 @@ export function useAppState() {
 
   // KUSURSUZ TOPLU İŞLEMLER
   const bulkImportCustomers = useCallback((customersData: Array<{ name: string }>) => {
-    setIsLoading(true);
-    try {
-      const newCustomers: Customer[] = customersData.map(data => ({
-        name: data.name,
-        company: undefined,
-        phone: undefined,
-        email: undefined,
-        address: undefined,
-        notes: undefined,
-        id: generateId(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }));
-      
-      setCustomers(prev => [...prev, ...newCustomers]);
-    } catch (error) {
-      setError('Toplu müşteri yükleme hatası');
-    } finally {
-      setIsLoading(false);
-    }
+    const newCustomers: Customer[] = customersData.map(data => ({
+      name: data.name,
+      company: undefined,
+      phone: undefined,
+      email: undefined,
+      address: undefined,
+      notes: undefined,
+      id: generateId(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    
+    setCustomers(prev => [...prev, ...newCustomers]);
   }, [setCustomers]);
 
   const bulkImportProducts = useCallback((productsData: Array<{ name: string; code: string; category?: string }>) => {
-    setIsLoading(true);
-    try {
-      const newProducts: Product[] = productsData.map(data => ({
-        name: data.name,
-        code: data.code,
-        category: data.category,
-        description: undefined,
-        price: undefined,
-        unit: undefined,
-        id: generateId(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }));
-      
-      setProducts(prev => [...prev, ...newProducts]);
-    } catch (error) {
-      setError('Toplu ürün yükleme hatası');
-    } finally {
-      setIsLoading(false);
-    }
+    const newProducts: Product[] = productsData.map(data => ({
+      name: data.name,
+      code: data.code,
+      category: data.category,
+      description: undefined,
+      price: undefined,
+      unit: undefined,
+      id: generateId(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    }));
+    
+    setProducts(prev => [...prev, ...newProducts]);
   }, [setProducts]);
 
   const exportData = useCallback(() => {
