@@ -74,7 +74,8 @@ export function filterAndSort<T>(
   sortBy: keyof T,
   sortOrder: 'asc' | 'desc' = 'asc'
 ): T[] {
-  let filtered = items;
+  // Create a shallow copy to avoid mutating the original array when sorting
+  let filtered = [...items];
 
   if (searchTerm) {
     // Türkçe karakterleri normalize et
