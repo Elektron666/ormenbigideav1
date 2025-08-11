@@ -2,9 +2,9 @@
 
 export const APP_CONFIG = {
   name: 'ORMEN TEKSTİL',
-  version: '1.2.0',
+  version: '1.5.0',
   buildTime: new Date().toISOString(),
-  description: 'Kartela Yönetim Sistemi V1.2',
+  description: 'Kartela Yönetim Sistemi V1.5',
   author: 'ORMEN TEKSTİL',
 } as const;
 
