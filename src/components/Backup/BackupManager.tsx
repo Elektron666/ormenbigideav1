@@ -12,6 +12,26 @@ export function BackupManager() {
   const [restoreData, setRestoreData] = useState('');
   const [showRestoreForm, setShowRestoreForm] = useState(false);
 
+  // Gelen veriyi normalize et - eksik formatları destekle
+  const normalizeBackupData = (raw: string) => {
+    const cleaned = raw.trim().replace(/,\s*$/, '');
+
+    let parsed;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (e) {
+      // Düzensiz formatı dizi gibi değerlendir
+      parsed = JSON.parse(`[${cleaned}]`);
+    }
+
+    if (Array.isArray(parsed)) {
+      // Sadece müşteri listesi verilmişse onu uygun formata dönüştür
+      return { customers: parsed };
+    }
+
+    return parsed;
+  };
+
   const stats = {
     customers: customers.length,
     products: products.length,
@@ -60,9 +80,9 @@ export function BackupManager() {
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
-        const data = JSON.parse(e.target?.result as string);
+        const data = normalizeBackupData(e.target?.result as string);
         const success = importData(data);
-        
+
         if (success) {
           setImportStatus('success');
           setImportMessage('Yedek başarıyla yüklendi!');
@@ -90,9 +110,9 @@ export function BackupManager() {
     }
 
     try {
-      const data = JSON.parse(restoreData);
+      const data = normalizeBackupData(restoreData);
       const success = importData(data);
-      
+
       if (success) {
         setImportStatus('success');
         setImportMessage('Yedek başarıyla yüklendi!');
