@@ -30,7 +30,17 @@ export function UpdateManager() {
       const response = await fetch('https://api.github.com/repos/ormentekstil/ormen-tekstil-kartela-sistemi/releases/latest');
       
       if (!response.ok) {
-        throw new Error('GitHub API\'ye erişim hatası');
+        let errorMessage = `GitHub API hatası (${response.status}: ${response.statusText})`;
+        
+        if (response.status === 403) {
+          errorMessage += ' - API rate limit aşıldı. Lütfen daha sonra tekrar deneyin.';
+        } else if (response.status === 404) {
+          errorMessage += ' - Repository bulunamadı.';
+        } else if (response.status >= 500) {
+          errorMessage += ' - GitHub sunucu hatası. Lütfen daha sonra tekrar deneyin.';
+        }
+        
+        throw new Error(errorMessage);
       }
       
       const release: GitHubRelease = await response.json();
