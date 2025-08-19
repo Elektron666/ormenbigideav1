@@ -37,11 +37,15 @@ export function NewMovementForm({ customers, products, movements, onSave, onCanc
   }, [products, productSearch]);
 
   const sortedCustomers = useMemo(() => {
-    return filteredCustomers.sort((a, b) => a.name.localeCompare(b.name, 'tr-TR', { sensitivity: 'base' }));
+    return filteredCustomers
+      .slice(0, 50) // Tablet performansı için limit
+      .sort((a, b) => a.name.localeCompare(b.name, 'tr-TR', { sensitivity: 'base' }));
   }, [filteredCustomers]);
 
   const sortedProducts = useMemo(() => {
-    return filteredProducts.sort((a, b) => a.name.localeCompare(b.name, 'tr-TR', { sensitivity: 'base' }));
+    return filteredProducts
+      .slice(0, 100) // Tablet performansı için limit
+      .sort((a, b) => a.name.localeCompare(b.name, 'tr-TR', { sensitivity: 'base' }));
   }, [filteredProducts]);
 
   // Seçili müşterinin mevcut kartelaları

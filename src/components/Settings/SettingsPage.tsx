@@ -93,7 +93,7 @@ export function SettingsPage() {
       {activeTab === 'updates' ? (
         <UpdateManager />
       ) : (
-        <>
+        <div className="space-y-6">
       {/* Save Status */}
       {isSaved && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -310,7 +310,7 @@ export function SettingsPage() {
           <span>Varsayılana Sıfırla</span>
         </button>
       </div>
-        </>
+        </div>
       )}
     </div>
   );

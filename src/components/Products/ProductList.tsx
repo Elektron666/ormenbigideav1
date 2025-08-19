@@ -3,7 +3,7 @@ import { Plus, Edit, Trash2, Package, Tag, Scissors } from 'lucide-react';
 import { Product } from '../../types';
 import { SearchFilter } from '../Common/SearchFilter';
 import { formatDate, formatCurrency, filterAndSort } from '../../utils/helpers';
-import { debounce } from '../../utils/performance';
+import { tabletDebounce } from '../../utils/performance';
 
 interface ProductListProps {
   products: Product[];
@@ -17,7 +17,7 @@ export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: Pr
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<keyof Product>('name');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [displayCount, setDisplayCount] = useState(20); // Pagination for performance
+  const [displayCount, setDisplayCount] = useState(10); // Tablet için daha az
 
   const sortOptions = [
     { value: 'name', label: 'İsim' },
@@ -29,7 +29,7 @@ export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: Pr
 
   // Debounced search for better performance
   const debouncedSetSearchTerm = useMemo(
-    () => debounce(setSearchTerm, 300),
+    () => tabletDebounce(setSearchTerm, 500),
     []
   );
 
@@ -50,7 +50,7 @@ export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: Pr
   }, [products, searchTerm, sortBy, sortOrder, displayCount]);
 
   const handleLoadMore = () => {
-    setDisplayCount(prev => prev + 20);
+    setDisplayCount(prev => prev + 10); // Tablet için daha az yükleme
   };
   return (
     <div className="space-y-6">

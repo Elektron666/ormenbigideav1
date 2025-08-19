@@ -11,6 +11,11 @@ export function useAppState() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Performance optimization: Memoize expensive calculations
+  const memoizedCustomers = useMemo(() => customers, [customers]);
+  const memoizedProducts = useMemo(() => products, [products]);
+  const memoizedMovements = useMemo(() => movements, [movements]);
+
   // KUSURSUZ MÜŞTERİ İŞLEMLERİ
   const addCustomer = useCallback((customerData: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>) => {
     const newCustomer: Customer = {
@@ -80,7 +85,7 @@ export function useAppState() {
   }, [setMovements, currentUser]);
 
   const getCustomerProducts = useCallback((customerId: string) => {
-    const customerMovements = movements.filter(m => m.customerId === customerId);
+    const customerMovements = memoizedMovements.filter(m => m.customerId === customerId);
     const productQuantities = new Map<string, number>();
 
     customerMovements.forEach(movement => {
@@ -95,7 +100,7 @@ export function useAppState() {
     return Array.from(productQuantities.entries())
       .filter(([_, quantity]) => quantity > 0)
       .map(([productId, quantity]) => ({
-        product: products.find(p => p.id === productId)!,
+        product: memoizedProducts.find(p => p.id === productId)!,
         quantity,
         lastMovementDate: Math.max(
           ...customerMovements
@@ -104,7 +109,7 @@ export function useAppState() {
         ),
       }))
       .filter(item => item.product);
-  }, [movements, products]);
+  }, [memoizedMovements, memoizedProducts]);
 
   // KUSURSUZ TOPLU İŞLEMLER
   const bulkImportCustomers = useCallback((customersData: Array<{ name: string }>) => {
@@ -141,13 +146,13 @@ export function useAppState() {
 
   const exportData = useCallback(() => {
     return {
-      customers,
-      products,
-      movements,
+      customers: memoizedCustomers,
+      products: memoizedProducts,
+      movements: memoizedMovements,
       exportDate: new Date().toISOString(),
       version: '1.0',
     };
-  }, [customers, products, movements]);
+  }, [memoizedCustomers, memoizedProducts, memoizedMovements]);
 
   const importData = useCallback((data: any) => {
     try {
@@ -165,9 +170,9 @@ export function useAppState() {
 
   return {
     // State
-    customers,
-    products,
-    movements,
+    customers: memoizedCustomers,
+    products: memoizedProducts,
+    movements: memoizedMovements,
     setMovements,
     currentUser,
     isLoading,

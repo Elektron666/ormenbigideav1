@@ -52,8 +52,10 @@ export function memoize<T extends (...args: any[]) => any>(
     
     // Clear cache after timeout to prevent memory leaks
     setTimeout(() => {
-      cache.delete(key);
-    }, 2 * 60 * 1000); // 2 minutes for better performance
+      if (cache.has(key)) {
+        cache.delete(key);
+      }
+    }, 30 * 1000); // 30 seconds for tablet performance
     
     return result;
   }) as T;
@@ -66,7 +68,12 @@ export function useVirtualScrolling<T>(
   items: T[],
   itemHeight: number,
   containerHeight: number
-) {
+): {
+  visibleItems: T[];
+  totalHeight: number;
+  offsetY: number;
+  setScrollTop: (scrollTop: number) => void;
+} {
   const [scrollTop, setScrollTop] = React.useState(0);
   
   const startIndex = Math.floor(scrollTop / itemHeight);
@@ -90,7 +97,10 @@ export function useVirtualScrolling<T>(
 /**
  * Lazy loading hook for components
  */
-export function useLazyLoading(threshold = 100) {
+export function useLazyLoading(threshold = 50): { 
+  ref: React.RefObject<HTMLDivElement>; 
+  isVisible: boolean; 
+} {
   const [isVisible, setIsVisible] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
   
@@ -102,7 +112,10 @@ export function useLazyLoading(threshold = 100) {
           observer.disconnect();
         }
       },
-      { rootMargin: `${threshold}px` }
+      { 
+        rootMargin: `${threshold}px`,
+        threshold: 0.1 
+      }
     );
     
     if (ref.current) {
@@ -157,4 +170,32 @@ export function getMemoryUsage(): {
     };
   }
   return null;
+}
+
+/**
+ * Optimized debounce for tablet performance
+ */
+export function tabletDebounce<T extends (...args: any[]) => any>(
+  func: T,
+  wait: number = 500 // Longer wait for tablets
+): (...args: Parameters<T>) => void {
+  let timeout: NodeJS.Timeout;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+}
+
+/**
+ * Batch updates for better performance
+ */
+export function batchUpdates<T>(
+  items: T[],
+  batchSize: number = 10
+): T[][] {
+  const batches: T[][] = [];
+  for (let i = 0; i < items.length; i += batchSize) {
+    batches.push(items.slice(i, i + batchSize));
+  }
+  return batches;
 }

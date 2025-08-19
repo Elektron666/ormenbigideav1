@@ -3,7 +3,7 @@ import { Edit, Trash2, Calendar, User, Package, ArrowUpDown, Eye } from 'lucide-
 import { Movement, Customer, Product } from '../../types';
 import { SearchFilter } from '../Common/SearchFilter';
 import { formatDate } from '../../utils/helpers';
-import { debounce } from '../../utils/performance';
+import { tabletDebounce } from '../../utils/performance';
 
 interface MovementsListProps {
   movements: Movement[];
@@ -17,7 +17,7 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState<keyof Movement>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [displayCount, setDisplayCount] = useState(50); // Show more movements initially
+  const [displayCount, setDisplayCount] = useState(20); // Tablet için daha az
 
   const sortOptions = [
     { value: 'createdAt', label: 'Tarih' },
@@ -27,7 +27,7 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
 
   // Debounced search for better performance
   const debouncedSetSearchTerm = useMemo(
-    () => debounce(setSearchTerm, 300),
+    () => tabletDebounce(setSearchTerm, 500),
     []
   );
 
@@ -87,7 +87,7 @@ export function MovementsList({ movements, customers, products, onEdit, onDelete
   }, [enrichedMovements, searchTerm, sortBy, sortOrder, displayCount]);
 
   const handleLoadMore = () => {
-    setDisplayCount(prev => prev + 50);
+    setDisplayCount(prev => prev + 20); // Tablet için daha az yükleme
   };
 
   const getMovementTypeColor = (type: Movement['type']) => {
