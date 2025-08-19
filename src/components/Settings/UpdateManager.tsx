@@ -94,7 +94,7 @@ export function UpdateManager() {
 
   useEffect(() => {
     // Sayfa yüklendiğinde otomatik kontrol et
-    checkForUpdates();
+    // checkForUpdates(); // GitHub repository olmadığı için devre dışı
   }, []);
 
   return (
