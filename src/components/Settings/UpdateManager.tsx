@@ -27,7 +27,7 @@ export function UpdateManager() {
     
     try {
       // GitHub API'den son release'i al
-      const response = await fetch('https://api.github.com/repos/ormentekstil/ormen-tekstil-kartela-sistemi/releases/latest');
+      const response = await fetch('https://api.github.com/repos/your-username/your-repository-name/releases/latest');
       
       if (!response.ok) {
         let errorMessage = `GitHub API hatası (${response.status}: ${response.statusText})`;
