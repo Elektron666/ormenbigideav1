@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Customer, Product, Movement, User } from '../types';
 import { generateId } from '../utils/helpers';
