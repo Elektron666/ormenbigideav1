@@ -1,6 +1,6 @@
 import React from 'react';
 import { Settings, Database, Shield, Info } from 'lucide-react';
-import UpdateManager from './UpdateManager';
+import { UpdateManager } from './UpdateManager';
 
 const SettingsPage: React.FC = () => {
   return (
