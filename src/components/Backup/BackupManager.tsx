@@ -104,20 +104,48 @@ export function BackupManager() {
         return;
       }
       
-      // Veri yapısını kontrol et
-      if (!data || typeof data !== 'object') {
+      // Yardımcı tip kontrol fonksiyonları
+      const isMovement = (item: any) =>
+        item && typeof item === 'object' && 'customerId' in item && 'productId' in item && 'type' in item;
+      const isProduct = (item: any) =>
+        item && typeof item === 'object' && 'name' in item && 'code' in item;
+      const isCustomer = (item: any) =>
+        item && typeof item === 'object' && 'name' in item && !('code' in item);
+
+      // Veri yapısını kontrol et ve gerekirse dönüştür
+      if (!data || (typeof data !== 'object' && !Array.isArray(data))) {
         setImportStatus('error');
         setImportMessage('Geçersiz yedek formatı. Veri objesi bulunamadı.');
         return;
       }
-      
-      // En az bir veri türü olmalı
-      if (!data.customers && !data.products && !data.movements) {
-        setImportStatus('error');
-        setImportMessage('Geçersiz yedek formatı. Müşteri, kartela veya hareket verisi bulunamadı.');
-        return;
+
+      if (Array.isArray(data)) {
+        const firstItem = data[0];
+        if (isMovement(firstItem)) {
+          data = { movements: data };
+        } else if (isProduct(firstItem)) {
+          data = { products: data };
+        } else if (isCustomer(firstItem)) {
+          data = { customers: data };
+        } else {
+          setImportStatus('error');
+          setImportMessage('Geçersiz yedek formatı. Tanımlanamayan veri türü.');
+          return;
+        }
+      } else if (!data.customers && !data.products && !data.movements) {
+        if (isMovement(data)) {
+          data = { movements: [data] };
+        } else if (isProduct(data)) {
+          data = { products: [data] };
+        } else if (isCustomer(data)) {
+          data = { customers: [data] };
+        } else {
+          setImportStatus('error');
+          setImportMessage('Geçersiz yedek formatı. Müşteri, kartela veya hareket verisi bulunamadı.');
+          return;
+        }
       }
-      
+
       const success = importData(data);
       
       if (success) {
