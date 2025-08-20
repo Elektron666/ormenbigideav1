@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import { Customer, Product, Movement, User } from '../types';
 import { generateId } from '../utils/helpers';
+import { batchUpdates } from '../utils/performance';
 
 export function useAppState() {
   const [customers, setCustomers] = useLocalStorage<Customer[]>('kartela_customers', []);
@@ -124,8 +125,13 @@ export function useAppState() {
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
-    
-    setCustomers(prev => [...prev, ...newCustomers]);
+
+    const batches = batchUpdates(newCustomers, 50);
+    batches.forEach((batch, index) => {
+      setTimeout(() => {
+        setCustomers(prev => [...prev, ...batch]);
+      }, index * 50);
+    });
   }, [setCustomers]);
 
   const bulkImportProducts = useCallback((productsData: Array<{ name: string; code: string; category?: string }>) => {
@@ -140,8 +146,13 @@ export function useAppState() {
       createdAt: new Date(),
       updatedAt: new Date(),
     }));
-    
-    setProducts(prev => [...prev, ...newProducts]);
+
+    const batches = batchUpdates(newProducts, 50);
+    batches.forEach((batch, index) => {
+      setTimeout(() => {
+        setProducts(prev => [...prev, ...batch]);
+      }, index * 50);
+    });
   }, [setProducts]);
 
   const exportData = useCallback(() => {
