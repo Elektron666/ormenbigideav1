@@ -156,12 +156,43 @@ export function useAppState() {
 
   const importData = useCallback((data: any) => {
     try {
-      if (data.customers) setCustomers(data.customers);
-      if (data.products) setProducts(data.products);
-      if (data.movements) setMovements(data.movements);
+      // Veri tiplerini kontrol et ve temizle
+      if (data.customers && Array.isArray(data.customers)) {
+        const validCustomers = data.customers.filter((c: any) => 
+          c && typeof c === 'object' && c.name && typeof c.name === 'string'
+        ).map((c: any) => ({
+          ...c,
+          createdAt: c.createdAt ? new Date(c.createdAt) : new Date(),
+          updatedAt: c.updatedAt ? new Date(c.updatedAt) : new Date(),
+        }));
+        setCustomers(validCustomers);
+      }
+      
+      if (data.products && Array.isArray(data.products)) {
+        const validProducts = data.products.filter((p: any) => 
+          p && typeof p === 'object' && p.name && typeof p.name === 'string' && p.code && typeof p.code === 'string'
+        ).map((p: any) => ({
+          ...p,
+          createdAt: p.createdAt ? new Date(p.createdAt) : new Date(),
+          updatedAt: p.updatedAt ? new Date(p.updatedAt) : new Date(),
+        }));
+        setProducts(validProducts);
+      }
+      
+      if (data.movements && Array.isArray(data.movements)) {
+        const validMovements = data.movements.filter((m: any) => 
+          m && typeof m === 'object' && m.customerId && m.productId && m.type && typeof m.quantity === 'number'
+        ).map((m: any) => ({
+          ...m,
+          createdAt: m.createdAt ? new Date(m.createdAt) : new Date(),
+        }));
+        setMovements(validMovements);
+      }
+      
       return true;
     } catch (error) {
-      setError('Veri içe aktarma hatası');
+      console.error('Import error:', error);
+      setError(`Veri içe aktarma hatası: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
       return false;
     }
   }, [setCustomers, setProducts, setMovements]);

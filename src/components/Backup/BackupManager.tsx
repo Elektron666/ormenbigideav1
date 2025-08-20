@@ -90,12 +90,44 @@ export function BackupManager() {
     }
 
     try {
-      const data = JSON.parse(restoreData);
+      // Önce veriyi temizle ve düzelt
+      let cleanedData = restoreData.trim();
+      
+      // Eğer veri JSON değilse, basit format olarak kabul et
+      let data;
+      try {
+        data = JSON.parse(cleanedData);
+      } catch (parseError) {
+        // JSON değilse, basit format olarak dene
+        setImportStatus('error');
+        setImportMessage('Geçersiz JSON formatı. Lütfen doğru yedek verisini yapıştırın.');
+        return;
+      }
+      
+      // Veri yapısını kontrol et
+      if (!data || typeof data !== 'object') {
+        setImportStatus('error');
+        setImportMessage('Geçersiz yedek formatı. Veri objesi bulunamadı.');
+        return;
+      }
+      
+      // En az bir veri türü olmalı
+      if (!data.customers && !data.products && !data.movements) {
+        setImportStatus('error');
+        setImportMessage('Geçersiz yedek formatı. Müşteri, kartela veya hareket verisi bulunamadı.');
+        return;
+      }
+      
       const success = importData(data);
       
       if (success) {
         setImportStatus('success');
-        setImportMessage('Yedek başarıyla yüklendi!');
+        const loadedItems = [];
+        if (data.customers?.length) loadedItems.push(`${data.customers.length} müşteri`);
+        if (data.products?.length) loadedItems.push(`${data.products.length} kartela`);
+        if (data.movements?.length) loadedItems.push(`${data.movements.length} hareket`);
+        
+        setImportMessage(`Yedek başarıyla yüklendi! (${loadedItems.join(', ')})`);
         setRestoreData('');
         setShowRestoreForm(false);
       } else {
@@ -104,7 +136,7 @@ export function BackupManager() {
       }
     } catch (error) {
       setImportStatus('error');
-      setImportMessage('Geçersiz yedek formatı. JSON formatında olmalı.');
+      setImportMessage(`Yedek yükleme hatası: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`);
     }
   };
 
@@ -335,15 +367,31 @@ export function BackupManager() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Yedek Verisini Yapıştırın
+                Yedek Verisini Yapıştırın (JSON Format)
               </label>
               <textarea
                 value={restoreData}
                 onChange={(e) => setRestoreData(e.target.value)}
                 rows={10}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm"
-                placeholder="WhatsApp'tan kopyaladığınız yedek verisini buraya yapıştırın..."
+                placeholder={`{
+  "customers": [...],
+  "products": [...],
+  "movements": [...],
+  "exportDate": "2024-01-01T00:00:00.000Z",
+  "version": "1.0"
+}`}
               />
+            </div>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <h4 className="font-medium text-blue-900 mb-2">💡 Yedek Format Bilgisi</h4>
+              <div className="text-sm text-blue-800 space-y-1">
+                <p>• Yedek verisi JSON formatında olmalıdır</p>
+                <p>• "Manuel Yedek Hazırla" butonuyla oluşturulan veriyi kullanın</p>
+                <p>• Veri { } süslü parantezlerle başlayıp bitmelidir</p>
+                <p>• En az customers, products veya movements verisi bulunmalıdır</p>
+              </div>
             </div>
 
             <div className="flex space-x-3">
