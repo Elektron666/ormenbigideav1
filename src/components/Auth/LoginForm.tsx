@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { User, Lock, Eye, EyeOff, Scissors } from 'lucide-react';
+import { APP_CONFIG } from '../../utils/constants';
 
 interface LoginFormProps {
   onLogin: (username: string, password: string) => boolean;
@@ -32,7 +33,7 @@ export function LoginForm({ onLogin }: LoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-sky-200 flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 w-20 h-20 border border-white rounded-full"></div>
@@ -44,12 +45,12 @@ export function LoginForm({ onLogin }: LoginFormProps) {
       <div className="w-full max-w-md">
         <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 px-8 py-8 text-center relative">
+          <div className="bg-gradient-to-r from-sky-600 via-sky-500 to-sky-400 px-8 py-8 text-center relative">
             <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
               <Scissors className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-white mb-2">ORMEN TEKSTİL</h1>
-            <p className="text-white/80 text-sm font-medium">Kartela Yönetim Sistemi V1</p>
+            <p className="text-white/80 text-sm font-medium">Kartela Yönetim Sistemi V{APP_CONFIG.version}</p>
             <div className="absolute top-4 right-4 text-white/60 text-xs">
               © 2025
             </div>
