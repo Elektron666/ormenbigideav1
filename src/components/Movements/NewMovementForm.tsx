@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, ArrowLeft, Eye, Check, X, Package, User } from 'lucide-react';
+import { Search, ArrowLeft, Eye, Check, User } from 'lucide-react';
 import { Customer, Product, Movement } from '../../types';
 
 interface NewMovementFormProps {

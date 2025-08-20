@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, User, Bell, Shield, Palette, Database, Info, Save, RotateCcw, RefreshCw } from 'lucide-react';
+import { Settings, User, Bell, Shield, Database, Info, Save, RotateCcw, RefreshCw } from 'lucide-react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { UpdateManager } from './UpdateManager';
 

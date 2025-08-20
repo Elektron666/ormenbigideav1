@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Filter, SortAsc, SortDesc } from 'lucide-react';
+import { Search, SortAsc, SortDesc } from 'lucide-react';
 import { debounce } from '../../utils/performance';
 
 interface SearchFilterProps {

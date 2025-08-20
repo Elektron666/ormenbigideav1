@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, User, Package, AlertTriangle, CheckCircle, Eye, ArrowRight, List, BarChart3 } from 'lucide-react';
+import { Search, User, Package, AlertTriangle, CheckCircle, ArrowRight, BarChart3 } from 'lucide-react';
 import { Customer, Product, Movement } from '../../types';
 
 interface MissingProductsPageProps {
@@ -104,7 +104,7 @@ export function MissingProductsPage({ customers, products, movements }: MissingP
         missingCustomerCount: customersWithoutProduct
       };
     }).sort((a, b) => a.product.name.localeCompare(b.product.name, 'tr-TR'));
-  }, [products, movements]);
+  }, [products, movements, customers.length]);
 
   // Seçili ürün için müşteri listelerini hesapla
   const selectedProductCustomers = useMemo(() => {

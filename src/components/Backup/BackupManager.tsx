@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Upload, Database, AlertCircle, CheckCircle, Copy, FileText } from 'lucide-react';
+import { Download, Upload, Database, AlertCircle, CheckCircle, Copy } from 'lucide-react';
 import { useAppState } from '../../hooks/useAppState';
 
 export function BackupManager() {
@@ -27,7 +27,7 @@ export function BackupManager() {
       setBackupData(jsonData);
       setShowBackupData(true);
       setImportStatus('idle');
-    } catch (error) {
+    } catch (_error) {
       setImportStatus('error');
       setImportMessage('Yedek hazırlama hatası');
     }
@@ -39,7 +39,7 @@ export function BackupManager() {
       await navigator.clipboard.writeText(backupData);
       setCopySuccess(true);
       setTimeout(() => setCopySuccess(false), 3000);
-    } catch (error) {
+    } catch (_error) {
       // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = backupData;
@@ -62,7 +62,7 @@ export function BackupManager() {
       try {
         const data = JSON.parse(e.target?.result as string);
         const success = importData(data);
-        
+
         if (success) {
           setImportStatus('success');
           setImportMessage('Yedek başarıyla yüklendi!');
@@ -70,7 +70,7 @@ export function BackupManager() {
           setImportStatus('error');
           setImportMessage('Yedek yükleme sırasında hata oluştu.');
         }
-      } catch (error) {
+      } catch (_error) {
         setImportStatus('error');
         setImportMessage('Geçersiz dosya formatı.');
       }
@@ -102,7 +102,7 @@ export function BackupManager() {
         setImportStatus('error');
         setImportMessage('Yedek yükleme sırasında hata oluştu.');
       }
-    } catch (error) {
+    } catch (_error) {
       setImportStatus('error');
       setImportMessage('Geçersiz yedek formatı. JSON formatında olmalı.');
     }
@@ -122,7 +122,7 @@ export function BackupManager() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    } catch (error) {
+    } catch (_error) {
       setImportStatus('error');
       setImportMessage('Dosya indirme hatası');
     }

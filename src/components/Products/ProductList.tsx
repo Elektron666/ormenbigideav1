@@ -96,7 +96,7 @@ export function ProductList({ products, onEdit, onDelete, onAdd, onBulkAdd }: Pr
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredProducts.map((product, index) => (
+        {filteredProducts.map((product, _index) => (
           <div
             key={product.id}
             className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-green-300 transform hover:scale-[1.02]"

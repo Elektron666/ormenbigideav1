@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Product } from '../../types';
 import { useAppState } from '../../hooks/useAppState';
 
@@ -21,7 +21,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Otomatik kod oluşturma fonksiyonu
-  const generateNextCode = () => {
+  const generateNextCode = useCallback(() => {
     const existingCodes = products.map(p => p.code);
     let maxCodeNumber = 0;
     
@@ -38,7 +38,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
     // Bir sonraki numarayı oluştur (sıralı devam)
     const nextNumber = maxCodeNumber + 1;
     return `ORM-${nextNumber.toString().padStart(4, '0')}`;
-  };
+  }, [products]);
 
   useEffect(() => {
     if (product) {
@@ -57,7 +57,7 @@ export function ProductForm({ product, onSave, onCancel }: ProductFormProps) {
         code: generateNextCode()
       }));
     }
-  }, [product, products]);
+  }, [product, generateNextCode]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};

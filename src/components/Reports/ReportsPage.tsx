@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { BarChart3, Users, Package, TrendingUp, Calendar, Download, FileText, PieChart } from 'lucide-react';
+import { BarChart3, Users, Package, TrendingUp, Calendar, Download } from 'lucide-react';
 import { Customer, Product, Movement } from '../../types';
-import { formatDate, formatCurrency } from '../../utils/helpers';
+import { formatDate } from '../../utils/helpers';
 
 interface ReportsPageProps {
   customers: Customer[];

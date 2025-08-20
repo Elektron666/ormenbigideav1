@@ -22,7 +22,7 @@ import { MovementsList } from './components/Movements/MovementsList';
 import { MissingProductsPage } from './components/MissingProducts/MissingProductsPage';
 import { Modal } from './components/Common/Modal';
 import { useAppState } from './hooks/useAppState';
-import { Customer, Product, Movement } from './types';
+import { Customer, Product } from './types';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

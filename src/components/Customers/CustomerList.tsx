@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Plus, Edit, Trash2, Eye, Phone, Mail, Building, Users, Scissors } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Phone, Mail, Building, Users } from 'lucide-react';
 import { Customer } from '../../types';
 import { SearchFilter } from '../Common/SearchFilter';
 import { formatDate, filterAndSort } from '../../utils/helpers';
@@ -96,7 +96,7 @@ export function CustomerList({ customers, onEdit, onDelete, onView, onAdd, onBul
       />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredCustomers.map((customer, index) => (
+        {filteredCustomers.map((customer, _index) => (
           <div
             key={customer.id}
             className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all duration-200 hover:border-blue-300 transform hover:scale-[1.02]"

@@ -9,11 +9,9 @@ import {
   Lightbulb,
   BookOpen,
   Settings, 
-  Download, 
-  Upload,
+  Download,
   Home,
   X,
-  Heart,
   Scissors
 } from 'lucide-react';
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Download, RefreshCw, CheckCircle, AlertCircle, Globe, Smartphone, ExternalLink } from 'lucide-react';
 
 interface GitHubRelease {
@@ -21,7 +21,7 @@ export function UpdateManager() {
   const [error, setError] = useState<string | null>(null);
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
-  const checkForUpdates = async () => {
+  const checkForUpdates = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     
@@ -56,7 +56,7 @@ export function UpdateManager() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentVersion]);
 
   const compareVersions = (latest: string, current: string): boolean => {
     // v1.2.0 formatını 1.2.0 yapmak için v'yi kaldır
@@ -95,7 +95,7 @@ export function UpdateManager() {
   useEffect(() => {
     // Sayfa yüklendiğinde otomatik kontrol et
     checkForUpdates();
-  }, []);
+  }, [checkForUpdates]);
 
   return (
     <div className="space-y-6">

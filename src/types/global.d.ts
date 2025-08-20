@@ -4,12 +4,14 @@ declare global {
   const __APP_VERSION__: string;
   const __BUILD_TIME__: string;
   
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface Window {
     // Add any window extensions here if needed
   }
 }
 
 // Environment variables
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: 'development' | 'production' | 'test';

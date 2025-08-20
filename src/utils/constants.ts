@@ -43,7 +43,7 @@ export const VALIDATION_CONFIG = {
   maxNameLength: 100,
   maxDescriptionLength: 500,
   maxNotesLength: 1000,
-  phoneRegex: /^[\+]?[0-9\s\-\(\)]{10,}$/,
+  phoneRegex: /^[+]?[\d\s-()]{10,}$/,
   emailRegex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
 } as const;
 

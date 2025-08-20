@@ -74,7 +74,6 @@ export function StockManagement() {
   });
 
   const categories = ['Pamuk', 'Polyester', 'Viskon', 'Karışım', 'Diğer'];
-  const locations = ['Depo A - Raf 1', 'Depo A - Raf 2', 'Depo B - Raf 1', 'Depo B - Raf 2', 'Depo B - Raf 3'];
 
   // Statistics calculations
   const totalItems = stockItems.length;
@@ -110,8 +109,8 @@ export function StockManagement() {
 
     // Apply sorting
     return filtered.sort((a, b) => {
-      let aVal: any = a[sortBy];
-      let bVal: any = b[sortBy];
+      const aVal: any = a[sortBy];
+      const bVal: any = b[sortBy];
 
       if (typeof aVal === 'string' && typeof bVal === 'string') {
         const comparison = aVal.localeCompare(bVal, 'tr-TR', { sensitivity: 'base' });

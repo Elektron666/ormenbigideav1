@@ -8,7 +8,7 @@ export function useAppState() {
   const [products, setProducts] = useLocalStorage<Product[]>('kartela_products', []);
   const [movements, setMovements] = useLocalStorage<Movement[]>('kartela_movements', []);
   const [currentUser, setCurrentUser] = useLocalStorage<User | null>('kartela_current_user', null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // KUSURSUZ MÜŞTERİ İŞLEMLERİ
@@ -155,7 +155,7 @@ export function useAppState() {
       if (data.products) setProducts(data.products);
       if (data.movements) setMovements(data.movements);
       return true;
-    } catch (error) {
+    } catch (_error) {
       setError('Veri içe aktarma hatası');
       return false;
     }

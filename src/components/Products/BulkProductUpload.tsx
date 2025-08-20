@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, Download, Package, Check, X, AlertCircle, Scissors } from 'lucide-react';
+import { Upload, Download, Check, X, AlertCircle, Scissors } from 'lucide-react';
 
 interface BulkProductUploadProps {
   onUpload: (products: Array<{ name: string; code: string; category?: string }>) => void;

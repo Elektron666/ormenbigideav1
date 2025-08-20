@@ -15,7 +15,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T 
       
       const parsed = JSON.parse(item);
       return parsed;
-    } catch (error) {
+    } catch (_error) {
       return initialValue;
     }
   });
@@ -27,7 +27,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T 
       if (typeof window !== 'undefined') {
         try {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
-        } catch (error) {
+        } catch (_error) {
           // Silent error handling for production
         }
       }
@@ -43,7 +43,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, (value: T 
         try {
           const newValue = JSON.parse(e.newValue);
           setStoredValue(newValue);
-        } catch (error) {
+        } catch (_error) {
           // Silent error handling for production
         }
       }

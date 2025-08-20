@@ -168,7 +168,7 @@ export function CustomerDetail({
             
             {customerMovements.length > 0 ? (
               <div className="space-y-3">
-                {customerMovements.map((movement, index) => {
+                {customerMovements.map((movement, _index) => {
                   const product = products.find(p => p.id === movement.productId);
                   return (
                     <div key={movement.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">

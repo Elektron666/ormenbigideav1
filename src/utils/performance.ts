@@ -1,4 +1,5 @@
 // Performance utilities for ORMEN TEKSTİL
+import React from 'react';
 
 /**
  * Debounce function to limit the rate of function calls
